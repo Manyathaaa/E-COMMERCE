@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export const userschema = new mongoose.schema(
+const userschema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -25,10 +25,12 @@ export const userschema = new mongoose.schema(
     },
     role: {
       type: Number,
-      required: true,
+      default: 0, // default to 0 for normal users
     },
   },
   {
-    timeStamp: true,
+    timestamps: true, // correct spelling is timestamps, not timeStamp
   }
 );
+
+export default mongoose.model("User", userschema);
