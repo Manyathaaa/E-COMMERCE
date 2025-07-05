@@ -73,9 +73,13 @@ export const logincontroller = async (req, res) => {
       });
     }
 
-    const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = await JWT.sign(
+      { _id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
     return res.status(200).send({
       success: true,
       message: "successfull login",
@@ -91,8 +95,37 @@ export const logincontroller = async (req, res) => {
     console.log("error");
     return res.status(404).send({
       success: false,
-
       message: "failure to login",
+    });
+  }
+};
+
+//test controller
+export const testcontroller = (req, res) => {
+  try {
+    return res.status("protected routes");
+  } catch (error) {
+    console.log("error");
+  }
+};
+
+//admin access
+export const isAdmin = async (req, res, next) => {
+  try {
+    console.log("Decoded user in isAdmin:", req.user); // Add this line
+    if (req.user.role !== 1) {
+      return res.status(403).send({
+        success: false,
+        message: "unauthorized access",
+      });
+    }
+    next();
+  } catch (error) {
+    console.log("isAdmin error:", error); // Log the actual error
+    res.status(401).send({
+      success: false,
+      error,
+      message: "error in admin middleware",
     });
   }
 };
