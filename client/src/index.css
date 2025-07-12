@@ -83,9 +83,10 @@
 /* Outer wrapper that fills the screen */
 .register {
   display: flex;
+  font-family: 'Courier New', Courier, monospace;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 90vh;
   margin: 0;
   padding: 0;
   background-image: url("https://wallawallaclothing.com/cdn/shop/files/iStock-539974264_8edf1de7-0fb5-4d74-91db-9b9f15174164_640x640.jpg?v=1613769599");
