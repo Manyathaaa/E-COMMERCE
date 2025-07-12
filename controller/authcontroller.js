@@ -32,6 +32,7 @@ export const registercontroller = async (req, res) => {
       password: hashedPassword,
     }).save();
 
+    //
     return res.status(201).send({
       success: true,
       message: "registered successfully",

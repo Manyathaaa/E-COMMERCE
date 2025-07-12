@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import connectDB from "./config/db.js";
 import authrouter from "./routes/authroutes.js";
+import cors from "cors";
 
 //env config
 dotenv.config();
@@ -15,6 +16,7 @@ const app = express();
 //middleware
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(cors());
 
 //routes
 app.use("/api/v1/auth", authrouter);
@@ -26,7 +28,7 @@ app.get("/", (req, res) => {
 });
 
 //port
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`server running on port ${PORT}`);
