@@ -6,15 +6,18 @@ import PageNotFound from "./pages/PageNotFound";
 import Contact from "./pages/Contact";
 import Policy from "./pages/Policy";
 import Register from "./pages/auth/Register";
+import Login from "./pages/auth/login";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/about" element={<About />} />
         <Route path="/Contact" element={<Contact />} />
         <Route path="/policy" element={<Policy />} />

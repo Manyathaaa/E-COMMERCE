@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
