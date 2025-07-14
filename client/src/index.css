@@ -105,3 +105,16 @@
   border-radius: 12px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
 }
+
+.login{
+  background-image: url("https://img.freepik.com/free-photo/3d-illustration-smartphone-with-products-coming-out-screen-online-shopping-e-commerce-concept_58466-14529.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh; 
+  margin: 0;
+  padding: 0;
+}
