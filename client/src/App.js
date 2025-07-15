@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-//import "bootstrap/dist/css/bootstrap.min.css";
 import HomePage from "./pages/HomePage";
 import About from "./pages/About";
 import PageNotFound from "./pages/PageNotFound";
@@ -12,6 +11,8 @@ import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./pages/user/dashboard";
 import PrivateRoute from "./components/Layout/routes/private";
 import ForgotPassword from "./pages/auth/ForgotPassword";
+import AdminRoute from "./components/Layout/routes/adminroute";
+import AdminDashboard from "./pages/admin/adminDashboard"; // ✅ Make sure this exists and is named correctly
 
 function App() {
   return (
@@ -20,15 +21,24 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/register" element={<Register />} />
-
-        <Route path="/dashboard" element={<PrivateRoute />} />
-        <Route path="" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/about" element={<About />} />
-        <Route path="/Contact" element={<Contact />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/policy" element={<Policy />} />
-        <Route path="/PageNotFound" element={<PageNotFound />} />
+
+        {/* Private User Route */}
+        <Route path="/dashboard" element={<PrivateRoute />}>
+          <Route path="user" element={<Dashboard />} />
+        </Route>
+
+        {/* Private Admin Route */}
+        <Route path="/dashboard" element={<AdminRoute />}>
+          <Route path="admin" element={<AdminDashboard />} />
+        </Route>
+
+        {/* 404 Route */}
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>
   );

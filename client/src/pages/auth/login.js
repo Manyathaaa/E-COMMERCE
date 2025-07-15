@@ -22,12 +22,25 @@ const Login = () => {
       );
       if (res.data.success) {
         toast.success(res.data.message);
-        setAuth({
-          ...auth,
-          user: res.data.user,
-          token: res.data.token,
-        });
-        localStorage.setItem("auth", JSON.stringify(res.data));
+
+        const { token, user } = res.data;
+
+        // Update auth context
+        setAuth({ token, user });
+
+        // ✅ Store only essential data to avoid 431 error
+        localStorage.setItem(
+          "auth",
+          JSON.stringify({
+            token,
+            user: {
+              name: user.name,
+              email: user.email,
+              role: user.role,
+            },
+          })
+        );
+
         navigate(location.state || "/");
       } else {
         toast.error(res.data.message);
@@ -46,7 +59,6 @@ const Login = () => {
           minHeight: "90vh",
           backgroundImage:
             'url("https://wallawallaclothing.com/cdn/shop/files/iStock-539974264_8edf1de7-0fb5-4d74-91db-9b9f15174164_640x640.jpg?v=1613769599")',
-
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -63,6 +75,7 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="username"
               />
             </div>
 
