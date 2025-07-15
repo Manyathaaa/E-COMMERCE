@@ -1,3 +1,4 @@
+import { copyFile } from "fs";
 import usermodel from "../models/usermodel.js";
 import { comparepassword, hashPassword } from "./../helpers/authhelper.js";
 import JWT from "jsonwebtoken";
@@ -5,8 +6,8 @@ import JWT from "jsonwebtoken";
 // Register Controller
 export const registercontroller = async (req, res) => {
   try {
-    const { name, email, password, phone, address } = req.body;
-    if (!name || !email || !password || !phone || !address) {
+    const { name, email, password, phone, address, answer } = req.body;
+    if (!name || !email || !password || !phone || !address || !answer) {
       return res.status(400).send({
         success: false,
         message: "fill all the requirements",
@@ -29,6 +30,7 @@ export const registercontroller = async (req, res) => {
       email,
       phone,
       address,
+      answer,
       password: hashedPassword,
     }).save();
 
@@ -139,6 +141,43 @@ export const isAdmin = async (req, res, next) => {
       success: false,
       error,
       message: "error in admin middleware",
+    });
+  }
+};
+
+//forgot password
+export const forgotpasswordController = async (req, res) => {
+  try {
+    const { email, answer, newPassword } = req.body;
+    if (!email) {
+      res.status(400).send({ message: "email is required" });
+    }
+    if (!answer) {
+      res.status(400).send({ message: "answer is required" });
+    }
+    if (!newPassword) {
+      res.status(400).send({ message: "new Password is required" });
+    }
+    //check
+    const user = await usermodel.findOne({ email, answer });
+    //validation
+    if (!user) {
+      return res.status(500).send({
+        success: false,
+        message: "wrong email or answer`",
+      });
+    }
+    const hashed = await hashPassword(newPassword);
+    await usermodel.findByIdAndUpdate(user._id, { password: hashed });
+    res.status(200).send({
+      success: true,
+      message: "password reset successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "something went wrong",
     });
   }
 };

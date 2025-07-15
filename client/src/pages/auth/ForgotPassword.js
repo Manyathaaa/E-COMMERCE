@@ -2,33 +2,29 @@ import React, { useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../../context/auth";
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [auth, setAuth] = useAuth();
+  const [answer, setAnswer] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API}/api/v1/auth/login`,
-        { email, password },
+        `${process.env.REACT_APP_API}/api/v1/auth/forgot-password`,
+        {
+          email,
+          answer,
+          newPassword,
+        },
         { withCredentials: true }
       );
       if (res.data.success) {
         toast.success(res.data.message);
-        setAuth({
-          ...auth,
-          user: res.data.user,
-          token: res.data.token,
-        });
-        localStorage.setItem("auth", JSON.stringify(res.data));
-        navigate(location.state || "/");
+        navigate("/login");
       } else {
         toast.error(res.data.message);
       }
@@ -39,7 +35,7 @@ const Login = () => {
   };
 
   return (
-    <Layout title="Login - Ecommerce App">
+    <Layout title="Forgot Password - Ecommerce App">
       <div
         className="d-flex justify-content-center align-items-center"
         style={{
@@ -52,7 +48,7 @@ const Login = () => {
         }}
       >
         <div className="card p-4" style={{ minWidth: "350px", opacity: 0.95 }}>
-          <h2 className="text-center mb-4">LOGIN</h2>
+          <h2 className="text-center mb-4">RESET PASSWORD</h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="email">EMAIL</label>
@@ -63,43 +59,38 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
               />
             </div>
 
             <div className="mb-3">
-              <label htmlFor="password">PASSWORD</label>
+              <label htmlFor="answer">SECURITY ANSWER</label>
+              <input
+                type="text"
+                id="answer"
+                className="form-control"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                placeholder="Enter your school name"
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="newPassword">NEW PASSWORD</label>
               <input
                 type="password"
-                id="password"
+                id="newPassword"
                 className="form-control"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 required
-                autoComplete="current-password"
+                autoComplete="new-password"
               />
             </div>
 
-            <div className="mb-3 form-check">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                id="checkLogin"
-              />
-              <label className="form-check-label" htmlFor="checkLogin">
-                Remember me
-              </label>
-            </div>
-
-            <button type="submit" className="btn btn-primary w-100 mb-2">
-              LOGIN
-            </button>
-
-            <button
-              type="button"
-              className="btn btn-outline-secondary w-100"
-              onClick={() => navigate("/forgot-password")}
-            >
-              FORGOT PASSWORD
+            <button type="submit" className="btn btn-primary w-100">
+              RESET PASSWORD
             </button>
           </form>
         </div>
@@ -108,4 +99,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;
