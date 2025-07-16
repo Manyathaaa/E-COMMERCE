@@ -4,37 +4,37 @@ import morgan from "morgan";
 import connectDB from "./config/db.js";
 import authrouter from "./routes/authroutes.js";
 import cors from "cors";
+import categoryroute from "./routes/categoryroute.js";
 
-//env config
+// env config
 dotenv.config();
 
-//database config
+// connect database
 connectDB();
 
 const app = express();
 
-//middleware
+// Middleware
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: "http://localhost:3000", // your React app origin
-    credentials: true, // 👈 allow cookies to be sent
+    origin: "http://localhost:3000",
+    credentials: true,
   })
 );
 
-//routes
+// Routes
 app.use("/api/v1/auth", authrouter);
+app.use("/api/v1/category", categoryroute);
 
-//for api
-
+// Home route
 app.get("/", (req, res) => {
-  res.send("<h1>welcome to ecommerce app </h1>");
+  res.send("<h1>Welcome to Ecommerce App</h1>");
 });
 
-//port
+// Port
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
-  console.log(`server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

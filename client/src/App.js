@@ -5,7 +5,7 @@ import PageNotFound from "./pages/PageNotFound";
 import Contact from "./pages/Contact";
 import Policy from "./pages/Policy";
 import Register from "./pages/auth/Register";
-import Login from "./pages/auth/login";
+import Login from "./pages/auth/Login";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./pages/user/dashboard";

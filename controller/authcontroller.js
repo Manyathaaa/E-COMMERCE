@@ -84,6 +84,13 @@ export const logincontroller = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // change to true in production (HTTPS)
+      sameSite: "none", // or 'none' if you're working cross-origin
+    });
+
     return res.status(200).send({
       success: true,
       message: "successful login",
