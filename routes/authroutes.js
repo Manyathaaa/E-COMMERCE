@@ -2,6 +2,7 @@ import express from "express";
 import {
   registercontroller,
   logincontroller,
+  logoutController,
   testcontroller,
   forgotpasswordController,
   isAdmin,
@@ -15,6 +16,9 @@ router.post("/register", registercontroller);
 
 //login
 router.post("/login", logincontroller);
+
+//logout
+router.post("/logout", logoutController);
 
 //test controller
 router.get("/test", requireSignIn, isAdmin, testcontroller);
