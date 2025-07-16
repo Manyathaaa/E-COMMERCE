@@ -1,24 +1,17 @@
 import React from "react";
 import Layout from "../../components/Layout/Layout";
 import AdminMenu from "../../components/Layout/AdminMenu";
-import { useAuth } from "../../context/auth";
 
-const AdminDashboard = () => {
-  const [auth] = useAuth();
-
+const createproduct = () => {
   return (
-    <Layout>
+    <Layout title={"Dashboard =create-product"}>
       <div className="container-fluid m-3 p-3">
         <div className="row">
           <div className="col-md-3">
             <AdminMenu />
           </div>
           <div className="col-md-9">
-            <div className="card w-75 p-3">
-              <h3>Admin Name: {auth?.user?.name}</h3>
-              <h4>Email: {auth?.user?.email}</h4>
-              <h5>contact: {auth?.user?.contact}</h5>
-            </div>
+            <h1>create product</h1>
           </div>
         </div>
       </div>
@@ -26,4 +19,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default createproduct;

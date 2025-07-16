@@ -20,7 +20,6 @@ const Login = () => {
         { email, password },
         { withCredentials: true }
       );
-
       if (res.data.success) {
         toast.success(res.data.message);
 
@@ -41,7 +40,6 @@ const Login = () => {
             },
           })
         );
-
         // Redirect to the page user originally tried to visit, or homepage
         navigate(location.state || "/");
       } else {
