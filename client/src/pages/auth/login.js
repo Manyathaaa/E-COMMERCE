@@ -8,7 +8,7 @@ import { useAuth } from "../../context/auth";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [auth, setAuth] = useAuth();
+  const [, setAuth] = useAuth(); // don't use auth to avoid eslint warning
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,15 +20,16 @@ const Login = () => {
         { email, password },
         { withCredentials: true }
       );
+
       if (res.data.success) {
         toast.success(res.data.message);
 
         const { token, user } = res.data;
 
-        // Update auth context
+        // Set auth context (if used globally)
         setAuth({ token, user });
 
-        // ✅ Store only essential data to avoid 431 error
+        // ✅ Only store essential auth info (not full object)
         localStorage.setItem(
           "auth",
           JSON.stringify({
@@ -41,13 +42,14 @@ const Login = () => {
           })
         );
 
+        // Redirect to the page user originally tried to visit, or homepage
         navigate(location.state || "/");
       } else {
         toast.error(res.data.message);
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong");
+      console.error("Login error:", error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
     }
   };
 
