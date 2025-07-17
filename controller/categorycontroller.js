@@ -20,11 +20,11 @@ export const createCategoryController = async (req, res) => {
       name,
       slug: slugify(name),
     }).save();
-    res.status(200).send({
+
+    return res.status(200).send({
       success: true,
       message: "new category created",
       category,
-      id,
     });
   } catch (error) {
     console.log("error", error);
@@ -45,12 +45,33 @@ export const updateCategoryController = async (req, res) => {
       { name, slug: slugify(name) },
       { new: true }
     );
-    res.status(200).send({
+    return res.status(200).send({
       success: true,
       message: "category updated successfully",
       category,
     });
   } catch (error) {
+    return res.status(500).send({
+      success: false,
+      message: "something went wrong",
+    });
+  }
+};
+
+//getall
+
+export const categoryController = async (req, res) => {
+  try {
+    const category = await categoryModels.find({});
+    if (category) {
+      return res.status(200).send({
+        success: true,
+        message: "all categories list",
+        category,
+      });
+    }
+  } catch (error) {
+    console.log("error", error);
     return res.status(500).send({
       success: false,
       message: "something went wrong",
