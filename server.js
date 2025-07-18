@@ -5,6 +5,8 @@ import connectDB from "./config/db.js";
 import authrouter from "./routes/authroutes.js";
 import cors from "cors";
 import categoryroute from "./routes/categoryroute.js";
+import productroute from "./routes/productroutes.js";
+import formidable from "express-formidable";
 
 // env config
 dotenv.config();
@@ -15,6 +17,7 @@ connectDB();
 const app = express();
 
 // Middleware
+app.use(formidable());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(
@@ -27,6 +30,7 @@ app.use(
 // Routes
 app.use("/api/v1/auth", authrouter);
 app.use("/api/v1/category", categoryroute);
+app.use("/api/v1/products", productroute);
 
 // Home route
 app.get("/", (req, res) => {
