@@ -5,7 +5,7 @@ import slugify from "slugify";
 export const createProductController = async (req, res) => {
   try {
     const { name, slug, description, price, category, quantity, shipping } =
-      req.fields;
+      req.fields || req.body;
     const { photo } = req.files; // ✅ photo comes from req.files
 
     // validation
@@ -24,11 +24,14 @@ export const createProductController = async (req, res) => {
         return res.status(500).send({ error: "photo should be less than 1MB" });
     }
 
-    const product = new productModels({ ...req.fields, slug: slugify(name) });
+    const productData = req.fields || req.body;
+    const product = new productModels({ ...productData, slug: slugify(name) });
 
     if (photo) {
-      product.photo.data = fs.readFileSync(photo.path);
-      product.photo.contentType = photo.type;
+      product.photo = {
+        data: fs.readFileSync(photo.path),
+        contentType: photo.type,
+      };
     }
 
     await product.save(); // ✅ use save not bulkSave
@@ -43,7 +46,7 @@ export const createProductController = async (req, res) => {
     return res.status(500).send({
       success: false,
       message: "something went wrong in creating product",
-      error,
+      error: error.message || error,
     });
   }
 };

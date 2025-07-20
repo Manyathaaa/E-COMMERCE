@@ -53,7 +53,7 @@ export const registercontroller = async (req, res) => {
 // Login Controller
 export const logincontroller = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body || req.fields;
     // Validation
     if (!email || !password) {
       return res.status(400).send({
