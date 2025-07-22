@@ -97,3 +97,22 @@ export const getsingleproductController = async (req, res) => {
     });
   }
 };
+
+//get photo
+export const productPhotoController = async (req, res) => {
+  try {
+    const product = await productModels
+      .findById(req.params.pid)
+      .select("photo");
+    if (product.photo.data) {
+      res.set("Content-type", product.photo.ContentType);
+      return res.status(200).send(product.photo.data);
+    }
+  } catch (error) {
+    console.log("error", error);
+    return res.status(404).send({
+      success: false,
+      message: "something wrong in getting photo",
+    });
+  }
+};

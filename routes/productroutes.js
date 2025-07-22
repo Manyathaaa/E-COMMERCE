@@ -4,6 +4,7 @@ import {
   createProductController,
   getAllProductController,
   getsingleproductController,
+  productPhotoController,
 } from "../controller/productcontroller.js";
 import expressformidable from "express-formidable";
 
@@ -22,4 +23,7 @@ router.get("/get-product", getAllProductController);
 
 //single get
 router.get("/get-product/:slug", getsingleproductController);
+
+//get photo
+router.get("/product-photo/:pid", productPhotoController);
 export default router;
