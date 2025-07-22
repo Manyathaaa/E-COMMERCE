@@ -28,7 +28,7 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
     photo: {
-      data: Buffer,
+      data: Buffer, // yaha pai type ko data mai convert kiye jisse direct data save ho jaaye
       contentType: String,
     },
     shipping: {

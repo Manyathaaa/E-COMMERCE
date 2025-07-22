@@ -1,6 +1,9 @@
 import express from "express";
 import { isAdmin, requireSignIn } from "../middlewares/authmiddleware.js";
-import { createProductController } from "../controller/productcontroller.js";
+import {
+  createProductController,
+  getproductController,
+} from "../controller/productcontroller.js";
 import expressformidable from "express-formidable";
 
 const router = express.Router();
@@ -14,4 +17,5 @@ router.post(
   createProductController
 );
 
+router.post("/get-product", getproductController);
 export default router;

@@ -34,7 +34,7 @@ export const createProductController = async (req, res) => {
       };
     }
 
-    await product.save(); // ✅ use save not bulkSave
+    await product.save(); // use save not bulkSave
 
     return res.status(200).send({
       success: true,
@@ -47,6 +47,27 @@ export const createProductController = async (req, res) => {
       success: false,
       message: "something went wrong in creating product",
       error: error.message || error,
+    });
+  }
+};
+
+export const getproductController = async (req, res) => {
+  try {
+    const products = await productModels
+      .find({})
+      .select("-photo")
+      .limit(12)
+      .sort({ createdAt: -1 });
+    res.status(200).send({
+      success: true,
+      message: "All products",
+      products,
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(404).send({
+      success: false,
+      message: "something wrong in getting product",
     });
   }
 };
