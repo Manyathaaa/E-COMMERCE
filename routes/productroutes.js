@@ -2,7 +2,8 @@ import express from "express";
 import { isAdmin, requireSignIn } from "../middlewares/authmiddleware.js";
 import {
   createProductController,
-  getproductController,
+  getAllProductController,
+  getsingleproductController,
 } from "../controller/productcontroller.js";
 import expressformidable from "express-formidable";
 
@@ -17,5 +18,8 @@ router.post(
   createProductController
 );
 
-router.post("/get-product", getproductController);
+router.get("/get-product", getAllProductController);
+
+//single get
+router.get("/get-product/:slug", getsingleproductController);
 export default router;
