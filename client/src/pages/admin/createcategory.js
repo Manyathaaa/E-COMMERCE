@@ -3,16 +3,39 @@ import Layout from "../../components/Layout/Layout";
 import AdminMenu from "../../components/Layout/AdminMenu";
 import { toast } from "react-toastify";
 import axios from "axios";
+import CategoryForm from "../../components/Form/CategoryForm";
 
 const CreateCategory = () => {
   const [categories, setCategories] = useState([]);
+  const [name, setName] = useState("");
 
+  //handle form
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post(
+        "http://localhost:5000/api/v1/category/create-category",
+        {
+          name,
+        }
+      );
+      if (data.success) {
+        toast.success(`${name} is created`);
+        getAllCategory();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("something went wrong in input form");
+    }
+  };
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API}/api/v1/category/get-category`
       );
-      console.log("API Response:", data); // ✅ Debug log
+      console.log("API Response:", data); //  Debug log
 
       // Check what key the backend sends
       if (data.success) {
@@ -40,6 +63,13 @@ const CreateCategory = () => {
           </div>
           <div className="col-md-9">
             <h1>Manage Categories</h1>
+            <div className="p-3 w-50">
+              <CategoryForm
+                handleSubmit={handleSubmit}
+                value={name}
+                setValue={setName}
+              />
+            </div>
             <div>
               <table className="table">
                 <thead>
