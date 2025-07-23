@@ -121,3 +121,20 @@ export const productPhotoController = async (req, res) => {
     });
   }
 };
+
+//delete product
+export const deleteproductController = async (req, res) => {
+  try {
+    await productModels.findByIdAndDelete(req.params.pid).select("photo");
+    return res.status(200).send({
+      success: true,
+      message: "deleted successfully",
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(404).send({
+      success: true,
+      message: "aomething wrong in deleting product",
+    });
+  }
+};
