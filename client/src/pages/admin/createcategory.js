@@ -9,7 +9,9 @@ const CreateCategory = () => {
 
   const getAllCategory = async () => {
     try {
-      const { data } = await axios.get("/api/v1/category/get-category");
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API}/api/v1/category/get-category`
+      );
       console.log("API Response:", data); // ✅ Debug log
 
       // Check what key the backend sends
