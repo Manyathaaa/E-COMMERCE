@@ -4,10 +4,13 @@ import AdminMenu from "../../components/Layout/AdminMenu";
 import { toast } from "react-toastify";
 import axios from "axios";
 import CategoryForm from "../../components/Form/CategoryForm";
-
+import {} from "antd/dist/reset.css";
 const CreateCategory = () => {
   const [categories, setCategories] = useState([]);
   const [name, setName] = useState("");
+  const [visible, setVisible] = useState(false);
+  const [selected, setSelected] = useState(null);
+  const [updatedName, setUpdatedName] = useState("");
 
   //handle form
   const handleSubmit = async (e) => {
@@ -54,6 +57,15 @@ const CreateCategory = () => {
     getAllCategory();
   }, []);
 
+  //update category
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      console.log(e);
+    } catch (error) {
+      toast.error("something went wrong");
+    }
+  };
   return (
     <Layout title={"Dashboard - Create Category"}>
       <div className="container-fluid m-3 p-3">
@@ -85,7 +97,13 @@ const CreateCategory = () => {
                         <td>{c.name}</td>
                         <td>
                           {/* You can add Edit/Delete buttons here */}
-                          <button className="btn btn-primary btn-sm me-2">
+                          <button
+                            className="btn btn-primary btn-sm me-2"
+                            onClick={() => {
+                              setVisible(true);
+                              setUpdatedName(c.name);
+                            }}
+                          >
                             Edit
                           </button>
                           <button className="btn btn-danger btn-sm">
@@ -102,6 +120,17 @@ const CreateCategory = () => {
                 </tbody>
               </table>
             </div>
+            <Modal
+              onCancel={() => setVisible(false)}
+              footer={null}
+              visible={visible}
+            >
+              <CategoryForm
+                value={updatedName}
+                setValue={setUpdatedName}
+                handleSubmit={handleUpdate}
+              />
+            </Modal>
           </div>
         </div>
       </div>
