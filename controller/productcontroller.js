@@ -138,3 +138,54 @@ export const deleteproductController = async (req, res) => {
     });
   }
 };
+
+//update product
+export const updateProductController = async (req, res) => {
+  try {
+    const { name, slug, description, price, category, quantity, shipping } =
+      req.fields || req.body;
+    const { photo } = req.files; // ✅ photo comes from req.files
+
+    // validation
+    switch (true) {
+      case !name:
+        return res.status(500).send({ error: "name is required" });
+      case !description:
+        return res.status(500).send({ error: "description is required" });
+      case !price:
+        return res.status(500).send({ error: "price is required" });
+      case !category:
+        return res.status(500).send({ error: "category is required" });
+      case !quantity:
+        return res.status(500).send({ error: "quantity is required" });
+      case photo && photo.size > 1000000:
+        return res.status(500).send({ error: "photo should be less than 1MB" });
+    }
+
+    const product = await productModels.findByIdAndUpdate(
+      req.params.pid,
+      { ...req.fields, slug: slugify(name) },
+      { new: true }
+    );
+    if (photo) {
+      product.photo = {
+        data: fs.readFileSync(photo.path),
+        contentType: photo.type,
+      };
+    }
+
+    await product.save(); // use save not bulkSave
+
+    return res.status(201).json({
+      success: true,
+      message: "product updated successfully",
+      product,
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(404).send({
+      success: false,
+      message: "something wrong in update",
+    });
+  }
+};

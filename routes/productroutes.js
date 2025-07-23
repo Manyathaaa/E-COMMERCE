@@ -6,6 +6,7 @@ import {
   getsingleproductController,
   productPhotoController,
   deleteproductController,
+  updateProductController,
 } from "../controller/productcontroller.js";
 import expressformidable from "express-formidable";
 
@@ -30,4 +31,13 @@ router.get("/product-photo/:pid", productPhotoController);
 
 //delete prduct
 router.delete("/delete-product/:pid", deleteproductController);
+
+//update
+router.put(
+  "/update-product/:pid",
+  requireSignIn,
+  isAdmin,
+  expressformidable(),
+  updateProductController
+);
 export default router;

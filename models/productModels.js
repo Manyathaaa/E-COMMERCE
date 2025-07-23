@@ -20,15 +20,15 @@ const productSchema = new mongoose.Schema(
     },
     category: {
       type: mongoose.ObjectId,
-      ref: "category",
-      required: true,
+      ref: "Category",
     },
+
     quantity: {
       type: Number,
       required: true,
     },
     photo: {
-      data: Buffer, // yaha pai type ko data mai convert kiye jisse direct data save ho jaaye
+      data: Buffer,
       contentType: String,
     },
     shipping: {
