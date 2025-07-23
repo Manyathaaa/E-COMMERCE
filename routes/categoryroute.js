@@ -3,7 +3,7 @@ import { isAdmin, requireSignIn } from "../middlewares/authmiddleware.js";
 import { createCategoryController } from "./../controller/categorycontroller.js";
 import { updateCategoryController } from "./../controller/categorycontroller.js";
 import {
-  categoryController,
+  getAllCategoryController,
   singlecategoryController,
   deletecategoryController,
 } from "../controller/categorycontroller.js";
@@ -27,7 +27,7 @@ router.put(
 );
 
 //getAll category
-router.get("/get-category", categoryController);
+router.get("/get-category", getAllCategoryController);
 export default router;
 
 //single category

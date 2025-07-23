@@ -5,7 +5,7 @@ import PageNotFound from "./pages/PageNotFound";
 import Contact from "./pages/Contact";
 import Policy from "./pages/Policy";
 import Register from "./pages/auth/Register";
-import Login from "./pages/auth/Login";
+import Login from "./pages/auth/login";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./pages/user/dashboard";
@@ -13,7 +13,7 @@ import PrivateRoute from "./components/Layout/routes/private";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import AdminRoute from "./components/Layout/routes/adminroute";
 import AdminDashboard from "./pages/admin/adminDashboard"; // ✅ Make sure this exists and is named correctly
-import CreateCategory from "./pages/admin/createcategory";
+import CreateCategory from "./pages/admin/CreateCategory";
 import CreateProduct from "./pages/admin/createproduct";
 import Users from "./pages/admin/user";
 import Orders from "./pages/user/orders";
