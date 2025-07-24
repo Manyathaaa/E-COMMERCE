@@ -8,29 +8,28 @@ import { useAuth } from "../../context/auth";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [, setAuth] = useAuth(); // don't use auth to avoid eslint warning
+  const [, setAuth] = useAuth(); // Update only setter
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("API URL:", process.env.REACT_APP_API);
-
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_API}/api/v1/auth/login`,
         { email, password }
       );
+
       if (res.data.success) {
         toast.success(res.data.message);
 
         const { token, user } = res.data;
 
-        // Set auth context (if used globally)
+        // Update auth context
         setAuth({ token, user });
 
-        // ✅ Only store essential auth info (not full object)
+        // Save to localStorage
         localStorage.setItem(
           "auth",
           JSON.stringify({
@@ -42,7 +41,11 @@ const Login = () => {
             },
           })
         );
-        // Redirect to the page user originally tried to visit, or homepage
+
+        // Optional: set default header for future axios requests
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+        // Navigate to intended page or home
         navigate(location.state || "/");
       } else {
         toast.error(res.data.message);

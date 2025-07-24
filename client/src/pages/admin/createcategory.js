@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import CategoryForm from "../../components/Form/CategoryForm";
 import { Modal } from "antd";
+
 const CreateCategory = () => {
   const [categories, setCategories] = useState([]);
   const [name, setName] = useState("");
@@ -12,40 +13,39 @@ const CreateCategory = () => {
   const [selected, setSelected] = useState(null);
   const [updatedName, setUpdatedName] = useState("");
 
-  //handle form
+  // Create Category
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
         `${process.env.REACT_APP_API}/api/v1/category/create-category`,
-        {
-          name,
-        }
+        { name }
       );
       if (data.success) {
         toast.success(`${name} is created`);
+        setName(""); // clear input
         getAllCategory();
       } else {
         toast.error(data.message);
       }
     } catch (error) {
       console.log(error);
-      toast.error("something went wrong in input form");
+      toast.error("Something went wrong in input form");
     }
   };
+
+  // Get All Categories
   const getAllCategory = async () => {
     try {
-      const token = localStorage.getItem("authToken"); // 👈 get token from localStorage
-
+      const token = localStorage.getItem("authToken");
       const { data } = await axios.get(
         `${process.env.REACT_APP_API}/api/v1/category/get-category`,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // 👈 pass token in headers
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-
       console.log("API Response:", data);
       if (data.success) {
         setCategories(data.categories || data.category || []);
@@ -54,7 +54,7 @@ const CreateCategory = () => {
       }
     } catch (error) {
       console.error("Error fetching categories:", error);
-      toast.error("Something went wrong in getting category");
+      toast.error("Something went wrong in getting categories");
     }
   };
 
@@ -62,7 +62,7 @@ const CreateCategory = () => {
     getAllCategory();
   }, []);
 
-  //update category
+  // Update Category
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -80,9 +80,27 @@ const CreateCategory = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error("something went wrong");
+      toast.error("Something went wrong");
     }
   };
+
+  // Delete Category
+  const handleDelete = async (id) => {
+    try {
+      const { data } = await axios.delete(
+        `${process.env.REACT_APP_API}/api/v1/category/delete-category/${id}`
+      );
+      if (data.success) {
+        toast.success(`Category deleted successfully`);
+        getAllCategory();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  };
+
   return (
     <Layout title={"Dashboard - Create Category"}>
       <div className="container-fluid m-3 p-3">
@@ -113,18 +131,20 @@ const CreateCategory = () => {
                       <tr key={c._id}>
                         <td>{c.name}</td>
                         <td>
-                          {/* You can add Edit/Delete buttons here */}
                           <button
                             className="btn btn-primary btn-sm me-2"
                             onClick={() => {
-                              setVisible(true);
                               setUpdatedName(c.name);
                               setSelected(c);
+                              setVisible(true);
                             }}
                           >
                             Edit
                           </button>
-                          <button className="btn btn-danger btn-sm">
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => handleDelete(c._id)}
+                          >
                             Delete
                           </button>
                         </td>
@@ -141,7 +161,7 @@ const CreateCategory = () => {
             <Modal
               onCancel={() => setVisible(false)}
               footer={null}
-              visible={visible}
+              open={visible}
             >
               <CategoryForm
                 value={updatedName}
