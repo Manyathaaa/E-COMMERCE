@@ -35,15 +35,20 @@ const CreateCategory = () => {
   };
   const getAllCategory = async () => {
     try {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API}/api/v1/category/get-category`
-      );
-      console.log("API Response:", data); //  Debug log
+      const token = localStorage.getItem("authToken"); // 👈 get token from localStorage
 
-      // Check what key the backend sends
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API}/api/v1/category/get-category`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // 👈 pass token in headers
+          },
+        }
+      );
+
+      console.log("API Response:", data);
       if (data.success) {
-        // Use the correct key here:
-        setCategories(data.categories || data.category || []); // Supports both 'categories' and 'category'
+        setCategories(data.categories || data.category || []);
       } else {
         toast.error(data.message || "Failed to load categories");
       }
@@ -61,7 +66,19 @@ const CreateCategory = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      console.log(e);
+      const { data } = await axios.put(
+        `${process.env.REACT_APP_API}/api/v1/category/update-category/${selected._id}`,
+        { name: updatedName }
+      );
+      if (data.success) {
+        toast.success(`${updatedName} is updated`);
+        setSelected(null);
+        setUpdatedName("");
+        setVisible(false);
+        getAllCategory();
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
       toast.error("something went wrong");
     }
@@ -102,6 +119,7 @@ const CreateCategory = () => {
                             onClick={() => {
                               setVisible(true);
                               setUpdatedName(c.name);
+                              setSelected(c);
                             }}
                           >
                             Edit
