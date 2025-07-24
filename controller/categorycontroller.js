@@ -38,7 +38,7 @@ export const createCategoryController = async (req, res) => {
 //update
 export const updateCategoryController = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name } = req.body || req.fields;
     const { id } = req.params;
     const category = await categoryModels.findByIdAndUpdate(
       id,
