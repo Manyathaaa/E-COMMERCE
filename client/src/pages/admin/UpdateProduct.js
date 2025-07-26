@@ -22,12 +22,12 @@ const UpdateProduct = () => {
   const [photo, setPhoto] = useState("");
   const [productId, setProductId] = useState("");
 
+  // Get Single Product
   const getSingleProduct = useCallback(async () => {
     try {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API}/api/v1/products/get-product/${params.slug}`
       );
-      console.log(data);
       const p = data?.product;
       setName(p.name);
       setDescription(p.description);
@@ -41,6 +41,7 @@ const UpdateProduct = () => {
     }
   }, [params.slug]);
 
+  // Get Categories
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get(
@@ -59,6 +60,7 @@ const UpdateProduct = () => {
     getAllCategory();
   }, [getSingleProduct]);
 
+  // Update Product
   const handleUpdate = async () => {
     try {
       const productData = new FormData();
@@ -66,7 +68,7 @@ const UpdateProduct = () => {
       productData.append("description", description);
       productData.append("price", price);
       productData.append("quantity", quantity);
-      photo && productData.append("photo", photo);
+      if (photo) productData.append("photo", photo);
       productData.append("category", category);
       productData.append("shipping", shipping);
 
@@ -88,6 +90,29 @@ const UpdateProduct = () => {
       }
     } catch (error) {
       toast.error("Something went wrong while updating product");
+    }
+  };
+
+  // Delete Product
+  const handleDelete = async () => {
+    try {
+      const confirmDelete = window.confirm(
+        "Are you sure you want to delete this product?"
+      );
+      if (!confirmDelete) return;
+
+      const { data } = await axios.delete(
+        `${process.env.REACT_APP_API}/api/v1/products/delete-product/${productId}`
+      );
+
+      if (data?.success) {
+        toast.success("Product deleted successfully");
+        navigate("/admin/product");
+      } else {
+        toast.error(data?.message || "Failed to delete product");
+      }
+    } catch (error) {
+      toast.error("Something went wrong while deleting the product");
     }
   };
 
@@ -119,7 +144,7 @@ const UpdateProduct = () => {
 
               <div className="mb-3">
                 <label className="btn btn-outline-secondary col-md-12">
-                  {photo ? photo.name : "upload photo"}
+                  {photo ? photo.name : "Upload Photo"}
                   <input
                     type="file"
                     name="photo"
@@ -136,7 +161,7 @@ const UpdateProduct = () => {
                     <img
                       src={URL.createObjectURL(photo)}
                       alt="product_photo"
-                      height={"200px"}
+                      height="200px"
                       className="img img-responsive"
                     />
                   </div>
@@ -145,7 +170,7 @@ const UpdateProduct = () => {
                     <img
                       src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${productId}`}
                       alt="product_photo"
-                      height={"200px"}
+                      height="200px"
                       className="img img-responsive"
                     />
                   </div>
@@ -155,14 +180,14 @@ const UpdateProduct = () => {
               <input
                 type="text"
                 value={name}
-                placeholder="write a name"
+                placeholder="Write a name"
                 className="form-control mb-3"
                 onChange={(e) => setName(e.target.value)}
               />
 
               <textarea
                 value={description}
-                placeholder="write a description"
+                placeholder="Write a description"
                 className="form-control mb-3"
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -170,7 +195,7 @@ const UpdateProduct = () => {
               <input
                 type="number"
                 value={price}
-                placeholder="write a price"
+                placeholder="Write a price"
                 className="form-control mb-3"
                 onChange={(e) => setPrice(e.target.value)}
               />
@@ -178,7 +203,7 @@ const UpdateProduct = () => {
               <input
                 type="number"
                 value={quantity}
-                placeholder="write a quantity"
+                placeholder="Write a quantity"
                 className="form-control mb-3"
                 onChange={(e) => setQuantity(e.target.value)}
               />
@@ -188,15 +213,19 @@ const UpdateProduct = () => {
                 placeholder="Select Shipping"
                 size="large"
                 className="form-select mb-3"
-                value={shipping ? "1" : "0"}
-                onChange={(value) => setShipping(value === "1")}
+                value={shipping ? "true" : "false"}
+                onChange={(value) => setShipping(value === "true")}
               >
                 <Option value="false">No</Option>
                 <Option value="true">Yes</Option>
               </Select>
 
-              <button className="btn btn-primary" onClick={handleUpdate}>
+              <button className="btn btn-primary me-2" onClick={handleUpdate}>
                 Update Product
+              </button>
+
+              <button className="btn btn-danger" onClick={handleDelete}>
+                Delete Product
               </button>
             </div>
           </div>
