@@ -52,27 +52,19 @@ export const createProductController = async (req, res) => {
 };
 
 // GET all products
-export const getAllProductController = async (req, res) => {
+// controllers/productController.js
+export const getAllProductsController = async (req, res) => {
   try {
-    const products = await productModels
-      .find({})
-      .populate("category") // only if product model has 'category'
-      .select("-photo")
-      .limit(12)
-      .sort({ createdAt: -1 });
-
+    const products = await productModels.find({}).select("-photo"); // exclude photo
     res.status(200).send({
       success: true,
-      totalCount: products.length,
-      message: "All Products",
       products,
     });
   } catch (error) {
-    console.log(error); // check console for further error
+    console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error while getting products",
-      error,
+      message: "Error getting products",
     });
   }
 };
@@ -99,7 +91,7 @@ export const getsingleproductController = async (req, res) => {
 };
 
 //get photo
-export const productPhotoController = async (req, res) => {
+export const getproductPhotoController = async (req, res) => {
   try {
     const product = await productModels
       .findById(req.params.pid)

@@ -2,9 +2,9 @@ import express from "express";
 import { isAdmin, requireSignIn } from "../middlewares/authmiddleware.js";
 import {
   createProductController,
-  getAllProductController,
+  getAllProductsController,
   getsingleproductController,
-  productPhotoController,
+  getproductPhotoController,
   deleteproductController,
   updateProductController,
 } from "../controller/productcontroller.js";
@@ -12,7 +12,7 @@ import expressformidable from "express-formidable";
 
 const router = express.Router();
 
-//router
+// Routes
 router.post(
   "/create-product",
   requireSignIn,
@@ -21,18 +21,14 @@ router.post(
   createProductController
 );
 
-router.get("/get-product", getAllProductController);
+router.get("/get-products", getAllProductsController);
 
-//single get
 router.get("/get-product/:slug", getsingleproductController);
 
-//get photo
-router.get("/product-photo/:pid", productPhotoController);
+router.get("/product-photo/:pid", getproductPhotoController);
 
-//delete prduct
 router.delete("/delete-product/:pid", deleteproductController);
 
-//update
 router.put(
   "/update-product/:pid",
   requireSignIn,
@@ -40,4 +36,5 @@ router.put(
   expressformidable(),
   updateProductController
 );
+
 export default router;

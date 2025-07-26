@@ -46,15 +46,22 @@ const CreateProduct = () => {
   const handleCreate = async () => {
     try {
       const token = localStorage.getItem("authToken");
+      const productData = new FormData();
+      productData.append("name", name);
+      productData.append("description", description);
+      productData.append("price", price);
+      productData.append("quantity", quantity);
+      productData.append("category", category);
+      productData.append("shipping", shipping);
+      productData.append("photo", photo);
+
       const { data } = await axios.post(
         `${process.env.REACT_APP_API}/api/v1/products/create-product`,
+        productData,
         {
-          name,
-          description,
-          price,
-          quantity,
-          category,
-          shipping,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 

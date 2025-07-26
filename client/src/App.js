@@ -12,9 +12,10 @@ import Dashboard from "./pages/user/dashboard";
 import PrivateRoute from "./components/Layout/routes/private";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import AdminRoute from "./components/Layout/routes/adminroute";
-import AdminDashboard from "./pages/admin/adminDashboard"; // ✅ Make sure this exists and is named correctly
+import AdminDashboard from "./pages/admin/adminDashboard";
 import CreateCategory from "./pages/admin/CreateCategory";
 import CreateProduct from "./pages/admin/createproduct";
+import Products from "./pages/admin/Products";
 import Users from "./pages/admin/user";
 import Orders from "./pages/user/orders";
 import Profile from "./pages/user/profile";
@@ -33,12 +34,13 @@ function App() {
         <Route path="/policy" element={<Policy />} />
         <Route path="/admin/create-category" element={<CreateCategory />} />
         <Route path="/admin/create-product" element={<CreateProduct />} />
+        <Route path="/admin/product" element={<Products />} />
         <Route path="/admin/user" element={<Users />} />
 
         {/* Private User Route */}
         <Route path="/user" element={<PrivateRoute />}>
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="user/orders" element={<Orders />} />
+          <Route path="user/orders" element={<Orders />} />*
           <Route path="user/profile" element={<Profile />} />
         </Route>
 
