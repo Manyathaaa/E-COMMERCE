@@ -45,6 +45,7 @@ const CreateProduct = () => {
 
   const handleCreate = async () => {
     try {
+      // eslint-disable-next-line no-unused-vars
       const token = localStorage.getItem("authToken");
       const productData = new FormData();
       productData.append("name", name);
