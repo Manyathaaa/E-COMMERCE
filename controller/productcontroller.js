@@ -136,7 +136,7 @@ export const updateProductController = async (req, res) => {
   try {
     const { name, slug, description, price, category, quantity, shipping } =
       req.fields || req.body;
-    const { photo } = req.files; // ✅ photo comes from req.files
+    const { photo } = req.files; //  photo comes from req.files
 
     // validation
     switch (true) {

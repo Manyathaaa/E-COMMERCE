@@ -47,8 +47,9 @@ const UpdateProduct = () => {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API}/api/v1/category/get-category`
       );
+      console.log("Category API response:", data); // <-- Add this line
       if (data?.success) {
-        setCategories(data?.category);
+        setCategories(data.categories || data.category || []);
       }
     } catch (error) {
       toast.error("Failed to load categories");

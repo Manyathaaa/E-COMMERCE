@@ -38,7 +38,7 @@ const Products = () => {
             <p className="text-center">No products found.</p>
           ) : (
             <div className="d-flex flex-wrap gap-3 justify-content-center">
-              {products.map((p) => (
+              {products?.map((p) => (
                 <Link key={p._id} to={`/admin/product/${p.slug}`}>
                   <div className="card" style={{ width: "18rem" }}>
                     <img
@@ -61,7 +61,7 @@ const Products = () => {
                 </Link>
               ))}
             </div>
-          )}
+          )}  
         </div>
       </div>
     </Layout>
