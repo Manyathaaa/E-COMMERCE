@@ -22,8 +22,9 @@ const HomePage = () => {
           },
         }
       );
+      console.log("Category API response:", data);
       if (data.success) {
-        setCategories(data.categories || []);
+        setCategories(data.category || []);
       }
     } catch (error) {
       console.error("Error fetching categories:", error);

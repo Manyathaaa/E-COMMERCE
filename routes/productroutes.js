@@ -7,6 +7,7 @@ import {
   getproductPhotoController,
   deleteproductController,
   updateProductController,
+  productFiltersController,
 } from "../controller/productcontroller.js";
 import expressformidable from "express-formidable";
 
@@ -36,5 +37,7 @@ router.put(
   expressformidable(),
   updateProductController
 );
+
+router.post("/product-filters", productFiltersController);
 
 export default router;

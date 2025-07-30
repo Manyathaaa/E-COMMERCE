@@ -181,3 +181,35 @@ export const updateProductController = async (req, res) => {
     });
   }
 };
+
+// FILTER PRODUCTS BY CATEGORY AND PRICE
+export const productFiltersController = async (req, res) => {
+  try {
+    const { checked, selectedPrice } = req.body || req.fields;
+    let args = {};
+
+    if (checked?.length > 0) {
+      args.category = { $in: checked };
+    }
+
+    if (selectedPrice?.length === 2) {
+      args.price = {
+        $gte: selectedPrice[0],
+        $lte: selectedPrice[1],
+      };
+    }
+
+    const products = await productModels.find(args).select("-photo");
+    res.status(200).send({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    console.error("Filter error:", error);
+    res.status(500).send({
+      success: false,
+      message: "Error filtering products",
+      error,
+    });
+  }
+};
