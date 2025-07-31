@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout/Layout";
 import axios from "axios";
 import { Checkbox, Radio } from "antd";
-import { Prices } from "../components/prices.js";
+import { Prices } from "../components/prices";
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
@@ -11,6 +11,7 @@ const HomePage = () => {
   const [selectedPrice, setSelectedPrice] = useState(null);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false); // FIX: Added loading state
 
   // Load all categories
   const getAllCategory = async () => {
@@ -35,11 +36,14 @@ const HomePage = () => {
   // Load all products
   const getAllProducts = async () => {
     try {
+      setLoading(true);
       const { data } = await axios.get(
         `${process.env.REACT_APP_API}/api/v1/products/get-products`
       );
       setProducts(data.products || []);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Error fetching products:", error);
     }
   };
@@ -55,6 +59,22 @@ const HomePage = () => {
       console.error("Error fetching total count:", error);
     }
   };
+  useEffect(() => {
+    if (page === 1) return;
+    loadmore();
+  }, [page]);
+  //loadmore
+  const loadmore = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get(`api/v1/product/product-list/${page}`);
+      setLoading(false);
+      setProducts([...products, ...data?.products]);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
 
   // Run on first load
   useEffect(() => {
@@ -63,7 +83,7 @@ const HomePage = () => {
     getTotal();
   }, []);
 
-  // Filter handling
+  // Handle category checkbox toggle
   const handleFilter = (checkedValue, id) => {
     const all = [...checked];
     if (checkedValue) {
@@ -75,14 +95,14 @@ const HomePage = () => {
     setChecked(all);
   };
 
-  // Apply filters when category or price changes
+  // Filter products when filters change
   useEffect(() => {
     if (checked.length || selectedPrice !== null) {
       filterProducts();
     }
   }, [checked, selectedPrice]);
 
-  // Filter API
+  // Fetch filtered products
   const filterProducts = async () => {
     try {
       const { data } = await axios.post(
@@ -154,8 +174,23 @@ const HomePage = () => {
               </div>
             ))}
           </div>
+
           <div className="text-center mt-3">
             <strong>Total Products: {total}</strong>
+          </div>
+
+          <div className="m-2 p-3 text-center">
+            {products && products.length < total && (
+              <button
+                className="btn btn-warning"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPage(page + 1);
+                }}
+              >
+                {loading ? "Loading..." : "Load More"}
+              </button>
+            )}
           </div>
         </div>
       </div>
