@@ -213,3 +213,22 @@ export const productFiltersController = async (req, res) => {
     });
   }
 };
+
+//productCountController
+
+export const productCountController = async (req, res) => {
+  try {
+    const total = await productModels.find({}).estimatedDocumentCount();
+    res.status(200).send({
+      success: true,
+      total,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(404).send({
+      message: "error in product count",
+      error,
+      success: false,
+    });
+  }
+};
