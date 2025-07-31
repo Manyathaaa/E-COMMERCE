@@ -2,15 +2,17 @@ import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout/Layout";
 import axios from "axios";
 import { Checkbox, Radio } from "antd";
-import { Prices } from "../components/prices";
+import { Prices } from "../components/prices.js";
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
-  const [selectedPrice, setSelectedPrice] = useState([]);
+  const [selectedPrice, setSelectedPrice] = useState(null);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
 
-  // Load categories
+  // Load all categories
   const getAllCategory = async () => {
     try {
       const token = localStorage.getItem("authToken");
@@ -22,8 +24,7 @@ const HomePage = () => {
           },
         }
       );
-      console.log("Category API response:", data);
-      if (data.success) {
+      if (data?.success) {
         setCategories(data.category || []);
       }
     } catch (error) {
@@ -31,58 +32,76 @@ const HomePage = () => {
     }
   };
 
-  useEffect(() => {
-    getAllCategory();
-    getAllProducts(); // Load all products initially
-  }, []);
-
   // Load all products
   const getAllProducts = async () => {
     try {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API}/api/v1/products/get-products`
       );
-      setProducts(data.products);
+      setProducts(data.products || []);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching products:", error);
     }
   };
 
-  // Handle category checkbox toggle
-  const handleFilter = (value, id) => {
-    let all = [...checked];
-    if (value) {
+  // Get total product count
+  const getTotal = async () => {
+    try {
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API}/api/v1/products/product-count`
+      );
+      setTotal(data?.total || 0);
+    } catch (error) {
+      console.error("Error fetching total count:", error);
+    }
+  };
+
+  // Run on first load
+  useEffect(() => {
+    getAllCategory();
+    getAllProducts();
+    getTotal();
+  }, []);
+
+  // Filter handling
+  const handleFilter = (checkedValue, id) => {
+    const all = [...checked];
+    if (checkedValue) {
       all.push(id);
     } else {
-      all = all.filter((c) => c !== id);
+      const index = all.indexOf(id);
+      if (index > -1) all.splice(index, 1);
     }
     setChecked(all);
   };
 
-  // Filter when category or price changes
+  // Apply filters when category or price changes
   useEffect(() => {
-    if (checked.length || selectedPrice.length) {
+    if (checked.length || selectedPrice !== null) {
       filterProducts();
     }
   }, [checked, selectedPrice]);
 
-  // Filter products by selected filters
+  // Filter API
   const filterProducts = async () => {
     try {
       const { data } = await axios.post(
         `${process.env.REACT_APP_API}/api/v1/products/product-filters`,
-        { checked, selectedPrice }
+        {
+          checked,
+          selectedPrice,
+        }
       );
       setProducts(data?.products || []);
     } catch (error) {
-      console.log("Error filtering products:", error);
+      console.error("Error filtering products:", error);
     }
   };
 
   return (
-    <Layout title={"All Products - Best Offer"}>
+    <Layout title="All Products - Best Offer">
       <div className="row mt-3">
-        {/* Sidebar Filters */}
+        {/* FILTER SIDEBAR */}
         <div className="col-md-2">
           <h4 className="text-center">Filter By Category</h4>
           <div className="d-flex flex-column">
@@ -96,10 +115,12 @@ const HomePage = () => {
             ))}
           </div>
 
-          {/* Price filter */}
-          <h4 className="text-center mt-4">Filter By Prices</h4>
+          <h4 className="text-center mt-4">Filter By Price</h4>
           <div className="d-flex flex-column">
-            <Radio.Group onChange={(e) => setSelectedPrice(e.target.value)}>
+            <Radio.Group
+              onChange={(e) => setSelectedPrice(e.target.value)}
+              value={selectedPrice}
+            >
               {Prices?.map((p) => (
                 <Radio key={p._id} value={p.array}>
                   {p.name}
@@ -109,7 +130,7 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* Product List */}
+        {/* PRODUCT LISTING */}
         <div className="col-md-9">
           <h1 className="text-center">All Products</h1>
           <div className="d-flex flex-wrap">
@@ -117,12 +138,12 @@ const HomePage = () => {
               <div key={p._id} className="card m-2" style={{ width: "18rem" }}>
                 <img
                   src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${p._id}`}
+                  alt={p.name}
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "/no-image.png";
                   }}
                   className="card-img-top"
-                  alt={p.name}
                   style={{ height: "200px", objectFit: "cover" }}
                 />
                 <div className="card-body">
@@ -132,6 +153,9 @@ const HomePage = () => {
                 </div>
               </div>
             ))}
+          </div>
+          <div className="text-center mt-3">
+            <strong>Total Products: {total}</strong>
           </div>
         </div>
       </div>
