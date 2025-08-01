@@ -10,6 +10,7 @@ import {
   productFiltersController,
   productCountController,
   productListController,
+  searchProductController,
 } from "../controller/productcontroller.js";
 import expressformidable from "express-formidable";
 
@@ -45,5 +46,7 @@ router.post("/product-filters", productFiltersController);
 router.get("/product-count", productCountController);
 
 router.get("/product-list/:page", productListController);
+
+router.get("/search/:keyword", searchProductController);
 
 export default router;

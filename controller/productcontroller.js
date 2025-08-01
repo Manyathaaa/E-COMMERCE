@@ -255,3 +255,24 @@ export const productListController = async (req, res) => {
     });
   }
 };
+
+export const searchProductController = async (req, res) => {
+  try {
+    const { keyword } = req.params;
+    const results = await productModels
+      .find({
+        $or: [
+          { name: { $regex: keyword, $options: "i" } },
+          { description: { $regex: keyword, $options: "i" } },
+        ],
+      })
+      .select("-photo");
+    res.json(results);
+  } catch (error) {
+    console.log("error", error);
+    return res.status(404).send({
+      success: false,
+      message: "error in searching product",
+    });
+  }
+};
