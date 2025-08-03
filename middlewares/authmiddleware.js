@@ -1,6 +1,6 @@
 // middleware/authmiddleware.js
 import JWT from "jsonwebtoken";
-import userModel from "../models/userModel.js";
+import userModel from "../models/usermodel.js";
 
 // Middleware to verify token
 export const requireSignIn = async (req, res, next) => {
