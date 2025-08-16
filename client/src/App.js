@@ -64,7 +64,7 @@ function App() {
 function Navbar() {
   return (
     <nav className="navbar">
-      <div className="navbar-logo">Bolt.New</div>
+      <div className="navbar-logo">Magica</div>
       <ul className="navbar-links">
         <li>
           <Link to="/">Home</Link>
