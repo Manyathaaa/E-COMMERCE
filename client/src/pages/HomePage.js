@@ -13,6 +13,8 @@ const HomePage = () => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [isFiltering, setIsFiltering] = useState(false);
 
   // Load all categories
   const getAllCategory = async () => {
@@ -34,20 +36,40 @@ const HomePage = () => {
     }
   };
 
-  // Load all products
-  const getAllProducts = async () => {
+  // Load products with pagination
+  const getAllProducts = useCallback(async (pageNum = 1, reset = false) => {
     try {
       setLoading(true);
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API}/api/v1/products/get-products`
+      console.log("API URL:", process.env.REACT_APP_API);
+      console.log("Fetching products for page:", pageNum);
+
+      // Use the correct endpoint based on whether it's first load or pagination
+      const response = await axios.get(
+        pageNum === 1
+          ? `${process.env.REACT_APP_API}/api/v1/products/get-products`
+          : `${process.env.REACT_APP_API}/api/v1/products/product-list/${pageNum}`
       );
-      setProducts(data.products || []);
+
+      const data = response.data;
+      console.log("API response:", data);
+
+      if (reset) {
+        setProducts(data.products || []);
+      } else {
+        setProducts((prev) => [...prev, ...(data.products || [])]);
+      }
+
+      console.log("Products set:", data.products?.length || 0);
+
+      // Check if there are more products to load
+      setHasMore(data.products && data.products.length > 0);
       setLoading(false);
     } catch (error) {
       setLoading(false);
       console.error("Error fetching products:", error);
+      console.error("Error response:", error.response?.data);
     }
-  };
+  }, []);
 
   // Get total product count
   const getTotal = async () => {
@@ -62,27 +84,53 @@ const HomePage = () => {
   };
 
   const loadmore = useCallback(async () => {
+    if (!hasMore || loading || isFiltering) return;
+
     try {
       setLoading(true);
-      const { data } = await axios.get(`api/v1/product/product-list/${page}`);
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API}/api/v1/products/get-products?page=${
+          page + 1
+        }&limit=12`
+      );
+
+      if (data.products && data.products.length > 0) {
+        setProducts((prev) => [...prev, ...data.products]);
+        setPage((prev) => prev + 1);
+        setHasMore(data.products.length === 12);
+      } else {
+        setHasMore(false);
+      }
+
       setLoading(false);
-      setProducts([...products, ...data?.products]);
     } catch (error) {
       console.log(error);
       setLoading(false);
+      setHasMore(false);
     }
-  }, [page, products]);
+  }, [page, hasMore, loading, isFiltering]);
+
+  // Infinite scroll handler
+  const handleScroll = useCallback(() => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop >=
+      document.documentElement.offsetHeight - 1000 // Load when 1000px from bottom
+    ) {
+      loadmore();
+    }
+  }, [loadmore]);
 
   useEffect(() => {
-    if (page === 1) return;
-    loadmore();
-  }, [page, loadmore]);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   useEffect(() => {
+    console.log("Initial load started");
     getAllCategory();
-    getAllProducts();
+    getAllProducts(1, true);
     getTotal();
-  }, []);
+  }, [getAllProducts]);
 
   const handleFilter = (checkedValue, id) => {
     const all = [...checked];
@@ -97,6 +145,8 @@ const HomePage = () => {
 
   const filterProducts = useCallback(async () => {
     try {
+      setIsFiltering(true);
+      setLoading(true);
       const { data } = await axios.post(
         `${process.env.REACT_APP_API}/api/v1/products/product-filters`,
         {
@@ -105,16 +155,28 @@ const HomePage = () => {
         }
       );
       setProducts(data?.products || []);
+      setPage(1); // Reset page when filtering
+      setHasMore(false); // Disable infinite scroll when filtering
+      setLoading(false);
+      setIsFiltering(false);
     } catch (error) {
       console.error("Error filtering products:", error);
+      setLoading(false);
+      setIsFiltering(false);
     }
   }, [checked, selectedPrice]);
 
   useEffect(() => {
     if (checked.length || selectedPrice !== null) {
       filterProducts();
+    } else {
+      // Reset to normal pagination when no filters
+      setIsFiltering(false);
+      setPage(1);
+      setHasMore(true);
+      getAllProducts(1, true);
     }
-  }, [checked, selectedPrice, filterProducts]);
+  }, [checked, selectedPrice, filterProducts, getAllProducts]);
 
   return (
     <div className="homepage">
@@ -249,7 +311,10 @@ const HomePage = () => {
                     onClick={() => {
                       setChecked([]);
                       setSelectedPrice(null);
-                      getAllProducts();
+                      setPage(1);
+                      setHasMore(true);
+                      setIsFiltering(false);
+                      getAllProducts(1, true);
                     }}
                   >
                     Clear Filters
@@ -260,13 +325,14 @@ const HomePage = () => {
 
             {/* Products Grid */}
             <div className={`col-lg-${showFilters ? "9" : "12"}`}>
-              {loading ? (
-                <div className="loading-spinner">
-                  <div className="spinner-border" role="status">
-                    <span className="visually-hidden">Loading...</span>
+              {loading && products.length === 0 ? (
+                <div className="initial-loading">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading products...</span>
                   </div>
+                  <p className="mt-3">Loading amazing products for you...</p>
                 </div>
-              ) : (
+              ) : products.length > 0 ? (
                 <div className="products-grid">
                   {products.map((product) => (
                     <div key={product._id} className="product-card">
@@ -304,27 +370,47 @@ const HomePage = () => {
                     </div>
                   ))}
                 </div>
+              ) : (
+                <div className="no-products">
+                  <div className="no-products-content">
+                    <h3>🛍️ No Products Found</h3>
+                    <p>We couldn't find any products at the moment.</p>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => {
+                        console.log("Retry button clicked");
+                        getAllProducts(1, true);
+                      }}
+                    >
+                      Try Again
+                    </button>
+                  </div>
+                </div>
               )}
 
-              {/* Load More */}
-              {products && products.length < total && (
-                <div className="load-more-section">
-                  <button
-                    className="btn btn-outline-primary btn-lg"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setPage(page + 1);
-                    }}
-                    disabled={loading}
-                  >
-                    {loading ? "Loading..." : "Load More Products"}
-                  </button>
+              {/* Infinite Scroll Loading Indicator */}
+              {loading && (
+                <div className="infinite-scroll-loading">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">
+                      Loading more products...
+                    </span>
+                  </div>
+                  <p className="mt-2">Loading more products...</p>
+                </div>
+              )}
+
+              {!hasMore && !isFiltering && products.length > 0 && (
+                <div className="end-of-products">
+                  <p>🎉 You've seen all our amazing products!</p>
                 </div>
               )}
 
               <div className="products-count">
                 <p>
-                  Showing {products.length} of {total} products
+                  {isFiltering
+                    ? `Found ${products.length} products matching your filters`
+                    : `Showing ${products.length} of ${total} products`}
                 </p>
               </div>
             </div>
