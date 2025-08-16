@@ -3,18 +3,19 @@ import Layout from "../../components/Layout/Layout";
 import AdminMenu from "../../components/Layout/AdminMenu";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Select } from "antd"; //  Import Select
-const { Option } = Select; //  Get Option from Select
+import { Select } from "antd";
+const { Option } = Select;
 
 const CreateProduct = () => {
   const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState(""); //  Add category state
+  const [category, setCategory] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const [shipping, setShipping] = useState(false);
   const [photo, setPhoto] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const getAllCategory = async () => {
     try {
@@ -27,7 +28,6 @@ const CreateProduct = () => {
           },
         }
       );
-      console.log("API Response:", data);
       if (data.success) {
         setCategories(data.categories || data.category || []);
       } else {
@@ -43,10 +43,22 @@ const CreateProduct = () => {
     getAllCategory();
   }, []);
 
-  const handleCreate = async () => {
+  const handleCreate = async (e) => {
+    e.preventDefault();
+
+    // Validation
+    if (!name || !description || !price || !quantity || !category) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
+    if (!photo) {
+      toast.error("Please select a product image");
+      return;
+    }
+
     try {
-      // eslint-disable-next-line no-unused-vars
-      const token = localStorage.getItem("authToken");
+      setLoading(true);
       const productData = new FormData();
       productData.append("name", name);
       productData.append("description", description);
@@ -67,124 +79,237 @@ const CreateProduct = () => {
       );
 
       if (data?.success) {
-        toast.success("Product created successfully");
-
+        toast.success("Product created successfully! 🎉");
+        // Reset form
         setName("");
         setDescription("");
         setPrice("");
         setQuantity("");
         setCategory("");
-        setShipping("");
+        setShipping(false);
+        setPhoto("");
+        document.getElementById("photoInput").value = "";
       } else {
         toast.error(data?.message || "Failed to create product");
       }
     } catch (error) {
       console.error("Error in product creation:", error);
-      toast.error("Something went wrong");
+      toast.error("Something went wrong creating the product");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Layout title={"Dashboard - Create Product"}>
-      <div className="container-fluid m-3 p-3">
-        <div className="row">
-          <div className="col-md-3">
-            <AdminMenu />
-          </div>
-          <div className="col-md-9">
-            <h1>Create Product</h1>
-            <div className="m-1 w-75">
-              <Select
-                bordered={false}
-                placeholder="Select a category"
-                size="large"
-                showSearch
-                className="form-select mb-3"
-                onChange={(value) => setCategory(value)}
-              >
-                {categories?.map((c) => (
-                  <Option key={c._id} value={c._id}>
-                    {c.name}
-                  </Option>
-                ))}
-              </Select>
-              <div className="mb=3">
-                <label className="btn btn-outline-secondary col-md-12">
-                  {photo ? photo.name : "upload photo"}
-                  <input
-                    type="file"
-                    name="photo"
-                    accept="image/*"
-                    onChange={(e) => setPhoto(e.target.files[0])}
-                    hidden
-                  />
-                </label>
-              </div>
-              <div className="mb-3">
-                {photo && (
-                  <div className="text-center">
-                    <img
-                      src={URL.createObjectURL(photo)}
-                      alt="product_photo"
-                      height={"200px"}
-                      className="img img-responsive"
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="mb-3">
-                <input
-                  type="text"
-                  value={name}
-                  placeholder="write a name"
-                  className="form-control"
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <textarea
-                  type="text"
-                  value={description}
-                  placeholder="write a description"
-                  className="form-control"
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <input
-                  type="number"
-                  value={price}
-                  placeholder="write a price"
-                  className="form-control"
-                  onChange={(e) => setPrice(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <input
-                  type="quantity"
-                  value={quantity}
-                  placeholder="write a quantity"
-                  className="form-control"
-                  onChange={(e) => setQuantity(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <Select
-                  bordered={false}
-                  placeholder="Select Shipping"
-                  size="large"
-                  showSearch
-                  className="form-select mb-3"
-                  onChange={(value) => setShipping(value)}
-                >
-                  <Option value="0">No</Option>
-                  <Option value="1">Yes</Option>
-                </Select>
-              </div>
-              <div className="mb-3">
-                <button className="btn btn-primary" onClick={handleCreate}>
-                  Create Product
-                </button>
+    <Layout title="Create Product - Admin">
+      <div className="admin-dashboard">
+        <div className="container-fluid">
+          <div className="row">
+            {/* Sidebar */}
+            <div className="col-lg-3 col-md-4">
+              <AdminMenu />
+            </div>
+
+            {/* Main Content */}
+            <div className="col-lg-9 col-md-8">
+              <div className="admin-content">
+                {/* Page Header */}
+                <div className="page-header">
+                  <h1>Create New Product</h1>
+                  <p>Add a new product to your store inventory</p>
+                </div>
+
+                {/* Product Form */}
+                <div className="create-product-card">
+                  <form onSubmit={handleCreate} className="product-form">
+                    {/* Image Upload */}
+                    <div className="form-section">
+                      <h3>Product Image</h3>
+                      <div className="image-upload-area">
+                        {photo ? (
+                          <div className="image-preview">
+                            <img
+                              src={URL.createObjectURL(photo)}
+                              alt="Product preview"
+                              className="preview-image"
+                            />
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-danger remove-image"
+                              onClick={() => {
+                                setPhoto("");
+                                document.getElementById("photoInput").value =
+                                  "";
+                              }}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="upload-placeholder">
+                            <div className="upload-icon">📷</div>
+                            <p>Click to upload product image</p>
+                            <small>Supports: JPG, PNG, GIF (Max: 5MB)</small>
+                          </div>
+                        )}
+                        <input
+                          type="file"
+                          id="photoInput"
+                          name="photo"
+                          accept="image/*"
+                          onChange={(e) => setPhoto(e.target.files[0])}
+                          className="file-input"
+                          hidden
+                        />
+                        <label htmlFor="photoInput" className="upload-label">
+                          {photo ? "Change Image" : "Upload Image"}
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Basic Information */}
+                    <div className="form-section">
+                      <h3>Basic Information</h3>
+                      <div className="row">
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <label htmlFor="productName">Product Name *</label>
+                            <input
+                              type="text"
+                              id="productName"
+                              className="form-control"
+                              placeholder="Enter product name"
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <label htmlFor="category">Category *</label>
+                            <Select
+                              id="category"
+                              placeholder="Select a category"
+                              size="large"
+                              showSearch
+                              className="form-select"
+                              onChange={(value) => setCategory(value)}
+                              value={category}
+                            >
+                              {categories?.map((c) => (
+                                <Option key={c._id} value={c._id}>
+                                  {c.name}
+                                </Option>
+                              ))}
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="form-group">
+                        <label htmlFor="description">Description *</label>
+                        <textarea
+                          id="description"
+                          className="form-control"
+                          rows="4"
+                          placeholder="Enter product description"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    {/* Pricing & Inventory */}
+                    <div className="form-section">
+                      <h3>Pricing & Inventory</h3>
+                      <div className="row">
+                        <div className="col-md-4">
+                          <div className="form-group">
+                            <label htmlFor="price">Price (₹) *</label>
+                            <input
+                              type="number"
+                              id="price"
+                              className="form-control"
+                              placeholder="0.00"
+                              value={price}
+                              onChange={(e) => setPrice(e.target.value)}
+                              min="0"
+                              step="0.01"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-4">
+                          <div className="form-group">
+                            <label htmlFor="quantity">Quantity *</label>
+                            <input
+                              type="number"
+                              id="quantity"
+                              className="form-control"
+                              placeholder="0"
+                              value={quantity}
+                              onChange={(e) => setQuantity(e.target.value)}
+                              min="0"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-4">
+                          <div className="form-group">
+                            <label htmlFor="shipping">Shipping Available</label>
+                            <Select
+                              id="shipping"
+                              placeholder="Select shipping option"
+                              size="large"
+                              className="form-select"
+                              onChange={(value) => setShipping(value === "1")}
+                              value={shipping ? "1" : "0"}
+                            >
+                              <Option value="0">No</Option>
+                              <Option value="1">Yes</Option>
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="form-actions">
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => {
+                          setName("");
+                          setDescription("");
+                          setPrice("");
+                          setQuantity("");
+                          setCategory("");
+                          setShipping(false);
+                          setPhoto("");
+                          document.getElementById("photoInput").value = "";
+                        }}
+                      >
+                        Reset Form
+                      </button>
+                      <button
+                        type="submit"
+                        className="btn btn-primary"
+                        disabled={loading}
+                      >
+                        {loading ? (
+                          <>
+                            <span className="spinner-border spinner-border-sm me-2"></span>
+                            Creating Product...
+                          </>
+                        ) : (
+                          "✓ Create Product"
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
