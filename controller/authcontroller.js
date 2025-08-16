@@ -1,4 +1,3 @@
-import { copyFile } from "fs";
 import usermodel from "../models/usermodel.js";
 import { comparepassword, hashPassword } from "./../helpers/authhelper.js";
 import JWT from "jsonwebtoken";
@@ -7,7 +6,7 @@ import JWT from "jsonwebtoken";
 export const registercontroller = async (req, res) => {
   try {
     const { name, email, password, phone, address, answer } = req.body;
-    if (!name || !email || !password || !phone || !address || !answer) {
+    if (!name || !email || !password || !phone || !answer) {
       return res.status(400).send({
         success: false,
         message: "fill all the requirements",
@@ -29,7 +28,7 @@ export const registercontroller = async (req, res) => {
       name,
       email,
       phone,
-      address,
+      address: address || "", // Use empty string if address is not provided
       answer,
       password: hashedPassword,
     }).save();
@@ -42,10 +41,12 @@ export const registercontroller = async (req, res) => {
     });
   } catch (error) {
     console.log("register error:", error);
+    console.log("error message:", error.message);
+    console.log("error stack:", error.stack);
     return res.status(500).send({
       success: false,
       message: "error to register",
-      error,
+      error: error.message,
     });
   }
 };
