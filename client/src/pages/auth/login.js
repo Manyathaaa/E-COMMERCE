@@ -57,7 +57,7 @@ const Login = () => {
   };
 
   return (
-    <Layout title="Login - Ecommerce App">
+    <Layout title="Login - Magica">
       <div
         className="d-flex justify-content-center align-items-center"
         style={{

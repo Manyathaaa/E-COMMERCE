@@ -34,7 +34,7 @@ const Register = () => {
   };
 
   return (
-    <Layout title="Register - Ecommerce App">
+    <Layout title="Register - Magica">
       <div
         className="d-flex justify-content-center align-items-center"
         style={{
