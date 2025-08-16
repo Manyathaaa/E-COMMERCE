@@ -3,11 +3,14 @@ import axios from "axios";
 import { Checkbox, Radio } from "antd";
 import { Prices } from "../components/prices";
 import { Link } from "react-router-dom";
+import { useCart } from "../context/cart";
+import { toast } from "react-toastify";
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
+  const { addToCart } = useCart();
   const [selectedPrice, setSelectedPrice] = useState(null);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -359,7 +362,13 @@ const HomePage = () => {
                         </p>
                         <div className="product-price">₹{product.price}</div>
                         <div className="product-actions">
-                          <button className="btn btn-primary btn-sm">
+                          <button
+                            className="btn btn-primary btn-sm"
+                            onClick={() => {
+                              addToCart(product);
+                              toast.success(`${product.name} added to cart!`);
+                            }}
+                          >
                             Add to Cart
                           </button>
                           <button className="btn btn-outline-secondary btn-sm">

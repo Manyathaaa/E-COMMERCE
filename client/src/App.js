@@ -1,4 +1,4 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import About from "./pages/About";
 import PageNotFound from "./pages/PageNotFound";
@@ -21,10 +21,12 @@ import Orders from "./pages/user/orders";
 import Profile from "./pages/user/profile";
 import UpdateProduct from "./pages/admin/UpdateProduct";
 import CategoryPage from "./pages/CategoryPage";
+import CartPage from "./pages/CartPage";
+import Header from "./components/Layout/Header";
 function App() {
   return (
     <>
-      <Navbar />
+      <Header />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route
@@ -84,10 +86,18 @@ function App() {
           }
         />
         <Route
-          path="/categories"
+          path="/category"
           element={
             <div className="main-content">
               <CategoryPage />
+            </div>
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <div className="main-content">
+              <CartPage />
             </div>
           }
         />
@@ -181,28 +191,6 @@ function App() {
       </Routes>
       <ToastContainer />
     </>
-  );
-}
-
-function Navbar() {
-  return (
-    <nav className="navbar">
-      <div className="navbar-logo">Magica</div>
-      <ul className="navbar-links">
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/about">About</Link>
-        </li>
-        <li>
-          <Link to="/contact">Contact</Link>
-        </li>
-        <li>
-          <Link to="/policy">Policy</Link>
-        </li>
-      </ul>
-    </nav>
   );
 }
 
