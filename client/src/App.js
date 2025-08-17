@@ -21,6 +21,7 @@ import Orders from "./pages/user/orders";
 import Profile from "./pages/user/profile";
 import UpdateProduct from "./pages/admin/UpdateProduct";
 import CategoryPage from "./pages/CategoryPage";
+import CategoryProductsPage from "./pages/CategoryProductsPage";
 import CartPage from "./pages/CartPage";
 import Header from "./components/Layout/Header";
 function App() {
@@ -90,6 +91,14 @@ function App() {
           element={
             <div className="main-content">
               <CategoryPage />
+            </div>
+          }
+        />
+        <Route
+          path="/category/:slug"
+          element={
+            <div className="main-content">
+              <CategoryProductsPage />
             </div>
           }
         />
