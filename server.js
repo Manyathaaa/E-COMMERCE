@@ -6,6 +6,7 @@ import authrouter from "./routes/authroutes.js";
 import cors from "cors";
 import categoryroute from "./routes/categoryroute.js";
 import productroute from "./routes/productroutes.js";
+import userroute from "./routes/userRoutes.js";
 import formidable from "express-formidable";
 
 // env config
@@ -30,6 +31,7 @@ app.use(
 app.use("/api/v1/auth", authrouter);
 app.use("/api/v1/category", categoryroute);
 app.use("/api/v1/products", productroute);
+app.use("/api/v1/user", userroute);
 
 // Home route
 app.get("/", (req, res) => {
