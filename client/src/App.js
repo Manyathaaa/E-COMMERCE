@@ -20,6 +20,7 @@ import Products from "./pages/admin/Products";
 import Users from "./pages/admin/user";
 import Orders from "./pages/user/orders";
 import Profile from "./pages/user/profile";
+import OrderDetails from "./pages/user/OrderDetails";
 import UpdateProduct from "./pages/admin/UpdateProduct";
 import CategoryPage from "./pages/CategoryPage";
 import CategoryProductsPage from "./pages/CategoryProductsPage";
@@ -44,6 +45,7 @@ function App() {
         <Route path="/user" element={<PrivateRoute />}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="orders" element={<Orders />} />
+          <Route path="order-details/:orderId" element={<OrderDetails />} />
           <Route path="profile" element={<Profile />} />
         </Route>
         {/* Private Admin Route */}

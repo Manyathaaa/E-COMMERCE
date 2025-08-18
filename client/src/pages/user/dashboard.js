@@ -28,13 +28,53 @@ const Dashboard = () => {
         // setOrderStats(data.stats || {});
 
         // For now, set some dummy data to demonstrate the UI
-        setRecentOrders([]);
-        setOrderStats({
-          total: 0,
-          pending: 0,
-          completed: 0,
-          cancelled: 0,
-        });
+        const dummyOrders = [
+          {
+            _id: "1",
+            orderNumber: "ORD-001",
+            status: "delivered",
+            totalAmount: 2999,
+            createdAt: "2024-01-15T10:30:00Z",
+            products: [
+              {
+                _id: "1",
+                name: "Wireless Bluetooth Headphones",
+                price: 1499,
+                quantity: 2,
+              },
+            ],
+          },
+          {
+            _id: "2",
+            orderNumber: "ORD-002",
+            status: "shipped",
+            totalAmount: 1599,
+            createdAt: "2024-01-10T14:20:00Z",
+            products: [
+              {
+                _id: "2",
+                name: "Premium Smartphone Case",
+                price: 799,
+                quantity: 2,
+              },
+            ],
+          },
+        ];
+
+        setRecentOrders(dummyOrders);
+
+        // Calculate stats from dummy data
+        const stats = {
+          total: dummyOrders.length,
+          pending: dummyOrders.filter((order) => order.status === "pending")
+            .length,
+          completed: dummyOrders.filter((order) => order.status === "delivered")
+            .length,
+          cancelled: dummyOrders.filter((order) => order.status === "cancelled")
+            .length,
+        };
+
+        setOrderStats(stats);
       } catch (error) {
         console.log("Error fetching user stats:", error);
       }
@@ -281,17 +321,29 @@ const Dashboard = () => {
                       {recentOrders.length > 0 ? (
                         <div className="orders-list">
                           {recentOrders.slice(0, 3).map((order, index) => (
-                            <div key={index} className="order-item">
+                            <div key={order._id} className="order-item">
                               <div className="order-info">
-                                <span className="order-id">#{order.id}</span>
-                                <span className="order-date">{order.date}</span>
+                                <span className="order-id">
+                                  #{order.orderNumber}
+                                </span>
+                                <span className="order-date">
+                                  {new Date(order.createdAt).toLocaleDateString(
+                                    "en-IN",
+                                    {
+                                      year: "numeric",
+                                      month: "short",
+                                      day: "numeric",
+                                    }
+                                  )}
+                                </span>
                                 <span
                                   className={`order-status ${order.status}`}
                                 >
-                                  {order.status}
+                                  {order.status.charAt(0).toUpperCase() +
+                                    order.status.slice(1)}
                                 </span>
                                 <span className="order-total">
-                                  ₹{order.total}
+                                  ₹{order.totalAmount.toLocaleString()}
                                 </span>
                               </div>
                             </div>

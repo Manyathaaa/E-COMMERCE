@@ -455,6 +455,14 @@ i.fab::before {
   gap: 10px;
 }
 
+.order-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .order-id {
   font-weight: 600;
   color: #2c3e50;

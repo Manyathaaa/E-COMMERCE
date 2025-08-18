@@ -19,6 +19,11 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [orderStats, setOrderStats] = useState({
+    total: 0,
+    wishlist: 0,
+    reviews: 0,
+  });
 
   // Initialize form data with user info
   useEffect(() => {
@@ -31,6 +36,48 @@ const Profile = () => {
         address: auth.user.address || "",
         question: auth.user.question || "",
       });
+    }
+  }, [auth?.user]);
+
+  // Fetch user statistics (orders, wishlist, reviews)
+  useEffect(() => {
+    const fetchUserStats = async () => {
+      try {
+        // TODO: Replace with actual API calls
+        // const ordersResponse = await axios.get(`${process.env.REACT_APP_API}/api/v1/orders/user-orders`);
+        // const wishlistResponse = await axios.get(`${process.env.REACT_APP_API}/api/v1/user/wishlist`);
+        // const reviewsResponse = await axios.get(`${process.env.REACT_APP_API}/api/v1/user/reviews`);
+
+        // For now, using dummy data consistent with dashboard
+        const dummyOrders = [
+          {
+            _id: "1",
+            orderNumber: "ORD-001",
+            status: "delivered",
+            totalAmount: 2999,
+            createdAt: "2024-01-15T10:30:00Z",
+          },
+          {
+            _id: "2",
+            orderNumber: "ORD-002",
+            status: "shipped",
+            totalAmount: 1599,
+            createdAt: "2024-01-10T14:20:00Z",
+          },
+        ];
+
+        setOrderStats({
+          total: dummyOrders.length,
+          wishlist: 0, // TODO: Replace with actual wishlist count
+          reviews: 0, // TODO: Replace with actual reviews count
+        });
+      } catch (error) {
+        console.log("Error fetching user stats:", error);
+      }
+    };
+
+    if (auth?.user) {
+      fetchUserStats();
     }
   }, [auth?.user]);
 
@@ -302,7 +349,9 @@ const Profile = () => {
                             <i className="fas fa-shopping-bag"></i>
                           </div>
                           <div className="stat-info">
-                            <span className="stat-number">0</span>
+                            <span className="stat-number">
+                              {orderStats.total}
+                            </span>
                             <span className="stat-label">Total Orders</span>
                           </div>
                         </div>
@@ -311,7 +360,9 @@ const Profile = () => {
                             <i className="fas fa-heart"></i>
                           </div>
                           <div className="stat-info">
-                            <span className="stat-number">0</span>
+                            <span className="stat-number">
+                              {orderStats.wishlist}
+                            </span>
                             <span className="stat-label">Wishlist Items</span>
                           </div>
                         </div>
@@ -320,7 +371,9 @@ const Profile = () => {
                             <i className="fas fa-star"></i>
                           </div>
                           <div className="stat-info">
-                            <span className="stat-number">0</span>
+                            <span className="stat-number">
+                              {orderStats.reviews}
+                            </span>
                             <span className="stat-label">Reviews Written</span>
                           </div>
                         </div>
