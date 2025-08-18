@@ -22,7 +22,10 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "https://e-commerce-sooty-delta-13.vercel.app",
+    ],
     credentials: true,
   })
 );

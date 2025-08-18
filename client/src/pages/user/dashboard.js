@@ -4,7 +4,7 @@ import UserMenu from "../../components/Layout/UserMenu";
 import { useAuth } from "../../context/auth";
 import { useCart } from "../../context/cart";
 import { Link } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 import "./dashboard.css";
 
 const Dashboard = () => {
