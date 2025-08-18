@@ -9,6 +9,109 @@
   padding: 20px;
 }
 
+/* Font Awesome Icon Optimization */
+.fas, .far, .fab {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands";
+  font-weight: 900;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  line-height: 1;
+}
+
+/* Ensure icons are loaded properly */
+i.fas::before,
+i.far::before,
+i.fab::before {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+}
+
+/* Fallback for icons if Font Awesome fails to load */
+.action-icon i.fas.fa-shopping-bag::before {
+  content: "\f290";
+}
+
+.action-icon i.fas.fa-clock-rotate-left::before {
+  content: "\f1da";
+}
+
+.action-icon i.fas.fa-user-pen::before {
+  content: "\f4ff";
+}
+
+.action-icon i.fas.fa-cart-shopping::before {
+  content: "\f07a";
+}
+
+.action-icon i.fas.fa-bolt::before {
+  content: "\f0e7";
+}
+
+/* Additional fallback using Unicode if Font Awesome completely fails */
+@font-face {
+  font-family: 'FontAwesome-Fallback';
+  src: url('data:font/woff2;base64,') format('woff2');
+}
+
+.action-icon i {
+  position: relative;
+}
+
+/* Backup symbols if Font Awesome fails completely */
+.action-icon i.fas.fa-shopping-bag::after {
+  content: "🛍️";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.2em;
+  opacity: 0;
+}
+
+.action-icon i.fas.fa-clock-rotate-left::after {
+  content: "🕒";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.2em;
+  opacity: 0;
+}
+
+.action-icon i.fas.fa-user-pen::after {
+  content: "✏️";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.2em;
+  opacity: 0;
+}
+
+.action-icon i.fas.fa-cart-shopping::after {
+  content: "🛒";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.2em;
+  opacity: 0;
+}
+
+/* Show emoji fallback if Font Awesome icon is not loaded */
+.action-icon i:not([class*="fa-"]):after,
+.action-icon i.fas:empty::after {
+  opacity: 1;
+}
+
 /* Welcome Section */
 .welcome-section {
   background: white;
@@ -131,46 +234,88 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   padding: 25px 15px;
-  background: white;
+  background: #ffffff;
   border: 2px solid #e1e8ed;
-  border-radius: 12px;
+  border-radius: 15px;
   text-decoration: none;
   color: #2c3e50;
   transition: all 0.3s ease;
-  height: 120px;
-  justify-content: center;
+  height: 140px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.action-btn:hover::before {
+  left: 100%;
 }
 
 .action-btn:hover {
   border-color: #667eea;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
   color: #667eea;
   text-decoration: none;
+  background: #fafbff;
 }
 
 .action-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 15px;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   color: white;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.action-icon i {
+  font-size: 1.5rem;
+  color: white;
+  font-weight: 900;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .action-btn:hover .action-icon {
-  transform: scale(1.1);
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
 }
 
 .action-btn span {
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 1rem;
   text-align: center;
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover span {
+  color: #667eea;
+  transform: translateY(-2px);
 }
 
 /* Info Cards */
@@ -372,6 +517,22 @@
 }
 
 /* Responsive Design */
+@media (max-width: 992px) {
+  .action-btn {
+    height: 130px;
+  }
+  
+  .action-icon {
+    width: 55px;
+    height: 55px;
+    font-size: 1.3rem;
+  }
+  
+  .action-icon i {
+    font-size: 1.3rem;
+  }
+}
+
 @media (max-width: 768px) {
   .dashboard-title {
     font-size: 1.8rem;
@@ -382,13 +543,27 @@
   }
   
   .action-btn {
-    height: 100px;
+    height: 120px;
     padding: 20px 10px;
+  }
+  
+  .action-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+  
+  .action-icon i {
+    font-size: 1.2rem;
   }
   
   .order-info {
     flex-direction: column;
     align-items: flex-start;
+  }
+  
+  .quick-actions-card {
+    padding: 20px;
   }
 }
 
@@ -412,6 +587,26 @@
     padding: 20px;
   }
   
+  .action-btn {
+    height: 110px;
+    padding: 15px 8px;
+  }
+  
+  .action-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+  
+  .action-icon i {
+    font-size: 1.1rem;
+  }
+  
+  .action-btn span {
+    font-size: 0.9rem;
+  }
+  
   .info-item {
     flex-direction: column;
     align-items: flex-start;
@@ -420,5 +615,13 @@
   
   .info-value {
     text-align: left;
+  }
+  
+  .quick-actions-card .row {
+    margin: 0 -8px;
+  }
+  
+  .quick-actions-card .col-sm-6 {
+    padding: 0 8px;
   }
 }

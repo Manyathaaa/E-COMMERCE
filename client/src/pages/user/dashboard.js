@@ -135,40 +135,53 @@ const Dashboard = () => {
                   <div className="col-12">
                     <div className="quick-actions-card">
                       <h4 className="card-title">
-                        <i className="fas fa-bolt"></i> Quick Actions
+                        <i className="fas fa-bolt" aria-hidden="true"></i> Quick
+                        Actions
                       </h4>
-                      <div className="row">
-                        <div className="col-lg-3 col-md-6 mb-3">
+                      <div className="row g-3">
+                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3">
                           <Link to="/category" className="action-btn">
                             <div className="action-icon">
-                              <i className="fas fa-shopping-bag"></i>
+                              <i
+                                className="fas fa-shopping-bag"
+                                aria-hidden="true"
+                              ></i>
                             </div>
                             <span>Shop Now</span>
                           </Link>
                         </div>
 
-                        <div className="col-lg-3 col-md-6 mb-3">
+                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3">
                           <Link to="/user/orders" className="action-btn">
                             <div className="action-icon">
-                              <i className="fas fa-history"></i>
+                              <i
+                                className="fas fa-clock-rotate-left"
+                                aria-hidden="true"
+                              ></i>
                             </div>
                             <span>Order History</span>
                           </Link>
                         </div>
 
-                        <div className="col-lg-3 col-md-6 mb-3">
+                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3">
                           <Link to="/user/profile" className="action-btn">
                             <div className="action-icon">
-                              <i className="fas fa-user-edit"></i>
+                              <i
+                                className="fas fa-user-pen"
+                                aria-hidden="true"
+                              ></i>
                             </div>
                             <span>Edit Profile</span>
                           </Link>
                         </div>
 
-                        <div className="col-lg-3 col-md-6 mb-3">
+                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3">
                           <Link to="/cart" className="action-btn">
                             <div className="action-icon">
-                              <i className="fas fa-shopping-cart"></i>
+                              <i
+                                className="fas fa-cart-shopping"
+                                aria-hidden="true"
+                              ></i>
                             </div>
                             <span>View Cart</span>
                           </Link>
