@@ -4,11 +4,65 @@ const CartContext = createContext();
 
 const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    let existingCartItem = localStorage.getItem("cart");
-    if (existingCartItem) setCart(JSON.parse(existingCartItem));
-  }, []);
+    // Get current user from localStorage
+    const authData = localStorage.getItem("auth");
+    const currentUserId = authData
+      ? JSON.parse(authData).user?._id || JSON.parse(authData).user?.id
+      : null;
+
+    // If user changed, clear cart
+    if (currentUser && currentUser !== currentUserId) {
+      setCart([]);
+      localStorage.removeItem("cart");
+    }
+
+    // Update current user
+    setCurrentUser(currentUserId);
+
+    // Load cart only if user exists
+    if (currentUserId) {
+      let existingCartItem = localStorage.getItem("cart");
+      if (existingCartItem) {
+        try {
+          setCart(JSON.parse(existingCartItem));
+        } catch (error) {
+          console.log("Error parsing cart data:", error);
+          setCart([]);
+          localStorage.removeItem("cart");
+        }
+      }
+    } else {
+      // Clear cart if no user is logged in
+      setCart([]);
+      localStorage.removeItem("cart");
+    }
+  }, [currentUser]);
+
+  // Additional effect to monitor auth changes and clear cart accordingly
+  useEffect(() => {
+    const checkAuthChange = () => {
+      const authData = localStorage.getItem("auth");
+      const currentUserId = authData
+        ? JSON.parse(authData).user?._id || JSON.parse(authData).user?.id
+        : null;
+
+      if (currentUser !== currentUserId) {
+        setCurrentUser(currentUserId);
+        if (!currentUserId) {
+          setCart([]);
+          localStorage.removeItem("cart");
+        }
+      }
+    };
+
+    // Check for auth changes periodically
+    const interval = setInterval(checkAuthChange, 1000);
+
+    return () => clearInterval(interval);
+  }, [currentUser]);
 
   // Add to cart
   const addToCart = (product, quantity = 1) => {
@@ -58,6 +112,13 @@ const CartProvider = ({ children }) => {
     localStorage.removeItem("cart");
   };
 
+  // Clear cart on user change
+  const clearCartOnUserChange = () => {
+    setCart([]);
+    localStorage.removeItem("cart");
+    setCurrentUser(null);
+  };
+
   // Get cart total
   const getCartTotal = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -77,6 +138,7 @@ const CartProvider = ({ children }) => {
         removeFromCart,
         updateQuantity,
         clearCart,
+        clearCartOnUserChange,
         getCartTotal,
         getCartItemCount,
       }}

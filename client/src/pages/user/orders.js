@@ -31,39 +31,51 @@ const Orders = () => {
         // const { data } = await axios.get(`${process.env.REACT_APP_API}/api/v1/orders/user-orders`);
         // setOrders(data.orders || []);
 
-        // For now, set some dummy data to demonstrate the UI
-        setOrders([
-          {
-            _id: "1",
-            orderNumber: "ORD-001",
-            status: "delivered",
-            totalAmount: 2999,
-            createdAt: "2024-01-15T10:30:00Z",
-            products: [
-              {
-                _id: "1",
-                name: "Wireless Bluetooth Headphones",
-                price: 1499,
-                quantity: 2,
-              },
-            ],
-          },
-          {
-            _id: "2",
-            orderNumber: "ORD-002",
-            status: "shipped",
-            totalAmount: 1599,
-            createdAt: "2024-01-10T14:20:00Z",
-            products: [
-              {
-                _id: "2",
-                name: "Premium Smartphone Case",
-                price: 799,
-                quantity: 2,
-              },
-            ],
-          },
-        ]);
+        // For new users, show empty state
+        // Check if user is newly registered (today) to determine if they should see dummy data
+        const userCreatedAt = auth?.user?.createdAt || new Date().toISOString();
+        const today = new Date().toDateString();
+        const userCreatedDate = new Date(userCreatedAt).toDateString();
+        const isNewUser = userCreatedDate === today;
+
+        if (isNewUser) {
+          // New user - no orders
+          setOrders([]);
+        } else {
+          // Existing user with orders (dummy data for demo)
+          setOrders([
+            {
+              _id: "1",
+              orderNumber: "ORD-001",
+              status: "delivered",
+              totalAmount: 2999,
+              createdAt: "2024-01-15T10:30:00Z",
+              products: [
+                {
+                  _id: "1",
+                  name: "Wireless Bluetooth Headphones",
+                  price: 1499,
+                  quantity: 2,
+                },
+              ],
+            },
+            {
+              _id: "2",
+              orderNumber: "ORD-002",
+              status: "shipped",
+              totalAmount: 1599,
+              createdAt: "2024-01-10T14:20:00Z",
+              products: [
+                {
+                  _id: "2",
+                  name: "Premium Smartphone Case",
+                  price: 799,
+                  quantity: 2,
+                },
+              ],
+            },
+          ]);
+        }
       } catch (error) {
         console.log("Error fetching orders:", error);
       } finally {

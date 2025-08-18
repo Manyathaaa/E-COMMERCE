@@ -27,54 +27,74 @@ const Dashboard = () => {
         // setRecentOrders(data.orders || []);
         // setOrderStats(data.stats || {});
 
-        // For now, set some dummy data to demonstrate the UI
-        const dummyOrders = [
-          {
-            _id: "1",
-            orderNumber: "ORD-001",
-            status: "delivered",
-            totalAmount: 2999,
-            createdAt: "2024-01-15T10:30:00Z",
-            products: [
-              {
-                _id: "1",
-                name: "Wireless Bluetooth Headphones",
-                price: 1499,
-                quantity: 2,
-              },
-            ],
-          },
-          {
-            _id: "2",
-            orderNumber: "ORD-002",
-            status: "shipped",
-            totalAmount: 1599,
-            createdAt: "2024-01-10T14:20:00Z",
-            products: [
-              {
-                _id: "2",
-                name: "Premium Smartphone Case",
-                price: 799,
-                quantity: 2,
-              },
-            ],
-          },
-        ];
+        // For new users, show empty state
+        // Check if user is newly registered (today) to determine if they should see dummy data
+        const userCreatedAt = auth?.user?.createdAt || new Date().toISOString();
+        const today = new Date().toDateString();
+        const userCreatedDate = new Date(userCreatedAt).toDateString();
+        const isNewUser = userCreatedDate === today;
 
-        setRecentOrders(dummyOrders);
+        if (isNewUser) {
+          // New user - no orders
+          setRecentOrders([]);
+          setOrderStats({
+            total: 0,
+            pending: 0,
+            completed: 0,
+            cancelled: 0,
+          });
+        } else {
+          // Existing user with orders (dummy data for demo)
+          const dummyOrders = [
+            {
+              _id: "1",
+              orderNumber: "ORD-001",
+              status: "delivered",
+              totalAmount: 2999,
+              createdAt: "2024-01-15T10:30:00Z",
+              products: [
+                {
+                  _id: "1",
+                  name: "Wireless Bluetooth Headphones",
+                  price: 1499,
+                  quantity: 2,
+                },
+              ],
+            },
+            {
+              _id: "2",
+              orderNumber: "ORD-002",
+              status: "shipped",
+              totalAmount: 1599,
+              createdAt: "2024-01-10T14:20:00Z",
+              products: [
+                {
+                  _id: "2",
+                  name: "Premium Smartphone Case",
+                  price: 799,
+                  quantity: 2,
+                },
+              ],
+            },
+          ];
 
-        // Calculate stats from dummy data
-        const stats = {
-          total: dummyOrders.length,
-          pending: dummyOrders.filter((order) => order.status === "pending")
-            .length,
-          completed: dummyOrders.filter((order) => order.status === "delivered")
-            .length,
-          cancelled: dummyOrders.filter((order) => order.status === "cancelled")
-            .length,
-        };
+          setRecentOrders(dummyOrders);
 
-        setOrderStats(stats);
+          // Calculate stats from dummy data
+          const stats = {
+            total: dummyOrders.length,
+            pending: dummyOrders.filter((order) => order.status === "pending")
+              .length,
+            completed: dummyOrders.filter(
+              (order) => order.status === "delivered"
+            ).length,
+            cancelled: dummyOrders.filter(
+              (order) => order.status === "cancelled"
+            ).length,
+          };
+
+          setOrderStats(stats);
+        }
       } catch (error) {
         console.log("Error fetching user stats:", error);
       }
@@ -83,7 +103,7 @@ const Dashboard = () => {
     if (auth?.user) {
       fetchUserStats();
     }
-  }, [auth?.user, setRecentOrders, setOrderStats]);
+  }, [auth?.user]);
 
   return (
     <Layout title={"Dashboard - Magica"}>

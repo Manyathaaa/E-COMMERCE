@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 
 const Header = () => {
   const [auth, setAuth] = useAuth();
-  const { getCartItemCount } = useCart();
+  const { getCartItemCount, clearCartOnUserChange } = useCart();
 
   const handleLogout = () => {
     setAuth({
@@ -16,6 +16,7 @@ const Header = () => {
       token: "",
     });
     localStorage.removeItem("auth");
+    clearCartOnUserChange(); // Clear cart when user logs out
     toast.success("Logout successfully");
   };
 

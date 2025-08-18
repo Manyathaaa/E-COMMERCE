@@ -49,28 +49,44 @@ const Profile = () => {
         // const reviewsResponse = await axios.get(`${process.env.REACT_APP_API}/api/v1/user/reviews`);
 
         // For now, using dummy data consistent with dashboard
-        const dummyOrders = [
-          {
-            _id: "1",
-            orderNumber: "ORD-001",
-            status: "delivered",
-            totalAmount: 2999,
-            createdAt: "2024-01-15T10:30:00Z",
-          },
-          {
-            _id: "2",
-            orderNumber: "ORD-002",
-            status: "shipped",
-            totalAmount: 1599,
-            createdAt: "2024-01-10T14:20:00Z",
-          },
-        ];
+        // Check if user is newly registered (today) to determine if they should see dummy data
+        const userCreatedAt = auth?.user?.createdAt || new Date().toISOString();
+        const today = new Date().toDateString();
+        const userCreatedDate = new Date(userCreatedAt).toDateString();
+        const isNewUser = userCreatedDate === today;
 
-        setOrderStats({
-          total: dummyOrders.length,
-          wishlist: 0, // TODO: Replace with actual wishlist count
-          reviews: 0, // TODO: Replace with actual reviews count
-        });
+        if (isNewUser) {
+          // New user - no orders
+          setOrderStats({
+            total: 0,
+            wishlist: 0,
+            reviews: 0,
+          });
+        } else {
+          // Existing user with orders (dummy data for demo)
+          const dummyOrders = [
+            {
+              _id: "1",
+              orderNumber: "ORD-001",
+              status: "delivered",
+              totalAmount: 2999,
+              createdAt: "2024-01-15T10:30:00Z",
+            },
+            {
+              _id: "2",
+              orderNumber: "ORD-002",
+              status: "shipped",
+              totalAmount: 1599,
+              createdAt: "2024-01-10T14:20:00Z",
+            },
+          ];
+
+          setOrderStats({
+            total: dummyOrders.length,
+            wishlist: 0, // TODO: Replace with actual wishlist count
+            reviews: 0, // TODO: Replace with actual reviews count
+          });
+        }
       } catch (error) {
         console.log("Error fetching user stats:", error);
       }
