@@ -37,7 +37,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/products" element={<Products />} />
         <Route path="/category" element={<CategoryPage />} />
         <Route path="/category/:slug" element={<CategoryProductsPage />} />
         <Route path="/cart" element={<CartPage />} />

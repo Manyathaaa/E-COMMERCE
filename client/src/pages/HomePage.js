@@ -192,7 +192,7 @@ const HomePage = () => {
               Discover amazing products at unbeatable prices
             </p>
             <div className="hero-buttons">
-              <Link to="/products" className="btn btn-primary btn-lg">
+              <Link to="/category" className="btn btn-primary btn-lg">
                 Shop Now
               </Link>
               <Link to="/about" className="btn btn-outline-light btn-lg">

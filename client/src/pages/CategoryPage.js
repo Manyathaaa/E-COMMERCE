@@ -145,9 +145,9 @@ const CategoryPage = () => {
               <div className="cta-buttons">
                 <button
                   className="btn btn-primary me-3"
-                  onClick={() => navigate("/products")}
+                  onClick={() => navigate("/")}
                 >
-                  View All Products
+                  Browse Homepage
                 </button>
                 <button
                   className="btn btn-outline-primary"
