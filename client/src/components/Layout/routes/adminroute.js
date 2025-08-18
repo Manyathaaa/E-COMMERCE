@@ -10,14 +10,21 @@ export default function AdminRoute() {
 
   useEffect(() => {
     const authCheck = async () => {
-      const res = await axios.get(
-        process.env.REACT_APP_API + "/api/v1/auth/admin-auth"
-      );
+      try {
+        const res = await axios.get(
+          process.env.REACT_APP_API + "/api/v1/auth/admin-auth"
+        );
 
-      if (res.data.ok) {
-        setOk(true);
-      } else {
+        if (res.data.ok) {
+          setOk(true);
+        } else {
+          setOk(false);
+        }
+      } catch (error) {
+        console.log("Admin auth check failed:", error);
         setOk(false);
+        // Optionally clear invalid auth data
+        // localStorage.removeItem("auth");
       }
     };
     if (auth?.token) authCheck();
