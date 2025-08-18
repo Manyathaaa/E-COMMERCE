@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import "./App.css";
 import HomePage from "./pages/HomePage";
 import About from "./pages/About";
 import PageNotFound from "./pages/PageNotFound";
@@ -26,7 +27,7 @@ import CartPage from "./pages/CartPage";
 import Header from "./components/Layout/Header";
 function App() {
   return (
-    <>
+    <div className="App">
       <Header />
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -59,7 +60,7 @@ function App() {
         <Route path="*" element={<PageNotFound />} />
       </Routes>
       <ToastContainer />
-    </>
+    </div>
   );
 }
 

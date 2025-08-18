@@ -13,9 +13,8 @@ const CategoryProductsPage = () => {
   const [category, setCategory] = useState({});
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("name");
-  const [priceRange, setPriceRange] = useState([0, 10000]);
-  const [wishlist, setWishlist] = useState(new Set());
 
+  // Fetch category products
   useEffect(() => {
     const fetchCategoryProducts = async () => {
       try {
@@ -38,57 +37,19 @@ const CategoryProductsPage = () => {
     }
   }, [slug]);
 
+  // Handle add to cart
   const handleAddToCart = (product) => {
     try {
-      console.log("Adding to cart:", product); // Debug log
-      addToCart(product, 1);
-      toast.success(`${product.name} added to cart successfully!`);
+      addToCart(product);
+      toast.success(`${product.name} added to cart!`);
     } catch (error) {
       console.error("Error adding to cart:", error);
       toast.error("Failed to add item to cart");
     }
   };
 
-  const handleToggleWishlist = (productId) => {
-    setWishlist((prev) => {
-      const newWishlist = new Set(prev);
-      if (newWishlist.has(productId)) {
-        newWishlist.delete(productId);
-        toast.info("Removed from wishlist");
-      } else {
-        newWishlist.add(productId);
-        toast.success("Added to wishlist");
-      }
-      return newWishlist;
-    });
-  };
-
-  const getCategoryIcon = (categoryName) => {
-    const iconMap = {
-      electronics: "💻",
-      clothing: "👕",
-      women: "👗",
-      men: "👔",
-      shoes: "👟",
-      accessories: "💍",
-      home: "🏠",
-      sports: "⚽",
-      books: "📚",
-      beauty: "💄",
-      toys: "🧸",
-      food: "🍕",
-    };
-
-    const key = categoryName.toLowerCase();
-    return iconMap[key] || "🛍️";
-  };
-
-  const filteredProducts = (products || []).filter(
-    (product) =>
-      product.price >= priceRange[0] && product.price <= priceRange[1]
-  );
-
-  const sortedProducts = [...(filteredProducts || [])].sort((a, b) => {
+  // Sort products
+  const sortedProducts = [...products].sort((a, b) => {
     switch (sortBy) {
       case "price-low":
         return a.price - b.price;
@@ -101,289 +62,162 @@ const CategoryProductsPage = () => {
     }
   });
 
+  if (loading) {
+    return (
+      <Layout title="Loading...">
+        <div className="category-page-container">
+          <div className="container">
+            <div className="loading-spinner">
+              <div className="spinner"></div>
+              <p>Loading products...</p>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout title={`${category.name || "Category"} - Shop Collection`}>
-      {/* Category Hero Section */}
-      <div className="category-products-hero">
-        <div className="container">
-          <div className="row align-items-center">
-            <div className="col-md-8">
-              <div className="breadcrumb-nav">
+      <div className="category-page-container">
+        {/* Category Header */}
+        <div className="category-header">
+          <div className="container">
+            <div className="row align-items-center">
+              <div className="col-md-8">
                 <nav aria-label="breadcrumb">
                   <ol className="breadcrumb">
                     <li className="breadcrumb-item">
-                      <a
-                        href="/"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          navigate("/");
-                        }}
+                      <button
+                        onClick={() => navigate("/")}
+                        className="breadcrumb-link"
                       >
                         Home
-                      </a>
+                      </button>
                     </li>
                     <li className="breadcrumb-item">
-                      <a
-                        href="/category"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          navigate("/category");
-                        }}
+                      <button
+                        onClick={() => navigate("/category")}
+                        className="breadcrumb-link"
                       >
                         Categories
-                      </a>
+                      </button>
                     </li>
-                    <li className="breadcrumb-item active" aria-current="page">
-                      {category.name}
-                    </li>
+                    <li className="breadcrumb-item active">{category.name}</li>
                   </ol>
                 </nav>
-              </div>
-              <div className="category-info">
-                <div className="category-icon-large">
-                  {getCategoryIcon(category.name || "")}
+                <h1 className="category-title">{category.name}</h1>
+                <p className="category-description">
+                  {category.description ||
+                    `Explore our ${category.name?.toLowerCase()} collection`}
+                </p>
+                <div className="products-count">
+                  {products.length}{" "}
+                  {products.length === 1 ? "Product" : "Products"} Found
                 </div>
-                <div className="category-details">
-                  <h1 className="category-title">{category.name}</h1>
-                  <p className="category-description">
-                    {category.description ||
-                      `Discover our amazing ${category.name?.toLowerCase()} collection`}
-                  </p>
-                  <div className="category-stats">
-                    <span className="product-count">
-                      {products.length}{" "}
-                      {products.length === 1 ? "Product" : "Products"}
-                    </span>
-                  </div>
+              </div>
+              <div className="col-md-4">
+                <div className="sort-controls">
+                  <label htmlFor="sortBy">Sort by:</label>
+                  <select
+                    id="sortBy"
+                    className="form-select"
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                  >
+                    <option value="name">Name (A-Z)</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                  </select>
                 </div>
               </div>
             </div>
-            <div className="col-md-4 text-end">
-              <div className="category-actions">
+          </div>
+        </div>
+
+        {/* Products Grid */}
+        <div className="products-section">
+          <div className="container">
+            {sortedProducts.length === 0 ? (
+              <div className="no-products">
+                <div className="no-products-icon">📦</div>
+                <h3>No Products Found</h3>
+                <p>Sorry, there are no products in this category.</p>
                 <button
-                  className="btn btn-outline-primary"
+                  className="btn btn-primary"
                   onClick={() => navigate("/category")}
                 >
-                  <i className="fas fa-th-large me-2"></i>
-                  Browse All Categories
+                  Browse Other Categories
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Filters Section */}
-      <div className="filters-section">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-6">
-              <div className="filter-group">
-                <label htmlFor="sortBy" className="filter-label">
-                  Sort By:
-                </label>
-                <select
-                  id="sortBy"
-                  className="form-select"
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                >
-                  <option value="name">Name (A-Z)</option>
-                  <option value="price-low">Price (Low to High)</option>
-                  <option value="price-high">Price (High to Low)</option>
-                </select>
-              </div>
-            </div>
-            <div className="col-md-6">
-              <div className="filter-group">
-                <label className="filter-label">
-                  Price Range: ${priceRange[0]} - ${priceRange[1]}
-                </label>
-                <div className="price-range-inputs">
-                  <input
-                    type="number"
-                    className="form-control price-input"
-                    placeholder="Min"
-                    value={priceRange[0]}
-                    onChange={(e) =>
-                      setPriceRange([Number(e.target.value), priceRange[1]])
-                    }
-                  />
-                  <span className="price-separator">-</span>
-                  <input
-                    type="number"
-                    className="form-control price-input"
-                    placeholder="Max"
-                    value={priceRange[1]}
-                    onChange={(e) =>
-                      setPriceRange([priceRange[0], Number(e.target.value)])
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Products Section */}
-      <div className="category-products-section">
-        <div className="container">
-          {loading ? (
-            <div className="loading-section">
+            ) : (
               <div className="row">
-                {[...Array(8)].map((_, index) => (
-                  <div key={index} className="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div className="product-card skeleton">
-                      <div className="product-image skeleton-image"></div>
-                      <div className="product-content">
-                        <div className="skeleton-title"></div>
-                        <div className="skeleton-price"></div>
-                        <div className="skeleton-button"></div>
+                {sortedProducts.map((product) => (
+                  <div
+                    key={product._id}
+                    className="col-lg-3 col-md-4 col-sm-6 mb-4"
+                  >
+                    <div className="product-card">
+                      <div className="product-image">
+                        <img
+                          src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
+                          alt={product.name}
+                          onError={(e) => {
+                            e.target.src =
+                              "https://via.placeholder.com/300x200?text=No+Image";
+                          }}
+                        />
+                        <div className="product-overlay">
+                          <button
+                            className="btn btn-view"
+                            onClick={() => navigate(`/product/${product.slug}`)}
+                          >
+                            <i className="fas fa-eye"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="product-info">
+                        <h5 className="product-name">{product.name}</h5>
+                        <p className="product-description">
+                          {product.description?.length > 60
+                            ? `${product.description.substring(0, 60)}...`
+                            : product.description || "No description available"}
+                        </p>
+                        <div className="product-footer">
+                          <div className="product-price">₹{product.price}</div>
+                          <button
+                            className="btn btn-cart"
+                            onClick={() => handleAddToCart(product)}
+                            disabled={product.quantity === 0}
+                          >
+                            {product.quantity === 0 ? (
+                              <>
+                                <i className="fas fa-times"></i>
+                                Out of Stock
+                              </>
+                            ) : (
+                              <>
+                                <i className="fas fa-shopping-cart"></i>
+                                Add to Cart
+                              </>
+                            )}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
-          ) : sortedProducts.length === 0 ? (
-            <div className="empty-products">
-              <div className="row">
-                <div className="col-12 text-center">
-                  <div className="empty-icon">📦</div>
-                  <h3>No Products Found</h3>
-                  <p>
-                    Sorry, there are no products in this category at the moment.
-                  </p>
-                  <div className="empty-actions">
-                    <button
-                      className="btn btn-primary me-3"
-                      onClick={() => navigate("/category")}
-                    >
-                      Browse Other Categories
-                    </button>
-                    <button
-                      className="btn btn-outline-primary"
-                      onClick={() => navigate("/")}
-                    >
-                      Back to Home
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="products-grid">
-              <div className="row">
-                {sortedProducts.map((product, index) => {
-                  // Validate product data
-                  if (!product || !product._id || !product.name) {
-                    console.warn("Invalid product data:", product);
-                    return null;
-                  }
-
-                  return (
-                    <div
-                      key={product._id}
-                      className="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4"
-                    >
-                      <div
-                        className="product-card"
-                        style={{ animationDelay: `${index * 0.1}s` }}
-                      >
-                        <div className="product-image-container">
-                          <img
-                            src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
-                            alt={product.name}
-                            className="product-image"
-                            onError={(e) => {
-                              e.target.src =
-                                "https://via.placeholder.com/300x250?text=No+Image";
-                            }}
-                          />
-                          <div className="product-overlay">
-                            <button
-                              className="btn btn-quick-view"
-                              onClick={() =>
-                                navigate(`/product/${product.slug}`)
-                              }
-                              title="Quick View"
-                            >
-                              <i className="fas fa-eye"></i>
-                            </button>
-                          </div>
-                          <div className="product-wishlist">
-                            <button
-                              className={`btn btn-wishlist ${
-                                wishlist.has(product._id) ? "active" : ""
-                              }`}
-                              onClick={() => handleToggleWishlist(product._id)}
-                              title={
-                                wishlist.has(product._id)
-                                  ? "Remove from wishlist"
-                                  : "Add to wishlist"
-                              }
-                            >
-                              <i
-                                className={
-                                  wishlist.has(product._id)
-                                    ? "fas fa-heart"
-                                    : "far fa-heart"
-                                }
-                              ></i>
-                            </button>
-                          </div>
-                        </div>
-                        <div className="product-content">
-                          <h5 className="product-title" title={product.name}>
-                            {product.name}
-                          </h5>
-                          <p
-                            className="product-description"
-                            title={product.description}
-                          >
-                            {product.description &&
-                            product.description.length > 55
-                              ? `${product.description.substring(0, 55)}...`
-                              : product.description ||
-                                `Premium ${product.name.toLowerCase()} with excellent quality`}
-                          </p>
-                          <div className="product-footer">
-                            <div className="product-price-section">
-                              <div className="product-price">
-                                <span className="currency">$</span>
-                                <span className="price">{product.price}</span>
-                              </div>
-                            </div>
-                            <div className="product-actions">
-                              <button
-                                className="btn btn-add-cart"
-                                onClick={() => handleAddToCart(product)}
-                                title={`Add ${product.name} to cart`}
-                              >
-                                <i className="fas fa-shopping-cart"></i>
-                                <span className="btn-text">Add to Cart</span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Back to Categories */}
-      <div className="back-to-categories">
-        <div className="container">
-          <div className="row">
-            <div className="col-12 text-center">
+        {/* Back to Categories */}
+        <div className="back-section">
+          <div className="container">
+            <div className="text-center">
               <button
-                className="btn btn-outline-secondary btn-lg"
+                className="btn btn-outline-secondary"
                 onClick={() => navigate("/category")}
               >
                 <i className="fas fa-arrow-left me-2"></i>
