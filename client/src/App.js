@@ -25,6 +25,7 @@ import UpdateProduct from "./pages/admin/UpdateProduct";
 import CategoryPage from "./pages/CategoryPage";
 import CategoryProductsPage from "./pages/CategoryProductsPage";
 import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
 import Header from "./components/Layout/Header";
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
         <Route path="/category" element={<CategoryPage />} />
         <Route path="/category/:slug" element={<CategoryProductsPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
         {/* Private User Route */}
         <Route path="/user" element={<PrivateRoute />}>
           <Route path="dashboard" element={<Dashboard />} />
