@@ -151,57 +151,118 @@ const CategoryProductsPage = () => {
                 </button>
               </div>
             ) : (
-              <div className="row">
-                {sortedProducts.map((product) => (
+              <div className="row g-4">
+                {sortedProducts.map((product, index) => (
                   <div
                     key={product._id}
-                    className="col-lg-3 col-md-4 col-sm-6 mb-4"
+                    className="col-lg-3 col-md-4 col-sm-6"
+                    style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    <div className="product-card">
-                      <div className="product-image">
+                    <div className="product-card modern-card">
+                      {/* Wishlist & Stock Badge */}
+                      <div className="product-badges">
+                        {product.quantity === 0 && (
+                          <span className="badge out-of-stock-badge">
+                            Out of Stock
+                          </span>
+                        )}
+                        {product.quantity > 0 && product.quantity <= 5 && (
+                          <span className="badge low-stock-badge">
+                            Only {product.quantity} left
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Product Image */}
+                      <div className="product-image-wrapper">
                         <img
                           src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
                           alt={product.name}
+                          className="product-image"
+                          loading="lazy"
                           onError={(e) => {
                             e.target.src =
-                              "https://via.placeholder.com/300x200?text=No+Image";
+                              "https://via.placeholder.com/400x300?text=No+Image+Available&bg=f8f9fa&color=6c757d";
                           }}
                         />
                         <div className="product-overlay">
-                          <button
-                            className="btn btn-view"
-                            onClick={() => navigate(`/product/${product.slug}`)}
-                          >
-                            <i className="fas fa-eye"></i>
-                          </button>
+                          <div className="overlay-actions">
+                            <button
+                              className="action-btn view-btn"
+                              onClick={() =>
+                                navigate(`/product/${product.slug}`)
+                              }
+                              title="Quick View"
+                            >
+                              <i className="fas fa-eye"></i>
+                            </button>
+                            <button
+                              className="action-btn wishlist-btn"
+                              title="Add to Wishlist"
+                            >
+                              <i className="far fa-heart"></i>
+                            </button>
+                          </div>
                         </div>
                       </div>
-                      <div className="product-info">
-                        <h5 className="product-name">{product.name}</h5>
+
+                      {/* Product Info */}
+                      <div className="product-content">
+                        <div className="product-category">{category.name}</div>
+                        <h5 className="product-title">{product.name}</h5>
                         <p className="product-description">
-                          {product.description?.length > 60
-                            ? `${product.description.substring(0, 60)}...`
-                            : product.description || "No description available"}
+                          {product.description?.length > 55
+                            ? `${product.description.substring(0, 55)}...`
+                            : product.description ||
+                              "Premium quality product with excellent features"}
                         </p>
-                        <div className="product-footer">
-                          <div className="product-price">₹{product.price}</div>
-                          <button
-                            className="btn btn-cart"
-                            onClick={() => handleAddToCart(product)}
-                            disabled={product.quantity === 0}
-                          >
-                            {product.quantity === 0 ? (
-                              <>
-                                <i className="fas fa-times"></i>
-                                Out of Stock
-                              </>
-                            ) : (
-                              <>
-                                <i className="fas fa-shopping-cart"></i>
-                                Add to Cart
-                              </>
-                            )}
-                          </button>
+
+                        {/* Rating Stars */}
+                        <div className="product-rating">
+                          {[...Array(5)].map((_, i) => (
+                            <i
+                              key={i}
+                              className={`fas fa-star ${
+                                i < 4 ? "star-filled" : "star-empty"
+                              }`}
+                            ></i>
+                          ))}
+                          <span className="rating-text">(4.0)</span>
+                        </div>
+
+                        {/* Price & Actions */}
+                        <div className="product-bottom">
+                          <div className="price-section">
+                            <span className="current-price">
+                              ₹{product.price}
+                            </span>
+                            <span className="original-price">
+                              ₹{Math.round(product.price * 1.2)}
+                            </span>
+                            <span className="discount-badge">17% OFF</span>
+                          </div>
+
+                          <div className="product-actions">
+                            <button
+                              className={`btn-add-cart ${
+                                product.quantity === 0 ? "disabled" : ""
+                              }`}
+                              onClick={() => handleAddToCart(product)}
+                              disabled={product.quantity === 0}
+                            >
+                              {product.quantity === 0 ? (
+                                <>
+                                  <i className="fas fa-ban"></i>
+                                  <span>Sold Out</span>
+                                </>
+                              ) : (
+                                <>
+                                  <i className="fas fa-shopping-cart"></i>
+                                  <span>Add to Cart</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
