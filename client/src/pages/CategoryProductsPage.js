@@ -8,12 +8,13 @@ import { toast } from "react-toastify";
 const CategoryProductsPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const [cart, setCart] = useCart();
+  const { addToCart } = useCart();
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState({});
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("name");
   const [priceRange, setPriceRange] = useState([0, 10000]);
+  const [wishlist, setWishlist] = useState(new Set());
 
   useEffect(() => {
     const fetchCategoryProducts = async () => {
@@ -37,23 +38,29 @@ const CategoryProductsPage = () => {
     }
   }, [slug]);
 
-  const addToCart = (product) => {
-    const currentCart = cart || [];
-    const existingProduct = currentCart.find(
-      (item) => item._id === product._id
-    );
-    if (existingProduct) {
-      setCart(
-        currentCart.map((item) =>
-          item._id === product._id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      );
-    } else {
-      setCart([...currentCart, { ...product, quantity: 1 }]);
+  const handleAddToCart = (product) => {
+    try {
+      console.log("Adding to cart:", product); // Debug log
+      addToCart(product, 1);
+      toast.success(`${product.name} added to cart successfully!`);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Failed to add item to cart");
     }
-    toast.success(`${product.name} added to cart`);
+  };
+
+  const handleToggleWishlist = (productId) => {
+    setWishlist((prev) => {
+      const newWishlist = new Set(prev);
+      if (newWishlist.has(productId)) {
+        newWishlist.delete(productId);
+        toast.info("Removed from wishlist");
+      } else {
+        newWishlist.add(productId);
+        toast.success("Added to wishlist");
+      }
+      return newWishlist;
+    });
   };
 
   const getCategoryIcon = (categoryName) => {
@@ -268,55 +275,102 @@ const CategoryProductsPage = () => {
           ) : (
             <div className="products-grid">
               <div className="row">
-                {sortedProducts.map((product, index) => (
-                  <div
-                    key={product._id}
-                    className="col-lg-3 col-md-4 col-sm-6 mb-4"
-                  >
+                {sortedProducts.map((product, index) => {
+                  // Validate product data
+                  if (!product || !product._id || !product.name) {
+                    console.warn("Invalid product data:", product);
+                    return null;
+                  }
+
+                  return (
                     <div
-                      className="product-card"
-                      style={{ animationDelay: `${index * 0.1}s` }}
+                      key={product._id}
+                      className="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4"
                     >
-                      <div className="product-image-container">
-                        <img
-                          src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
-                          alt={product.name}
-                          className="product-image"
-                          onError={(e) => {
-                            e.target.src =
-                              "https://via.placeholder.com/300x250?text=No+Image";
-                          }}
-                        />
-                        <div className="product-overlay">
-                          <button
-                            className="btn btn-quick-view"
-                            onClick={() => navigate(`/product/${product.slug}`)}
-                          >
-                            <i className="fas fa-eye"></i>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="product-content">
-                        <h5 className="product-title">{product.name}</h5>
-                        <p className="product-description">
-                          {product.description?.substring(0, 80)}...
-                        </p>
-                        <div className="product-footer">
-                          <div className="product-price">
-                            <span className="price">${product.price}</span>
+                      <div
+                        className="product-card"
+                        style={{ animationDelay: `${index * 0.1}s` }}
+                      >
+                        <div className="product-image-container">
+                          <img
+                            src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
+                            alt={product.name}
+                            className="product-image"
+                            onError={(e) => {
+                              e.target.src =
+                                "https://via.placeholder.com/300x250?text=No+Image";
+                            }}
+                          />
+                          <div className="product-overlay">
+                            <button
+                              className="btn btn-quick-view"
+                              onClick={() =>
+                                navigate(`/product/${product.slug}`)
+                              }
+                              title="Quick View"
+                            >
+                              <i className="fas fa-eye"></i>
+                            </button>
                           </div>
-                          <button
-                            className="btn btn-add-cart"
-                            onClick={() => addToCart(product)}
+                          <div className="product-wishlist">
+                            <button
+                              className={`btn btn-wishlist ${
+                                wishlist.has(product._id) ? "active" : ""
+                              }`}
+                              onClick={() => handleToggleWishlist(product._id)}
+                              title={
+                                wishlist.has(product._id)
+                                  ? "Remove from wishlist"
+                                  : "Add to wishlist"
+                              }
+                            >
+                              <i
+                                className={
+                                  wishlist.has(product._id)
+                                    ? "fas fa-heart"
+                                    : "far fa-heart"
+                                }
+                              ></i>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="product-content">
+                          <h5 className="product-title" title={product.name}>
+                            {product.name}
+                          </h5>
+                          <p
+                            className="product-description"
+                            title={product.description}
                           >
-                            <i className="fas fa-shopping-cart me-2"></i>
-                            Add to Cart
-                          </button>
+                            {product.description &&
+                            product.description.length > 55
+                              ? `${product.description.substring(0, 55)}...`
+                              : product.description ||
+                                `Premium ${product.name.toLowerCase()} with excellent quality`}
+                          </p>
+                          <div className="product-footer">
+                            <div className="product-price-section">
+                              <div className="product-price">
+                                <span className="currency">$</span>
+                                <span className="price">{product.price}</span>
+                              </div>
+                            </div>
+                            <div className="product-actions">
+                              <button
+                                className="btn btn-add-cart"
+                                onClick={() => handleAddToCart(product)}
+                                title={`Add ${product.name} to cart`}
+                              >
+                                <i className="fas fa-shopping-cart"></i>
+                                <span className="btn-text">Add to Cart</span>
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
