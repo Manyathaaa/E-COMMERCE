@@ -86,14 +86,6 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.summary-icon.delivered {
-  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-}
-
-.summary-icon.processing {
-  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-}
-
 .summary-icon.amount {
   background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
 }
@@ -210,16 +202,6 @@
   gap: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-}
-
-.status-delivered {
-  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-  color: white;
-}
-
-.status-processing {
-  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-  color: white;
 }
 
 .status-shipped {
@@ -358,9 +340,23 @@
   }
   
   .product-item {
-    flex-direction: column;
-    text-align: center;
+    flex-direction: row;
+    text-align: left;
     gap: 10px;
+    padding: 12px;
+  }
+  
+  .product-image {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .product-info h6 {
+    font-size: 0.9rem;
+  }
+  
+  .product-amount {
+    font-size: 1rem;
   }
 }
 

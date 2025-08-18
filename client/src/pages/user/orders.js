@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import UserMenu from "../../components/Layout/UserMenu";
 import { useAuth } from "../../context/auth";
+import { Link } from "react-router-dom";
 // import axios from "axios";
 import "./orders.css";
 
@@ -50,7 +51,7 @@ const Orders = () => {
           {
             _id: "2",
             orderNumber: "ORD-002",
-            status: "processing",
+            status: "shipped",
             totalAmount: 1599,
             createdAt: "2024-01-10T14:20:00Z",
             products: [
@@ -316,9 +317,12 @@ const Orders = () => {
                               </strong>
                             </div>
                             <div className="order-actions">
-                              <button className="btn btn-sm btn-outline-primary">
+                              <Link
+                                to={`/user/order-details/${order._id}`}
+                                className="btn btn-sm btn-outline-primary"
+                              >
                                 <i className="fas fa-eye"></i> View Details
-                              </button>
+                              </Link>
                               {order.status === "delivered" && (
                                 <button className="btn btn-sm btn-outline-success">
                                   <i className="fas fa-redo"></i> Reorder
