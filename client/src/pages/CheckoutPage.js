@@ -667,7 +667,7 @@ const CheckoutPage = () => {
                     className="btn btn-primary btn-lg w-100"
                     disabled={loading || orderLoading}
                   >
-                    {(loading || orderLoading) ? (
+                    {loading || orderLoading ? (
                       <>
                         <span
                           className="spinner-border spinner-border-sm me-2"

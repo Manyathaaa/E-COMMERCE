@@ -113,7 +113,8 @@ const Header = () => {
 
             <li className="nav-item">
               <NavLink to="/cart" className="nav-link">
-                <i className="fas fa-shopping-cart"></i> Cart ({getCartItemCount()})
+                <i className="fas fa-shopping-cart"></i> Cart (
+                {getCartItemCount()})
               </NavLink>
             </li>
           </ul>

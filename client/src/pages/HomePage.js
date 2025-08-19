@@ -356,16 +356,18 @@ const HomePage = () => {
                 <div className="products-grid">
                   {products.map((product) => (
                     <div key={product._id} className="product-card">
-                      <div className="product-image">
-                        <img
-                          src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
-                          alt={product.name}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src =
-                              "https://via.placeholder.com/300x300?text=No+Image";
-                          }}
-                        />
+                      <div className="product-image-container">
+                        <div className="product-image">
+                          <img
+                            src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
+                            alt={product.name}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src =
+                                "https://via.placeholder.com/300x300?text=No+Image";
+                            }}
+                          />
+                        </div>
                         {/* Wishlist Heart Button */}
                         <button
                           className={`heart-button ${

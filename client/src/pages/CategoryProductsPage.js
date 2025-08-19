@@ -54,7 +54,7 @@ const CategoryProductsPage = () => {
   const handleWishlistToggle = (product) => {
     console.log("Wishlist toggle clicked for:", product.name);
     console.log("Current wishlist status:", isInWishlist(product._id));
-    
+
     if (isInWishlist(product._id)) {
       removeFromWishlist(product._id);
       toast.success(`${product.name} removed from wishlist!`);
