@@ -217,6 +217,18 @@
 .overlay-actions {
   display: flex;
   gap: 15px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* FontAwesome Icon Reset to prevent stretching */
+.fa, .fas, .far, .fal, .fab {
+  width: auto !important;
+  height: auto !important;
+  line-height: 1 !important;
+  display: inline-block !important;
+  vertical-align: baseline !important;
+  flex: none !important;
 }
 
 .action-btn {
@@ -233,6 +245,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .action-btn i {
@@ -240,6 +253,7 @@
   line-height: 1;
   width: auto;
   height: auto;
+  flex: none;
 }
 
 .action-btn:hover {
@@ -263,8 +277,8 @@
 }
 
 .wishlist-btn.active i {
-  color: white;
-  font-size: 1.1rem;
+  color: white !important;
+  font-size: 1.1rem !important;
 }
 
 .wishlist-btn:not(.active):hover {
@@ -275,12 +289,84 @@
 }
 
 .wishlist-btn:not(.active) i {
-  color: white;
-  font-size: 1.1rem;
+  color: white !important;
+  font-size: 1.1rem !important;
 }
 
 .wishlist-btn:not(.active):hover i {
+  color: #e74c3c !important;
+}
+
+/* View Button Specific Styles */
+.view-btn:hover {
+  background: rgba(52, 152, 219, 0.9);
+  color: white;
+  border-color: #3498db;
+  transform: scale(1.1);
+}
+
+.view-btn i {
+  font-size: 1.1rem !important;
+  color: white !important;
+}
+
+/* Heart Button Styles for Home Page */
+.heart-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.heart-button:hover {
+  background: white;
+  transform: scale(1.1);
+}
+
+.heart-button i {
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  line-height: 1;
+}
+
+.heart-button.active i {
   color: #e74c3c;
+}
+
+.heart-button:not(.active) i {
+  color: #bdc3c7;
+}
+
+.heart-button.active:hover i {
+  color: #c0392b;
+}
+
+.heart-button:not(.active):hover i {
+  color: #e74c3c;
+}
+
+/* Product Card Heart Button Integration */
+.product-card {
+  position: relative;
+}
+
+.product-card .heart-button {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.product-card:hover .heart-button {
+  opacity: 1;
 }
 
 /* Product Content */
@@ -480,6 +566,10 @@
     width: 45px;
     height: 45px;
     font-size: 1.1rem;
+  }
+
+  .action-btn i {
+    font-size: 1rem !important;
   }
 }
 

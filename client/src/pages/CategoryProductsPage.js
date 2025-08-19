@@ -3,12 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Layout from "../components/Layout/Layout";
 import { useCart } from "../context/cart";
+import { useWishlist } from "../context/wishlist";
 import { toast } from "react-toastify";
 
 const CategoryProductsPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState({});
   const [loading, setLoading] = useState(true);
@@ -45,6 +47,24 @@ const CategoryProductsPage = () => {
     } catch (error) {
       console.error("Error adding to cart:", error);
       toast.error("Failed to add item to cart");
+    }
+  };
+
+  // Handle wishlist toggle
+  const handleWishlistToggle = (product) => {
+    console.log("Wishlist toggle clicked for:", product.name);
+    console.log("Current wishlist status:", isInWishlist(product._id));
+    
+    if (isInWishlist(product._id)) {
+      removeFromWishlist(product._id);
+      toast.success(`${product.name} removed from wishlist!`);
+    } else {
+      const success = addToWishlist(product);
+      if (success) {
+        toast.success(`${product.name} added to wishlist!`);
+      } else {
+        toast.info(`${product.name} is already in wishlist!`);
+      }
     }
   };
 
@@ -189,18 +209,37 @@ const CategoryProductsPage = () => {
                           <div className="overlay-actions">
                             <button
                               className="action-btn view-btn"
-                              onClick={() =>
-                                navigate(`/product/${product.slug}`)
-                              }
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                navigate(`/product/${product.slug}`);
+                              }}
                               title="Quick View"
                             >
                               <i className="fas fa-eye"></i>
                             </button>
                             <button
-                              className="action-btn wishlist-btn"
-                              title="Add to Wishlist"
+                              className={`action-btn wishlist-btn ${
+                                isInWishlist(product._id) ? "active" : ""
+                              }`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleWishlistToggle(product);
+                              }}
+                              title={
+                                isInWishlist(product._id)
+                                  ? "Remove from wishlist"
+                                  : "Add to wishlist"
+                              }
                             >
-                              <i className="far fa-heart"></i>
+                              <i
+                                className={
+                                  isInWishlist(product._id)
+                                    ? "fas fa-heart"
+                                    : "far fa-heart"
+                                }
+                              ></i>
                             </button>
                           </div>
                         </div>

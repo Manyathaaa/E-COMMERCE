@@ -3,14 +3,15 @@ import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
 import { useCart } from "../context/cart";
 import { useAuth } from "../context/auth";
+import { useOrder } from "../context/order";
 import { toast } from "react-toastify";
-// import axios from "axios";
 import "./CheckoutPage.css";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { cart, getCartTotal, clearCart } = useCart();
   const [auth] = useAuth();
+  const { createOrder, loading: orderLoading } = useOrder();
 
   const [loading, setLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
@@ -164,59 +165,54 @@ const CheckoutPage = () => {
     setLoading(true);
 
     try {
-      // Prepare order data
+      // Prepare order data for new API
       const orderData = {
         products: cart.map((item) => ({
-          productId: item._id,
-          name: item.name,
-          price: item.price,
+          product: item._id,
           quantity: item.quantity,
         })),
-        shippingAddress: shippingInfo,
+        shippingAddress: {
+          fullName: shippingInfo.fullName,
+          email: shippingInfo.email,
+          phone: shippingInfo.phone,
+          address: shippingInfo.address,
+          city: shippingInfo.city,
+          state: shippingInfo.state,
+          zipCode: shippingInfo.zipCode,
+          country: shippingInfo.country,
+        },
         paymentMethod: paymentInfo.method,
-        paymentDetails:
-          paymentInfo.method === "cod"
-            ? {}
-            : {
-                ...(paymentInfo.method === "card" && {
-                  cardLast4: paymentInfo.cardNumber.slice(-4),
-                }),
-                ...(paymentInfo.method === "upi" && {
-                  upiId: paymentInfo.upiId,
-                }),
-              },
-        subtotal,
-        shipping,
-        tax,
-        total,
-        status: "pending",
+        paymentDetails: {
+          ...(paymentInfo.method === "card" && {
+            cardLast4: paymentInfo.cardNumber.slice(-4),
+          }),
+          ...(paymentInfo.method === "upi" && {
+            upiId: paymentInfo.upiId,
+          }),
+          paymentStatus: paymentInfo.method === "cod" ? "pending" : "completed",
+        },
+        orderSummary: {
+          subtotal,
+          shipping,
+          tax: Math.round(tax),
+          discount: 0,
+          total: Math.round(total),
+        },
       };
 
-      // TODO: Replace with actual API call
-      // const response = await axios.post(`${process.env.REACT_APP_API}/api/v1/orders/create`, orderData);
-      console.log("Order Data:", orderData);
+      // Create order using new order management system
+      const result = await createOrder(orderData);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      if (result.success) {
+        clearCart();
+        setOrderPlaced(true);
+        toast.success("Order placed successfully!");
 
-      // Generate order number
-      const orderNumber = `ORD-${Date.now()}`;
-
-      // Clear cart and show success
-      clearCart();
-      setOrderPlaced(true);
-
-      toast.success("Order placed successfully!");
-
-      // Navigate to order confirmation or orders page
-      setTimeout(() => {
-        navigate("/user/orders", {
-          state: {
-            orderPlaced: true,
-            orderNumber,
-          },
-        });
-      }, 3000);
+        // Navigate to order confirmation
+        setTimeout(() => {
+          navigate(`/order-confirmation/${result.order._id}`);
+        }, 2000);
+      }
     } catch (error) {
       console.log("Error placing order:", error);
       toast.error("Failed to place order. Please try again.");
@@ -669,9 +665,9 @@ const CheckoutPage = () => {
                   <button
                     type="submit"
                     className="btn btn-primary btn-lg w-100"
-                    disabled={loading}
+                    disabled={loading || orderLoading}
                   >
-                    {loading ? (
+                    {(loading || orderLoading) ? (
                       <>
                         <span
                           className="spinner-border spinner-border-sm me-2"

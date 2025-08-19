@@ -3,11 +3,13 @@ import { NavLink, Link } from "react-router-dom";
 import { HiOutlineShoppingBag } from "react-icons/hi";
 import { useAuth } from "../../context/auth";
 import { useCart } from "../../context/cart";
+import { useWishlist } from "../../context/wishlist";
 import toast from "react-hot-toast";
 
 const Header = () => {
   const [auth, setAuth] = useAuth();
   const { getCartItemCount, clearCartOnUserChange } = useCart();
+  const { getWishlistCount } = useWishlist();
 
   const handleLogout = () => {
     setAuth({
@@ -104,8 +106,14 @@ const Header = () => {
             )}
 
             <li className="nav-item">
+              <NavLink to="/wishlist" className="nav-link">
+                <i className="far fa-heart"></i> Wishlist ({getWishlistCount()})
+              </NavLink>
+            </li>
+
+            <li className="nav-item">
               <NavLink to="/cart" className="nav-link">
-                Cart ({getCartItemCount()})
+                <i className="fas fa-shopping-cart"></i> Cart ({getCartItemCount()})
               </NavLink>
             </li>
           </ul>
