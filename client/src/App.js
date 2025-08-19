@@ -27,6 +27,7 @@ import CategoryProductsPage from "./pages/CategoryProductsPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import WishlistPage from "./pages/WishlistPage";
+import OrderConfirmation from "./pages/OrderConfirmation";
 import Header from "./components/Layout/Header";
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
         {/* Private User Route */}
         <Route path="/user" element={<PrivateRoute />}>
           <Route path="dashboard" element={<Dashboard />} />

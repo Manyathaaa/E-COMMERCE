@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import UserMenu from "../../components/Layout/UserMenu";
 import { useAuth } from "../../context/auth";
+import { useOrder } from "../../context/order";
 import { Link } from "react-router-dom";
-// import axios from "axios";
 import "./orders.css";
 
 // Simple date formatter function
@@ -20,61 +20,20 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("all");
+  const [pagination, setPagination] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
   const [auth] = useAuth();
+  const { getUserOrders, cancelOrder, loading: orderLoading } = useOrder();
 
   // Fetch user orders
   useEffect(() => {
-    const getOrders = async () => {
+    const fetchOrders = async () => {
       try {
         setLoading(true);
-        // This is a placeholder - you'll need to implement this API
-        // const { data } = await axios.get(`${process.env.REACT_APP_API}/api/v1/orders/user-orders`);
-        // setOrders(data.orders || []);
-
-        // For new users, show empty state
-        // Check if user is newly registered (today) to determine if they should see dummy data
-        const userCreatedAt = auth?.user?.createdAt || new Date().toISOString();
-        const today = new Date().toDateString();
-        const userCreatedDate = new Date(userCreatedAt).toDateString();
-        const isNewUser = userCreatedDate === today;
-
-        if (isNewUser) {
-          // New user - no orders
-          setOrders([]);
-        } else {
-          // Existing user with orders (dummy data for demo)
-          setOrders([
-            {
-              _id: "1",
-              orderNumber: "ORD-001",
-              status: "delivered",
-              totalAmount: 2999,
-              createdAt: "2024-01-15T10:30:00Z",
-              products: [
-                {
-                  _id: "1",
-                  name: "Wireless Bluetooth Headphones",
-                  price: 1499,
-                  quantity: 2,
-                },
-              ],
-            },
-            {
-              _id: "2",
-              orderNumber: "ORD-002",
-              status: "shipped",
-              totalAmount: 1599,
-              createdAt: "2024-01-10T14:20:00Z",
-              products: [
-                {
-                  _id: "2",
-                  name: "Premium Smartphone Case",
-                  price: 799,
-                  quantity: 2,
-                },
-              ],
-            },
-          ]);
+        const result = await getUserOrders(currentPage, filterStatus);
+        if (result.success) {
+          setOrders(result.orders);
+          setPagination(result.pagination);
         }
       } catch (error) {
         console.log("Error fetching orders:", error);
@@ -83,10 +42,32 @@ const Orders = () => {
       }
     };
 
-    if (auth?.user) {
-      getOrders();
+    fetchOrders();
+  }, [currentPage, filterStatus, getUserOrders]);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const result = await getUserOrders(currentPage, filterStatus);
+      if (result.success) {
+        setOrders(result.orders);
+        setPagination(result.pagination);
+      }
+    } catch (error) {
+      console.log("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
     }
-  }, [auth?.user]);
+  };
+
+  const handleCancelOrder = async (orderId) => {
+    if (window.confirm("Are you sure you want to cancel this order?")) {
+      const result = await cancelOrder(orderId, "Cancelled by customer");
+      if (result.success) {
+        fetchOrders(); // Refresh the orders list
+      }
+    }
+  };
 
   // Filter orders based on status
   const filteredOrders = orders.filter(
@@ -104,6 +85,10 @@ const Orders = () => {
         return "status-shipped";
       case "cancelled":
         return "status-cancelled";
+      case "confirmed":
+        return "status-confirmed";
+      case "out-for-delivery":
+        return "status-shipped";
       default:
         return "status-pending";
     }
@@ -120,6 +105,10 @@ const Orders = () => {
         return "fas fa-truck";
       case "cancelled":
         return "fas fa-times-circle";
+      case "confirmed":
+        return "fas fa-thumbs-up";
+      case "out-for-delivery":
+        return "fas fa-running";
       default:
         return "fas fa-hourglass-half";
     }
@@ -325,7 +314,7 @@ const Orders = () => {
                           <div className="order-footer">
                             <div className="order-total">
                               <strong>
-                                Total: ₹{order.totalAmount.toLocaleString()}
+                                Total: ₹{order.orderSummary?.total?.toLocaleString() || order.totalAmount?.toLocaleString()}
                               </strong>
                             </div>
                             <div className="order-actions">
@@ -340,9 +329,14 @@ const Orders = () => {
                                   <i className="fas fa-redo"></i> Reorder
                                 </button>
                               )}
-                              {(order.status === "processing" ||
-                                order.status === "shipped") && (
-                                <button className="btn btn-sm btn-outline-danger">
+                              {(order.status === "pending" ||
+                                order.status === "confirmed" ||
+                                order.status === "processing") && (
+                                <button 
+                                  className="btn btn-sm btn-outline-danger"
+                                  onClick={() => handleCancelOrder(order._id)}
+                                  disabled={orderLoading}
+                                >
                                   <i className="fas fa-times"></i> Cancel
                                 </button>
                               )}

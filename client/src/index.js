@@ -8,6 +8,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { AuthProvider } from "./context/auth";
 import { SearchProvider } from "./context/search";
 import { CartProvider } from "./context/cart";
+import { WishlistProvider } from "./context/wishlist";
+import { OrderProvider } from "./context/order";
 import "antd/dist/reset.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -16,9 +18,13 @@ root.render(
     <AuthProvider>
       <SearchProvider>
         <CartProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
+          <WishlistProvider>
+            <OrderProvider>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </OrderProvider>
+          </WishlistProvider>
         </CartProvider>
       </SearchProvider>
     </AuthProvider>
