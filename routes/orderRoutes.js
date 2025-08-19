@@ -20,7 +20,12 @@ router.put("/:orderId/cancel", requireSignIn, cancelOrderController);
 
 // Admin routes
 router.get("/admin/all-orders", requireSignIn, isAdmin, getAllOrdersController);
-router.put("/admin/:orderId/status", requireSignIn, isAdmin, updateOrderStatusController);
+router.put(
+  "/admin/:orderId/status",
+  requireSignIn,
+  isAdmin,
+  updateOrderStatusController
+);
 router.get("/admin/stats", requireSignIn, isAdmin, getOrderStatsController);
 
 export default router;

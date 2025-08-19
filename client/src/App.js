@@ -46,7 +46,10 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
+        <Route
+          path="/order-confirmation/:orderId"
+          element={<OrderConfirmation />}
+        />
         {/* Private User Route */}
         <Route path="/user" element={<PrivateRoute />}>
           <Route path="dashboard" element={<Dashboard />} />

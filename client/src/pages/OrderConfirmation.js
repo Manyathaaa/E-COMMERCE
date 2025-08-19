@@ -77,7 +77,8 @@ const OrderConfirmation = () => {
             </div>
             <h1 className="h2 mb-3">Order Placed Successfully!</h1>
             <p className="text-muted">
-              Thank you for your order. We'll send you a confirmation email shortly.
+              Thank you for your order. We'll send you a confirmation email
+              shortly.
             </p>
           </div>
 
@@ -106,8 +107,13 @@ const OrderConfirmation = () => {
                   {/* Status */}
                   <div className="mb-4">
                     <h6 className="text-muted">Status</h6>
-                    <span className={`badge bg-${getStatusColor(order.status)} fs-6`}>
-                      {getStatusIcon(order.status)} {order.status.replace('-', ' ').toUpperCase()}
+                    <span
+                      className={`badge bg-${getStatusColor(
+                        order.status
+                      )} fs-6`}
+                    >
+                      {getStatusIcon(order.status)}{" "}
+                      {order.status.replace("-", " ").toUpperCase()}
                     </span>
                   </div>
 
@@ -115,7 +121,10 @@ const OrderConfirmation = () => {
                   <div className="mb-4">
                     <h6 className="text-muted mb-3">Items Ordered</h6>
                     {order.products.map((item, index) => (
-                      <div key={index} className="product-item d-flex align-items-center mb-3">
+                      <div
+                        key={index}
+                        className="product-item d-flex align-items-center mb-3"
+                      >
                         <img
                           src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${item.product._id}`}
                           alt={item.name}
@@ -123,11 +132,17 @@ const OrderConfirmation = () => {
                         />
                         <div className="flex-grow-1">
                           <h6 className="mb-1">{item.name}</h6>
-                          <p className="text-muted small mb-0">Quantity: {item.quantity}</p>
+                          <p className="text-muted small mb-0">
+                            Quantity: {item.quantity}
+                          </p>
                         </div>
                         <div className="text-end">
-                          <p className="fw-bold mb-0">₹{item.total.toLocaleString()}</p>
-                          <small className="text-muted">₹{item.price} each</small>
+                          <p className="fw-bold mb-0">
+                            ₹{item.total.toLocaleString()}
+                          </p>
+                          <small className="text-muted">
+                            ₹{item.price} each
+                          </small>
                         </div>
                       </div>
                     ))}
@@ -137,7 +152,9 @@ const OrderConfirmation = () => {
                   <div className="order-totals">
                     <div className="d-flex justify-content-between mb-2">
                       <span>Subtotal:</span>
-                      <span>₹{order.orderSummary.subtotal.toLocaleString()}</span>
+                      <span>
+                        ₹{order.orderSummary.subtotal.toLocaleString()}
+                      </span>
                     </div>
                     <div className="d-flex justify-content-between mb-2">
                       <span>Shipping:</span>
@@ -156,7 +173,9 @@ const OrderConfirmation = () => {
                     {order.orderSummary.discount > 0 && (
                       <div className="d-flex justify-content-between mb-2 text-success">
                         <span>Discount:</span>
-                        <span>-₹{order.orderSummary.discount.toLocaleString()}</span>
+                        <span>
+                          -₹{order.orderSummary.discount.toLocaleString()}
+                        </span>
                       </div>
                     )}
                     <hr />
@@ -181,10 +200,14 @@ const OrderConfirmation = () => {
                 </div>
                 <div className="card-body">
                   <address className="mb-0">
-                    <strong>{order.shippingAddress.fullName}</strong><br />
-                    {order.shippingAddress.address}<br />
-                    {order.shippingAddress.city}, {order.shippingAddress.state}<br />
-                    {order.shippingAddress.zipCode}<br />
+                    <strong>{order.shippingAddress.fullName}</strong>
+                    <br />
+                    {order.shippingAddress.address}
+                    <br />
+                    {order.shippingAddress.city}, {order.shippingAddress.state}
+                    <br />
+                    {order.shippingAddress.zipCode}
+                    <br />
                     <abbr title="Phone">P:</abbr> {order.shippingAddress.phone}
                   </address>
                 </div>
@@ -204,15 +227,24 @@ const OrderConfirmation = () => {
                   </p>
                   <p className="mb-0">
                     <strong>Status:</strong>{" "}
-                    <span className={`badge bg-${order.paymentDetails.paymentStatus === 'completed' ? 'success' : 'warning'}`}>
+                    <span
+                      className={`badge bg-${
+                        order.paymentDetails.paymentStatus === "completed"
+                          ? "success"
+                          : "warning"
+                      }`}
+                    >
                       {order.paymentDetails.paymentStatus.toUpperCase()}
                     </span>
                   </p>
-                  {order.paymentMethod === "card" && order.paymentDetails.cardLast4 && (
-                    <p className="mb-0 mt-2">
-                      <small>****-****-****-{order.paymentDetails.cardLast4}</small>
-                    </p>
-                  )}
+                  {order.paymentMethod === "card" &&
+                    order.paymentDetails.cardLast4 && (
+                      <p className="mb-0 mt-2">
+                        <small>
+                          ****-****-****-{order.paymentDetails.cardLast4}
+                        </small>
+                      </p>
+                    )}
                 </div>
               </div>
 
@@ -227,7 +259,8 @@ const OrderConfirmation = () => {
                   </div>
                   <div className="card-body">
                     <p className="mb-2">
-                      <strong>Tracking ID:</strong> {order.tracking.trackingNumber}
+                      <strong>Tracking ID:</strong>{" "}
+                      {order.tracking.trackingNumber}
                     </p>
                     {order.tracking.carrier && (
                       <p className="mb-2">
@@ -237,7 +270,9 @@ const OrderConfirmation = () => {
                     {order.tracking.estimatedDelivery && (
                       <p className="mb-0">
                         <strong>Estimated Delivery:</strong>{" "}
-                        {new Date(order.tracking.estimatedDelivery).toLocaleDateString()}
+                        {new Date(
+                          order.tracking.estimatedDelivery
+                        ).toLocaleDateString()}
                       </p>
                     )}
                   </div>
@@ -254,7 +289,8 @@ const OrderConfirmation = () => {
                   <i className="fas fa-home me-2"></i>
                   Continue Shopping
                 </Link>
-                {(order.status === "pending" || order.status === "confirmed") && (
+                {(order.status === "pending" ||
+                  order.status === "confirmed") && (
                   <Link
                     to={`/user/orders/${order._id}`}
                     className="btn btn-outline-danger"
@@ -276,7 +312,8 @@ const OrderConfirmation = () => {
                   <i className="fas fa-envelope fa-2x text-primary mb-3"></i>
                   <h6>Email Confirmation</h6>
                   <p className="small text-muted">
-                    You'll receive an order confirmation email within a few minutes.
+                    You'll receive an order confirmation email within a few
+                    minutes.
                   </p>
                 </div>
                 <div className="col-md-4">

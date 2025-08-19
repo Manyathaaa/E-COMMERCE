@@ -49,7 +49,8 @@ export const createOrderController = async (req, res) => {
     // Validate order summary
     const tax = Math.round(calculatedSubtotal * 0.18); // 18% GST
     const shipping = calculatedSubtotal > 500 ? 0 : 50;
-    const total = calculatedSubtotal + tax + shipping - (orderSummary.discount || 0);
+    const total =
+      calculatedSubtotal + tax + shipping - (orderSummary.discount || 0);
 
     if (Math.abs(total - orderSummary.total) > 1) {
       return res.status(400).json({
@@ -169,21 +170,20 @@ export const getOrderController = async (req, res) => {
   try {
     const { orderId } = req.params;
 
-    const order = await Order.findById(orderId)
-      .populate([
-        {
-          path: "user",
-          select: "name email phone",
-        },
-        {
-          path: "products.product",
-          select: "name photo",
-        },
-        {
-          path: "statusHistory.updatedBy",
-          select: "name role",
-        },
-      ]);
+    const order = await Order.findById(orderId).populate([
+      {
+        path: "user",
+        select: "name email phone",
+      },
+      {
+        path: "products.product",
+        select: "name photo",
+      },
+      {
+        path: "statusHistory.updatedBy",
+        select: "name role",
+      },
+    ]);
 
     if (!order) {
       return res.status(404).json({
@@ -193,7 +193,10 @@ export const getOrderController = async (req, res) => {
     }
 
     // Check if user owns this order or is admin
-    if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== 1) {
+    if (
+      order.user._id.toString() !== req.user._id.toString() &&
+      req.user.role !== 1
+    ) {
       return res.status(403).json({
         success: false,
         message: "Access denied",
@@ -218,7 +221,8 @@ export const getOrderController = async (req, res) => {
 export const updateOrderStatusController = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { status, note, trackingNumber, carrier, estimatedDelivery } = req.body;
+    const { status, note, trackingNumber, carrier, estimatedDelivery } =
+      req.body;
 
     const order = await Order.findById(orderId);
     if (!order) {
@@ -245,7 +249,8 @@ export const updateOrderStatusController = async (req, res) => {
         ...order.tracking,
         trackingNumber: trackingNumber || order.tracking.trackingNumber,
         carrier: carrier || order.tracking.carrier,
-        estimatedDelivery: estimatedDelivery || order.tracking.estimatedDelivery,
+        estimatedDelivery:
+          estimatedDelivery || order.tracking.estimatedDelivery,
       };
     }
 
@@ -360,7 +365,14 @@ export const cancelOrderController = async (req, res) => {
 // Get all orders (Admin only)
 export const getAllOrdersController = async (req, res) => {
   try {
-    const { page = 1, limit = 10, status, startDate, endDate, search } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      status,
+      startDate,
+      endDate,
+      search,
+    } = req.query;
     const query = {};
 
     // Filter by status
@@ -383,7 +395,7 @@ export const getAllOrdersController = async (req, res) => {
 
       query.$or = [
         { orderNumber: { $regex: search, $options: "i" } },
-        { user: { $in: users.map(u => u._id) } },
+        { user: { $in: users.map((u) => u._id) } },
       ];
     }
 

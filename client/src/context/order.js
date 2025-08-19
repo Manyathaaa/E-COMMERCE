@@ -9,7 +9,7 @@ const OrderProvider = ({ children }) => {
   const [currentOrder, setCurrentOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   const [orderStats, setOrderStats] = useState(null);
-  
+
   // Create new order
   const createOrder = async (orderData) => {
     try {
@@ -18,7 +18,7 @@ const OrderProvider = ({ children }) => {
         `${process.env.REACT_APP_API}/api/v1/orders/create`,
         orderData
       );
-      
+
       if (data?.success) {
         toast.success("Order placed successfully!");
         setCurrentOrder(data.order);
@@ -44,10 +44,14 @@ const OrderProvider = ({ children }) => {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API}/api/v1/orders/user-orders?page=${page}&status=${status}`
       );
-      
+
       if (data?.success) {
         setOrders(data.orders);
-        return { success: true, orders: data.orders, pagination: data.pagination };
+        return {
+          success: true,
+          orders: data.orders,
+          pagination: data.pagination,
+        };
       }
       return { success: false, message: data.message };
     } catch (error) {
@@ -67,7 +71,7 @@ const OrderProvider = ({ children }) => {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API}/api/v1/orders/${orderId}`
       );
-      
+
       if (data?.success) {
         setCurrentOrder(data.order);
         return { success: true, order: data.order };
@@ -91,12 +95,12 @@ const OrderProvider = ({ children }) => {
         `${process.env.REACT_APP_API}/api/v1/orders/${orderId}/cancel`,
         { reason }
       );
-      
+
       if (data?.success) {
         toast.success("Order cancelled successfully!");
         // Update orders list
-        setOrders(prevOrders => 
-          prevOrders.map(order => 
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
             order._id === orderId ? data.order : order
           )
         );
@@ -119,7 +123,7 @@ const OrderProvider = ({ children }) => {
 
   // Track order status
   const trackOrder = (orderId) => {
-    const order = orders.find(o => o._id === orderId) || currentOrder;
+    const order = orders.find((o) => o._id === orderId) || currentOrder;
     if (!order) return null;
 
     const statusSteps = [
@@ -132,7 +136,7 @@ const OrderProvider = ({ children }) => {
     ];
 
     const currentStatusIndex = statusSteps.findIndex(
-      step => step.key === order.status
+      (step) => step.key === order.status
     );
 
     return {
@@ -159,7 +163,7 @@ const OrderProvider = ({ children }) => {
       totalSpent: 0,
     };
 
-    orders.forEach(order => {
+    orders.forEach((order) => {
       summary[order.status] = (summary[order.status] || 0) + 1;
       if (order.status !== "cancelled") {
         summary.totalSpent += order.orderSummary.total;
@@ -181,13 +185,13 @@ const OrderProvider = ({ children }) => {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API}/api/v1/orders/admin/all-orders?${queryParams}`
       );
-      
+
       if (data?.success) {
-        return { 
-          success: true, 
-          orders: data.orders, 
+        return {
+          success: true,
+          orders: data.orders,
           pagination: data.pagination,
-          stats: data.stats 
+          stats: data.stats,
         };
       }
       return { success: false, message: data.message };
@@ -208,7 +212,7 @@ const OrderProvider = ({ children }) => {
         `${process.env.REACT_APP_API}/api/v1/orders/admin/${orderId}/status`,
         statusData
       );
-      
+
       if (data?.success) {
         toast.success("Order status updated successfully!");
         return { success: true, order: data.order };
@@ -216,7 +220,8 @@ const OrderProvider = ({ children }) => {
       return { success: false, message: data.message };
     } catch (error) {
       console.log(error);
-      const message = error.response?.data?.message || "Error updating order status";
+      const message =
+        error.response?.data?.message || "Error updating order status";
       toast.error(message);
       return { success: false, message };
     } finally {
@@ -229,15 +234,20 @@ const OrderProvider = ({ children }) => {
       const { data } = await axios.get(
         `${process.env.REACT_APP_API}/api/v1/orders/admin/stats?period=${period}`
       );
-      
+
       if (data?.success) {
         setOrderStats(data.stats);
-        return { success: true, stats: data.stats, topProducts: data.topProducts };
+        return {
+          success: true,
+          stats: data.stats,
+          topProducts: data.topProducts,
+        };
       }
       return { success: false, message: data.message };
     } catch (error) {
       console.log(error);
-      const message = error.response?.data?.message || "Error fetching order statistics";
+      const message =
+        error.response?.data?.message || "Error fetching order statistics";
       return { success: false, message };
     }
   };

@@ -180,7 +180,10 @@ orderSchema.index({ "paymentDetails.paymentStatus": 1 });
 orderSchema.pre("save", async function (next) {
   if (this.isNew && !this.orderNumber) {
     const count = await mongoose.model("Order").countDocuments();
-    this.orderNumber = `ORD-${Date.now()}-${String(count + 1).padStart(4, "0")}`;
+    this.orderNumber = `ORD-${Date.now()}-${String(count + 1).padStart(
+      4,
+      "0"
+    )}`;
   }
   next();
 });

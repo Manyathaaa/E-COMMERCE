@@ -314,7 +314,9 @@ const Orders = () => {
                           <div className="order-footer">
                             <div className="order-total">
                               <strong>
-                                Total: ₹{order.orderSummary?.total?.toLocaleString() || order.totalAmount?.toLocaleString()}
+                                Total: ₹
+                                {order.orderSummary?.total?.toLocaleString() ||
+                                  order.totalAmount?.toLocaleString()}
                               </strong>
                             </div>
                             <div className="order-actions">
@@ -332,7 +334,7 @@ const Orders = () => {
                               {(order.status === "pending" ||
                                 order.status === "confirmed" ||
                                 order.status === "processing") && (
-                                <button 
+                                <button
                                   className="btn btn-sm btn-outline-danger"
                                   onClick={() => handleCancelOrder(order._id)}
                                   disabled={orderLoading}
