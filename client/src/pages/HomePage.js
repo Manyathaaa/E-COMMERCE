@@ -4,6 +4,7 @@ import { Checkbox, Radio } from "antd";
 import { Prices } from "../components/prices";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/cart";
+import { useWishlist } from "../context/wishlist";
 import { toast } from "react-toastify";
 
 const HomePage = () => {
@@ -11,6 +12,7 @@ const HomePage = () => {
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
   const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [selectedPrice, setSelectedPrice] = useState(null);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -181,6 +183,21 @@ const HomePage = () => {
     }
   }, [checked, selectedPrice, filterProducts, getAllProducts]);
 
+  // Handle wishlist toggle
+  const handleWishlistToggle = (product) => {
+    if (isInWishlist(product._id)) {
+      removeFromWishlist(product._id);
+      toast.success(`${product.name} removed from wishlist!`);
+    } else {
+      const success = addToWishlist(product);
+      if (success) {
+        toast.success(`${product.name} added to wishlist!`);
+      } else {
+        toast.info(`${product.name} is already in wishlist!`);
+      }
+    }
+  };
+
   return (
     <div className="homepage">
       {/* Hero Section */}
@@ -349,6 +366,26 @@ const HomePage = () => {
                               "https://via.placeholder.com/300x300?text=No+Image";
                           }}
                         />
+                        {/* Wishlist Heart Button */}
+                        <button
+                          className={`heart-button ${
+                            isInWishlist(product._id) ? "active" : ""
+                          }`}
+                          onClick={() => handleWishlistToggle(product)}
+                          title={
+                            isInWishlist(product._id)
+                              ? "Remove from wishlist"
+                              : "Add to wishlist"
+                          }
+                        >
+                          <i
+                            className={
+                              isInWishlist(product._id)
+                                ? "fas fa-heart"
+                                : "far fa-heart"
+                            }
+                          ></i>
+                        </button>
                         <div className="product-overlay">
                           <button className="btn btn-primary">
                             Quick View
@@ -370,9 +407,6 @@ const HomePage = () => {
                             }}
                           >
                             Add to Cart
-                          </button>
-                          <button className="btn btn-outline-secondary btn-sm">
-                            ❤️
                           </button>
                         </div>
                       </div>

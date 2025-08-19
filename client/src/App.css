@@ -235,10 +235,52 @@
   justify-content: center;
 }
 
+.action-btn i {
+  font-size: 1.1rem;
+  line-height: 1;
+  width: auto;
+  height: auto;
+}
+
 .action-btn:hover {
   background: white;
   color: #667eea;
   transform: scale(1.1);
+}
+
+/* Wishlist Button Specific Styles */
+.wishlist-btn.active {
+  background: rgba(231, 76, 60, 0.9);
+  color: white;
+  border-color: #e74c3c;
+}
+
+.wishlist-btn.active:hover {
+  background: #e74c3c;
+  color: white;
+  border-color: #c0392b;
+  transform: scale(1.1);
+}
+
+.wishlist-btn.active i {
+  color: white;
+  font-size: 1.1rem;
+}
+
+.wishlist-btn:not(.active):hover {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  border-color: #e74c3c;
+  transform: scale(1.1);
+}
+
+.wishlist-btn:not(.active) i {
+  color: white;
+  font-size: 1.1rem;
+}
+
+.wishlist-btn:not(.active):hover i {
+  color: #e74c3c;
 }
 
 /* Product Content */
