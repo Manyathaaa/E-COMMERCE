@@ -59,10 +59,18 @@ export const createOrderController = async (req, res) => {
       });
     }
 
+    // Generate unique order number
+    const orderCount = await Order.countDocuments();
+    const orderNumber = `ORD-${Date.now()}-${String(orderCount + 1).padStart(
+      4,
+      "0"
+    )}`;
+
     // Create order
     const order = new Order({
       user: req.user._id,
       products: orderProducts,
+      orderNumber,
       shippingAddress,
       paymentMethod,
       paymentDetails,
