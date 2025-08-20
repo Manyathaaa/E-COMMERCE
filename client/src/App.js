@@ -28,6 +28,9 @@ import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import WishlistPage from "./pages/WishlistPage";
 import OrderConfirmation from "./pages/OrderConfirmation";
+import SupportTickets from "./pages/user/SupportTickets";
+import CreateSupportTicket from "./pages/user/CreateSupportTicket";
+import SupportTicketDetail from "./pages/user/SupportTicketDetail";
 import Header from "./components/Layout/Header";
 function App() {
   return (
@@ -43,6 +46,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/category" element={<CategoryPage />} />
         <Route path="/category/:slug" element={<CategoryProductsPage />} />
+        <Route path="/support" element={<SupportTickets />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
@@ -56,6 +60,12 @@ function App() {
           <Route path="orders" element={<Orders />} />
           <Route path="order-details/:orderId" element={<OrderDetails />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="support" element={<SupportTickets />} />
+          <Route path="support/create" element={<CreateSupportTicket />} />
+          <Route
+            path="support/ticket/:ticketId"
+            element={<SupportTicketDetail />}
+          />
         </Route>
         {/* Private Admin Route */}
         <Route path="/admin" element={<AdminRoute />}>

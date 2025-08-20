@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Layout from "../../components/Layout/Layout";
 import UserMenu from "../../components/Layout/UserMenu";
 import { useAuth } from "../../context/auth";
@@ -419,9 +419,12 @@ const OrderDetails = () => {
                           <i className="fas fa-times"></i> Cancel Order
                         </button>
                       )}
-                      <button className="btn btn-outline-secondary">
+                      <Link
+                        to={`/user/support/create?orderId=${order._id}`}
+                        className="btn btn-outline-secondary"
+                      >
                         <i className="fas fa-headset"></i> Contact Support
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>

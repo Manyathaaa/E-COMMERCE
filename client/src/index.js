@@ -10,6 +10,7 @@ import { SearchProvider } from "./context/search";
 import { CartProvider } from "./context/cart";
 import { WishlistProvider } from "./context/wishlist";
 import { OrderProvider } from "./context/order";
+import { SupportProvider } from "./context/support";
 import "antd/dist/reset.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -20,9 +21,11 @@ root.render(
         <CartProvider>
           <WishlistProvider>
             <OrderProvider>
-              <BrowserRouter>
-                <App />
-              </BrowserRouter>
+              <SupportProvider>
+                <BrowserRouter>
+                  <App />
+                </BrowserRouter>
+              </SupportProvider>
             </OrderProvider>
           </WishlistProvider>
         </CartProvider>

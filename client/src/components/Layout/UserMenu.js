@@ -41,6 +41,16 @@ const UserMenu = () => {
             <i className="fas fa-shopping-bag"></i>
             <span>Orders</span>
           </NavLink>
+
+          <NavLink
+            to="/user/support"
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "active" : ""}`
+            }
+          >
+            <i className="fas fa-headset"></i>
+            <span>Support</span>
+          </NavLink>
         </div>
       </div>
     </div>
