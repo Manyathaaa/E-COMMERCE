@@ -8,6 +8,7 @@ import categoryroute from "./routes/categoryroute.js";
 import productroute from "./routes/productroutes.js";
 import userroute from "./routes/userRoutes.js";
 import orderroute from "./routes/orderRoutes.js";
+import supportroute from "./routes/supportRoutes.js";
 import formidable from "express-formidable";
 
 // env config
@@ -37,6 +38,7 @@ app.use("/api/v1/category", categoryroute);
 app.use("/api/v1/products", productroute);
 app.use("/api/v1/user", userroute);
 app.use("/api/v1/orders", orderroute);
+app.use("/api/v1/support", supportroute);
 
 // Home route
 app.get("/", (req, res) => {

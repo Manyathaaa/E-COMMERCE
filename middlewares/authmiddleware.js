@@ -17,9 +17,20 @@ export const requireSignIn = async (req, res, next) => {
       : authHeader;
 
     const decode = JWT.verify(token, process.env.JWT_SECRET);
-    req.user = decode;
+
+    // Fetch full user details from database
+    const user = await userModel.findById(decode._id).select("-password");
+    if (!user) {
+      return res.status(401).send({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    req.user = user;
     next();
   } catch (error) {
+    console.log("Auth middleware error:", error);
     return res.status(401).send({ success: false, message: "Unauthorized" });
   }
 };
