@@ -1,14 +1,18 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useOrder } from "../context/order";
+import { toast } from "react-hot-toast";
 import Layout from "../components/Layout/Layout";
 import "./OrderConfirmation.css";
 
 const OrderConfirmation = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
-  const { getOrder, loading } = useOrder();
+  const { getOrder, cancelOrder, loading } = useOrder();
   const [order, setOrder] = useState(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
   const fetchedRef = useRef(false);
 
   useEffect(() => {
@@ -50,6 +54,31 @@ const OrderConfirmation = () => {
       fetchedRef.current = false;
     };
   }, [orderId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleCancelOrder = async () => {
+    if (!cancelReason.trim()) {
+      toast.error("Please provide a reason for cancellation");
+      return;
+    }
+
+    try {
+      setCancelling(true);
+      const result = await cancelOrder(orderId, cancelReason);
+      if (result.success) {
+        setOrder(result.order);
+        setShowCancelModal(false);
+        setCancelReason("");
+        toast.success("Order cancelled successfully");
+      } else {
+        toast.error(result.message || "Failed to cancel order");
+      }
+    } catch (error) {
+      console.log("Error cancelling order:", error);
+      toast.error("Error cancelling order");
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   const getStatusIcon = (status) => {
     const icons = {
@@ -317,13 +346,13 @@ const OrderConfirmation = () => {
                 </Link>
                 {(order.status === "pending" ||
                   order.status === "confirmed") && (
-                  <Link
-                    to={`/user/orders/${order._id}`}
+                  <button
                     className="btn btn-outline-danger"
+                    onClick={() => setShowCancelModal(true)}
                   >
                     <i className="fas fa-times me-2"></i>
                     Cancel Order
-                  </Link>
+                  </button>
                 )}
               </div>
             </div>
@@ -360,6 +389,68 @@ const OrderConfirmation = () => {
             </div>
           </div>
         </div>
+
+        {/* Cancel Order Modal */}
+        {showCancelModal && (
+          <div
+            className="modal d-block"
+            style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          >
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Cancel Order</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowCancelModal(false)}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <p>
+                    Are you sure you want to cancel order #{order.orderNumber}?
+                  </p>
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Reason for cancellation:
+                    </label>
+                    <textarea
+                      className="form-control"
+                      rows="3"
+                      value={cancelReason}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                      placeholder="Please provide a reason for cancellation"
+                    ></textarea>
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setShowCancelModal(false)}
+                  >
+                    Keep Order
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={handleCancelOrder}
+                    disabled={cancelling || !cancelReason.trim()}
+                  >
+                    {cancelling ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2"></span>
+                        Cancelling...
+                      </>
+                    ) : (
+                      "Cancel Order"
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   );

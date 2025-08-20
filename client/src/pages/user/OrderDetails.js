@@ -3,97 +3,66 @@ import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../../components/Layout/Layout";
 import UserMenu from "../../components/Layout/UserMenu";
 import { useAuth } from "../../context/auth";
-// import axios from "axios";
+import { useOrder } from "../../context/order";
+import { toast } from "react-hot-toast";
 import "./OrderDetails.css";
 
 const OrderDetails = () => {
   const [auth] = useAuth();
   const { orderId } = useParams();
   const navigate = useNavigate();
+  const { getOrder, cancelOrder, loading } = useOrder();
   const [order, setOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [cancelling, setCancelling] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
 
   useEffect(() => {
     const getOrderDetails = async () => {
-      try {
-        setLoading(true);
-        // TODO: Replace with actual API call
-        // const { data } = await axios.get(`${process.env.REACT_APP_API}/api/v1/orders/${orderId}`);
-        // setOrder(data.order);
-
-        // For now, using dummy data
-        const dummyOrders = [
-          {
-            _id: "1",
-            orderNumber: "ORD-001",
-            status: "delivered",
-            totalAmount: 2999,
-            createdAt: "2024-01-15T10:30:00Z",
-            shippingAddress: {
-              fullName: "John Doe",
-              address: "123 Main Street, Apt 4B",
-              city: "Mumbai",
-              state: "Maharashtra",
-              zipCode: "400001",
-              phone: "+91 9876543210",
-            },
-            paymentMethod: "Credit Card",
-            paymentStatus: "Paid",
-            estimatedDelivery: "2024-01-20T18:00:00Z",
-            trackingNumber: "TRK123456789",
-            products: [
-              {
-                _id: "1",
-                name: "Wireless Bluetooth Headphones",
-                price: 1499,
-                quantity: 2,
-                slug: "wireless-headphones",
-              },
-            ],
-          },
-          {
-            _id: "2",
-            orderNumber: "ORD-002",
-            status: "shipped",
-            totalAmount: 1599,
-            createdAt: "2024-01-10T14:20:00Z",
-            shippingAddress: {
-              fullName: "Jane Smith",
-              address: "456 Oak Avenue",
-              city: "Delhi",
-              state: "Delhi",
-              zipCode: "110001",
-              phone: "+91 9876543211",
-            },
-            paymentMethod: "UPI",
-            paymentStatus: "Paid",
-            estimatedDelivery: "2024-01-25T18:00:00Z",
-            trackingNumber: "TRK987654321",
-            products: [
-              {
-                _id: "2",
-                name: "Premium Smartphone Case",
-                price: 799,
-                quantity: 2,
-                slug: "premium-case",
-              },
-            ],
-          },
-        ];
-
-        const foundOrder = dummyOrders.find((o) => o._id === orderId);
-        setOrder(foundOrder);
-      } catch (error) {
-        console.log("Error fetching order details:", error);
-      } finally {
-        setLoading(false);
+      if (orderId) {
+        try {
+          const result = await getOrder(orderId);
+          if (result.success) {
+            setOrder(result.order);
+          } else {
+            toast.error("Failed to load order details");
+            navigate("/user/orders");
+          }
+        } catch (error) {
+          console.log("Error fetching order details:", error);
+          toast.error("Error loading order details");
+          navigate("/user/orders");
+        }
       }
     };
 
-    if (orderId) {
-      getOrderDetails();
+    getOrderDetails();
+  }, [orderId, getOrder, navigate]);
+
+  const handleCancelOrder = async () => {
+    if (!cancelReason.trim()) {
+      toast.error("Please provide a reason for cancellation");
+      return;
     }
-  }, [orderId]);
+
+    try {
+      setCancelling(true);
+      const result = await cancelOrder(orderId, cancelReason);
+      if (result.success) {
+        setOrder(result.order);
+        setShowCancelModal(false);
+        setCancelReason("");
+        toast.success("Order cancelled successfully");
+      } else {
+        toast.error(result.message || "Failed to cancel order");
+      }
+    } catch (error) {
+      console.log("Error cancelling order:", error);
+      toast.error("Error cancelling order");
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-IN", {
@@ -242,10 +211,17 @@ const OrderDetails = () => {
                       </h3>
                       <div className="order-items">
                         {order.products?.map((product, index) => (
-                          <div key={product._id} className="order-item">
+                          <div
+                            key={product._id || index}
+                            className="order-item"
+                          >
                             <div className="item-image">
                               <img
-                                src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
+                                src={
+                                  product.product?._id
+                                    ? `${process.env.REACT_APP_API}/api/v1/products/product-photo/${product.product._id}`
+                                    : `${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`
+                                }
                                 alt={product.name}
                                 onError={(e) => {
                                   e.target.onerror = null;
@@ -270,6 +246,7 @@ const OrderDetails = () => {
                               <strong>
                                 ₹
                                 {(
+                                  product.total ||
                                   product.quantity * product.price
                                 ).toLocaleString()}
                               </strong>
@@ -281,15 +258,51 @@ const OrderDetails = () => {
                       <div className="order-summary">
                         <div className="summary-row">
                           <span>Subtotal:</span>
-                          <span>₹{order.totalAmount.toLocaleString()}</span>
+                          <span>
+                            ₹
+                            {(
+                              order.orderSummary?.subtotal ||
+                              order.totalAmount ||
+                              0
+                            ).toLocaleString()}
+                          </span>
                         </div>
                         <div className="summary-row">
                           <span>Shipping:</span>
-                          <span>Free</span>
+                          <span>
+                            {order.orderSummary?.shipping === 0
+                              ? "Free"
+                              : order.orderSummary?.shipping
+                              ? `₹${order.orderSummary.shipping}`
+                              : "Free"}
+                          </span>
                         </div>
+                        {order.orderSummary?.tax && (
+                          <div className="summary-row">
+                            <span>Tax (GST):</span>
+                            <span>
+                              ₹{order.orderSummary.tax.toLocaleString()}
+                            </span>
+                          </div>
+                        )}
+                        {order.orderSummary?.discount > 0 && (
+                          <div className="summary-row">
+                            <span>Discount:</span>
+                            <span className="text-success">
+                              -₹{order.orderSummary.discount.toLocaleString()}
+                            </span>
+                          </div>
+                        )}
                         <div className="summary-row total">
                           <span>Total:</span>
-                          <span>₹{order.totalAmount.toLocaleString()}</span>
+                          <span>
+                            ₹
+                            {(
+                              order.orderSummary?.total ||
+                              order.totalAmount ||
+                              0
+                            ).toLocaleString()}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -329,19 +342,22 @@ const OrderDetails = () => {
                       <div className="payment-details">
                         <div className="payment-row">
                           <span>Method:</span>
-                          <span>{order.paymentMethod}</span>
+                          <span>{order.paymentMethod || "N/A"}</span>
                         </div>
                         <div className="payment-row">
                           <span>Status:</span>
                           <span className="payment-status paid">
-                            {order.paymentStatus}
+                            {order.paymentDetails?.paymentStatus ||
+                              order.paymentStatus ||
+                              "N/A"}
                           </span>
                         </div>
                       </div>
                     </div>
 
                     {/* Tracking Info */}
-                    {order.trackingNumber && (
+                    {(order.trackingNumber ||
+                      order.tracking?.trackingNumber) && (
                       <div className="details-card">
                         <h3 className="card-title">
                           <i className="fas fa-route"></i> Tracking Information
@@ -350,13 +366,20 @@ const OrderDetails = () => {
                           <div className="tracking-row">
                             <span>Tracking Number:</span>
                             <span className="tracking-number">
-                              {order.trackingNumber}
+                              {order.trackingNumber ||
+                                order.tracking?.trackingNumber}
                             </span>
                           </div>
-                          {order.estimatedDelivery && (
+                          {(order.estimatedDelivery ||
+                            order.tracking?.estimatedDelivery) && (
                             <div className="tracking-row">
                               <span>Estimated Delivery:</span>
-                              <span>{formatDate(order.estimatedDelivery)}</span>
+                              <span>
+                                {formatDate(
+                                  order.estimatedDelivery ||
+                                    order.tracking.estimatedDelivery
+                                )}
+                              </span>
                             </div>
                           )}
                           <button className="btn btn-outline-primary btn-sm track-btn">
@@ -387,9 +410,12 @@ const OrderDetails = () => {
                           </button>
                         </>
                       )}
-                      {(order.status === "processing" ||
-                        order.status === "shipped") && (
-                        <button className="btn btn-outline-danger">
+                      {(order.status === "pending" ||
+                        order.status === "confirmed") && (
+                        <button
+                          className="btn btn-outline-danger"
+                          onClick={() => setShowCancelModal(true)}
+                        >
                           <i className="fas fa-times"></i> Cancel Order
                         </button>
                       )}
@@ -399,6 +425,66 @@ const OrderDetails = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Cancel Order Modal */}
+                {showCancelModal && (
+                  <div
+                    className="modal d-block"
+                    style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                  >
+                    <div className="modal-dialog">
+                      <div className="modal-content">
+                        <div className="modal-header">
+                          <h5 className="modal-title">Cancel Order</h5>
+                          <button
+                            type="button"
+                            className="btn-close"
+                            onClick={() => setShowCancelModal(false)}
+                          ></button>
+                        </div>
+                        <div className="modal-body">
+                          <p>Are you sure you want to cancel this order?</p>
+                          <div className="mb-3">
+                            <label className="form-label">
+                              Reason for cancellation:
+                            </label>
+                            <textarea
+                              className="form-control"
+                              rows="3"
+                              value={cancelReason}
+                              onChange={(e) => setCancelReason(e.target.value)}
+                              placeholder="Please provide a reason for cancellation"
+                            ></textarea>
+                          </div>
+                        </div>
+                        <div className="modal-footer">
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={() => setShowCancelModal(false)}
+                          >
+                            Keep Order
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-danger"
+                            onClick={handleCancelOrder}
+                            disabled={cancelling || !cancelReason.trim()}
+                          >
+                            {cancelling ? (
+                              <>
+                                <span className="spinner-border spinner-border-sm me-2"></span>
+                                Cancelling...
+                              </>
+                            ) : (
+                              "Cancel Order"
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

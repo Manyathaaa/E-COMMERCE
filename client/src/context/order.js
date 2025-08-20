@@ -38,7 +38,7 @@ const OrderProvider = ({ children }) => {
   };
 
   // Get user orders
-  const getUserOrders = async (page = 1, status = "all") => {
+  const getUserOrders = useCallback(async (page = 1, status = "all") => {
     try {
       setLoading(true);
       const { data } = await axios.get(
@@ -62,7 +62,7 @@ const OrderProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Get single order
   const getOrder = useCallback(async (orderId) => {
@@ -88,7 +88,7 @@ const OrderProvider = ({ children }) => {
   }, []);
 
   // Cancel order
-  const cancelOrder = async (orderId, reason) => {
+  const cancelOrder = useCallback(async (orderId, reason) => {
     try {
       setLoading(true);
       const { data } = await axios.put(
@@ -119,7 +119,7 @@ const OrderProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentOrder]);
 
   // Track order status
   const trackOrder = (orderId) => {

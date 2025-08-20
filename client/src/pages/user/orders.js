@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Layout from "../../components/Layout/Layout";
 import UserMenu from "../../components/Layout/UserMenu";
 import { useAuth } from "../../context/auth";
@@ -26,26 +26,7 @@ const Orders = () => {
   const { getUserOrders, cancelOrder, loading: orderLoading } = useOrder();
 
   // Fetch user orders
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        setLoading(true);
-        const result = await getUserOrders(currentPage, filterStatus);
-        if (result.success) {
-          setOrders(result.orders);
-          setPagination(result.pagination);
-        }
-      } catch (error) {
-        console.log("Error fetching orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchOrders();
-  }, [currentPage, filterStatus, getUserOrders]);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getUserOrders(currentPage, filterStatus);
@@ -58,7 +39,11 @@ const Orders = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getUserOrders, currentPage, filterStatus]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   const handleCancelOrder = async (orderId) => {
     if (window.confirm("Are you sure you want to cancel this order?")) {
