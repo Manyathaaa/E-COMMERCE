@@ -33,14 +33,15 @@ const Dashboard = () => {
             // Calculate real stats from orders
             const stats = {
               total: userOrders.length,
-              pending: userOrders.filter((order) => 
-                order.status === "pending" || order.status === "confirmed"
+              pending: userOrders.filter(
+                (order) =>
+                  order.status === "pending" || order.status === "confirmed"
               ).length,
-              completed: userOrders.filter((order) => 
-                order.status === "delivered"
+              completed: userOrders.filter(
+                (order) => order.status === "delivered"
               ).length,
-              cancelled: userOrders.filter((order) => 
-                order.status === "cancelled"
+              cancelled: userOrders.filter(
+                (order) => order.status === "cancelled"
               ).length,
             };
 
@@ -330,7 +331,12 @@ const Dashboard = () => {
                                     order.status.slice(1)}
                                 </span>
                                 <span className="order-total">
-                                  ₹{(order.orderSummary?.total || order.totalAmount || 0).toLocaleString()}
+                                  ₹
+                                  {(
+                                    order.orderSummary?.total ||
+                                    order.totalAmount ||
+                                    0
+                                  ).toLocaleString()}
                                 </span>
                               </div>
                             </div>

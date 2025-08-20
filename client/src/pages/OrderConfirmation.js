@@ -208,35 +208,45 @@ const OrderConfirmation = () => {
                     <div className="d-flex justify-content-between mb-2">
                       <span>Subtotal:</span>
                       <span>
-                        ₹{order.orderSummary.subtotal.toLocaleString()}
+                        ₹{(order.orderSummary?.subtotal || 0).toLocaleString()}
                       </span>
                     </div>
                     <div className="d-flex justify-content-between mb-2">
                       <span>Shipping:</span>
                       <span>
-                        {order.orderSummary.shipping === 0 ? (
+                        {(order.orderSummary?.shipping || 0) === 0 ? (
                           <span className="text-success">FREE</span>
                         ) : (
-                          `₹${order.orderSummary.shipping}`
+                          `₹${order.orderSummary?.shipping || 0}`
                         )}
                       </span>
                     </div>
                     <div className="d-flex justify-content-between mb-2">
                       <span>Tax (GST):</span>
-                      <span>₹{order.orderSummary.tax.toLocaleString()}</span>
+                      <span>
+                        ₹{(order.orderSummary?.tax || 0).toLocaleString()}
+                      </span>
                     </div>
-                    {order.orderSummary.discount > 0 && (
+                    {(order.orderSummary?.discount || 0) > 0 && (
                       <div className="d-flex justify-content-between mb-2 text-success">
                         <span>Discount:</span>
                         <span>
-                          -₹{order.orderSummary.discount.toLocaleString()}
+                          -₹
+                          {(order.orderSummary?.discount || 0).toLocaleString()}
                         </span>
                       </div>
                     )}
                     <hr />
                     <div className="d-flex justify-content-between fw-bold fs-5">
                       <span>Total:</span>
-                      <span>₹{order.orderSummary.total.toLocaleString()}</span>
+                      <span>
+                        ₹
+                        {(
+                          order.orderSummary?.total ||
+                          order.totalAmount ||
+                          0
+                        ).toLocaleString()}
+                      </span>
                     </div>
                   </div>
                 </div>

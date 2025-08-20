@@ -88,38 +88,42 @@ const OrderProvider = ({ children }) => {
   }, []);
 
   // Cancel order
-  const cancelOrder = useCallback(async (orderId, reason) => {
-    try {
-      setLoading(true);
-      const { data } = await axios.put(
-        `${process.env.REACT_APP_API}/api/v1/orders/${orderId}/cancel`,
-        { reason }
-      );
-
-      if (data?.success) {
-        toast.success("Order cancelled successfully!");
-        // Update orders list
-        setOrders((prevOrders) =>
-          prevOrders.map((order) =>
-            order._id === orderId ? data.order : order
-          )
+  const cancelOrder = useCallback(
+    async (orderId, reason) => {
+      try {
+        setLoading(true);
+        const { data } = await axios.put(
+          `${process.env.REACT_APP_API}/api/v1/orders/${orderId}/cancel`,
+          { reason }
         );
-        // Update current order if it's the same
-        if (currentOrder?._id === orderId) {
-          setCurrentOrder(data.order);
+
+        if (data?.success) {
+          toast.success("Order cancelled successfully!");
+          // Update orders list
+          setOrders((prevOrders) =>
+            prevOrders.map((order) =>
+              order._id === orderId ? data.order : order
+            )
+          );
+          // Update current order if it's the same
+          if (currentOrder?._id === orderId) {
+            setCurrentOrder(data.order);
+          }
+          return { success: true, order: data.order };
         }
-        return { success: true, order: data.order };
+        return { success: false, message: data.message };
+      } catch (error) {
+        console.log(error);
+        const message =
+          error.response?.data?.message || "Error cancelling order";
+        toast.error(message);
+        return { success: false, message };
+      } finally {
+        setLoading(false);
       }
-      return { success: false, message: data.message };
-    } catch (error) {
-      console.log(error);
-      const message = error.response?.data?.message || "Error cancelling order";
-      toast.error(message);
-      return { success: false, message };
-    } finally {
-      setLoading(false);
-    }
-  }, [currentOrder]);
+    },
+    [currentOrder]
+  );
 
   // Track order status
   const trackOrder = (orderId) => {
@@ -166,7 +170,8 @@ const OrderProvider = ({ children }) => {
     orders.forEach((order) => {
       summary[order.status] = (summary[order.status] || 0) + 1;
       if (order.status !== "cancelled") {
-        summary.totalSpent += order.orderSummary.total;
+        const orderTotal = order.orderSummary?.total || order.totalAmount || 0;
+        summary.totalSpent += orderTotal;
       }
     });
 

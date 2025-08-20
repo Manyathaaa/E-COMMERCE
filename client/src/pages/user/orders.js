@@ -202,10 +202,14 @@ const Orders = () => {
                         <h3>
                           ₹
                           {orders
-                            .reduce(
-                              (total, order) => total + order.totalAmount,
-                              0
-                            )
+                            .filter((order) => order.status !== "cancelled")
+                            .reduce((total, order) => {
+                              const orderTotal =
+                                order.orderSummary?.total ||
+                                order.totalAmount ||
+                                0;
+                              return total + orderTotal;
+                            }, 0)
                             .toLocaleString()}
                         </h3>
                         <p>Total Spent</p>
