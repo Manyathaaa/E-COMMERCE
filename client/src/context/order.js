@@ -1,4 +1,4 @@
-import { useState, useContext, createContext } from "react";
+import { useState, useContext, createContext, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
@@ -65,7 +65,7 @@ const OrderProvider = ({ children }) => {
   };
 
   // Get single order
-  const getOrder = async (orderId) => {
+  const getOrder = useCallback(async (orderId) => {
     try {
       setLoading(true);
       const { data } = await axios.get(
@@ -85,7 +85,7 @@ const OrderProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Cancel order
   const cancelOrder = async (orderId, reason) => {

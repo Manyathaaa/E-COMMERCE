@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useOrder } from "../context/order";
 import Layout from "../components/Layout/Layout";
@@ -9,21 +9,47 @@ const OrderConfirmation = () => {
   const navigate = useNavigate();
   const { getOrder, loading } = useOrder();
   const [order, setOrder] = useState(null);
+  const fetchedRef = useRef(false);
 
   useEffect(() => {
     const fetchOrder = async () => {
-      const result = await getOrder(orderId);
-      if (result.success) {
-        setOrder(result.order);
-      } else {
-        navigate("/user/orders");
+      // Prevent multiple fetches for the same order
+      if (!orderId || fetchedRef.current) {
+        return;
+      }
+
+      fetchedRef.current = true;
+
+      try {
+        console.log("Fetching order:", orderId);
+        const result = await getOrder(orderId);
+        console.log("Order fetch result:", result);
+
+        if (result.success) {
+          setOrder(result.order);
+        } else {
+          console.error("Failed to fetch order:", result.message);
+          // Add a small delay before redirecting to avoid immediate redirect loops
+          setTimeout(() => {
+            navigate("/user/orders");
+          }, 1000);
+        }
+      } catch (error) {
+        console.error("Error fetching order:", error);
+        // Add a small delay before redirecting to avoid immediate redirect loops
+        setTimeout(() => {
+          navigate("/user/orders");
+        }, 1000);
       }
     };
 
-    if (orderId) {
-      fetchOrder();
-    }
-  }, [orderId, getOrder, navigate]);
+    fetchOrder();
+
+    // Reset the ref when orderId changes
+    return () => {
+      fetchedRef.current = false;
+    };
+  }, [orderId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getStatusIcon = (status) => {
     const icons = {
@@ -51,7 +77,7 @@ const OrderConfirmation = () => {
     return colors[status] || "secondary";
   };
 
-  if (loading || !order) {
+  if (loading || !order || !orderId) {
     return (
       <Layout>
         <div className="container py-5">
