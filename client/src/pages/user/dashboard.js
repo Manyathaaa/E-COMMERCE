@@ -3,13 +3,14 @@ import Layout from "../../components/Layout/Layout";
 import UserMenu from "../../components/Layout/UserMenu";
 import { useAuth } from "../../context/auth";
 import { useCart } from "../../context/cart";
+import { useOrder } from "../../context/order";
 import { Link } from "react-router-dom";
-// import axios from "axios";
 import "./dashboard.css";
 
 const Dashboard = () => {
   const [auth] = useAuth();
   const { getCartItemCount } = useCart();
+  const { getUserOrders, getOrderSummary, orders } = useOrder();
   const [recentOrders, setRecentOrders] = useState([]);
   const [orderStats, setOrderStats] = useState({
     total: 0,
@@ -18,92 +19,58 @@ const Dashboard = () => {
     cancelled: 0,
   });
 
-  // Fetch recent orders (you might need to implement this API)
+  // Fetch recent orders and stats
   useEffect(() => {
     const fetchUserStats = async () => {
       try {
-        // This is a placeholder - you'll need to implement these APIs
-        // const { data } = await axios.get(`${process.env.REACT_APP_API}/api/v1/orders/user-orders`);
-        // setRecentOrders(data.orders || []);
-        // setOrderStats(data.stats || {});
+        if (auth?.user) {
+          // Fetch real order data
+          const result = await getUserOrders(1, "all");
+          if (result.success) {
+            const userOrders = result.orders || [];
+            setRecentOrders(userOrders);
 
-        // For new users, show empty state
-        // Check if user is newly registered (today) to determine if they should see dummy data
-        const userCreatedAt = auth?.user?.createdAt || new Date().toISOString();
-        const today = new Date().toDateString();
-        const userCreatedDate = new Date(userCreatedAt).toDateString();
-        const isNewUser = userCreatedDate === today;
+            // Calculate real stats from orders
+            const stats = {
+              total: userOrders.length,
+              pending: userOrders.filter((order) => 
+                order.status === "pending" || order.status === "confirmed"
+              ).length,
+              completed: userOrders.filter((order) => 
+                order.status === "delivered"
+              ).length,
+              cancelled: userOrders.filter((order) => 
+                order.status === "cancelled"
+              ).length,
+            };
 
-        if (isNewUser) {
-          // New user - no orders
-          setRecentOrders([]);
-          setOrderStats({
-            total: 0,
-            pending: 0,
-            completed: 0,
-            cancelled: 0,
-          });
-        } else {
-          // Existing user with orders (dummy data for demo)
-          const dummyOrders = [
-            {
-              _id: "1",
-              orderNumber: "ORD-001",
-              status: "delivered",
-              totalAmount: 2999,
-              createdAt: "2024-01-15T10:30:00Z",
-              products: [
-                {
-                  _id: "1",
-                  name: "Wireless Bluetooth Headphones",
-                  price: 1499,
-                  quantity: 2,
-                },
-              ],
-            },
-            {
-              _id: "2",
-              orderNumber: "ORD-002",
-              status: "shipped",
-              totalAmount: 1599,
-              createdAt: "2024-01-10T14:20:00Z",
-              products: [
-                {
-                  _id: "2",
-                  name: "Premium Smartphone Case",
-                  price: 799,
-                  quantity: 2,
-                },
-              ],
-            },
-          ];
-
-          setRecentOrders(dummyOrders);
-
-          // Calculate stats from dummy data
-          const stats = {
-            total: dummyOrders.length,
-            pending: dummyOrders.filter((order) => order.status === "pending")
-              .length,
-            completed: dummyOrders.filter(
-              (order) => order.status === "delivered"
-            ).length,
-            cancelled: dummyOrders.filter(
-              (order) => order.status === "cancelled"
-            ).length,
-          };
-
-          setOrderStats(stats);
+            setOrderStats(stats);
+          } else {
+            // If no orders or error, set empty state
+            setRecentOrders([]);
+            setOrderStats({
+              total: 0,
+              pending: 0,
+              completed: 0,
+              cancelled: 0,
+            });
+          }
         }
       } catch (error) {
         console.log("Error fetching user stats:", error);
+        // Set empty state on error
+        setRecentOrders([]);
+        setOrderStats({
+          total: 0,
+          pending: 0,
+          completed: 0,
+          cancelled: 0,
+        });
       }
     };
 
-    if (auth?.user) {
-      fetchUserStats();
-    }
-  }, [auth?.user]);
+    fetchUserStats();
+  }, [auth?.user, getUserOrders]);
 
   return (
     <Layout title={"Dashboard - Magica"}>
@@ -363,7 +330,7 @@ const Dashboard = () => {
                                     order.status.slice(1)}
                                 </span>
                                 <span className="order-total">
-                                  ₹{order.totalAmount.toLocaleString()}
+                                  ₹{(order.orderSummary?.total || order.totalAmount || 0).toLocaleString()}
                                 </span>
                               </div>
                             </div>

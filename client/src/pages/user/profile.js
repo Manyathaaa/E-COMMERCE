@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layout/Layout";
 import UserMenu from "../../components/Layout/UserMenu";
 import { useAuth } from "../../context/auth";
+import { useOrder } from "../../context/order";
 import { toast } from "react-toastify";
 import axios from "axios";
 import "./profile.css";
 
 const Profile = () => {
   const [auth, setAuth] = useAuth();
+  const { getUserOrders } = useOrder();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -43,59 +45,37 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserStats = async () => {
       try {
-        // TODO: Replace with actual API calls
-        // const ordersResponse = await axios.get(`${process.env.REACT_APP_API}/api/v1/orders/user-orders`);
-        // const wishlistResponse = await axios.get(`${process.env.REACT_APP_API}/api/v1/user/wishlist`);
-        // const reviewsResponse = await axios.get(`${process.env.REACT_APP_API}/api/v1/user/reviews`);
-
-        // For now, using dummy data consistent with dashboard
-        // Check if user is newly registered (today) to determine if they should see dummy data
-        const userCreatedAt = auth?.user?.createdAt || new Date().toISOString();
-        const today = new Date().toDateString();
-        const userCreatedDate = new Date(userCreatedAt).toDateString();
-        const isNewUser = userCreatedDate === today;
-
-        if (isNewUser) {
-          // New user - no orders
-          setOrderStats({
-            total: 0,
-            wishlist: 0,
-            reviews: 0,
-          });
-        } else {
-          // Existing user with orders (dummy data for demo)
-          const dummyOrders = [
-            {
-              _id: "1",
-              orderNumber: "ORD-001",
-              status: "delivered",
-              totalAmount: 2999,
-              createdAt: "2024-01-15T10:30:00Z",
-            },
-            {
-              _id: "2",
-              orderNumber: "ORD-002",
-              status: "shipped",
-              totalAmount: 1599,
-              createdAt: "2024-01-10T14:20:00Z",
-            },
-          ];
-
-          setOrderStats({
-            total: dummyOrders.length,
-            wishlist: 0, // TODO: Replace with actual wishlist count
-            reviews: 0, // TODO: Replace with actual reviews count
-          });
+        if (auth?.user) {
+          // Fetch real order data
+          const result = await getUserOrders(1, "all");
+          if (result.success) {
+            const userOrders = result.orders || [];
+            setOrderStats({
+              total: userOrders.length,
+              wishlist: 0, // TODO: Replace with actual wishlist count
+              reviews: 0, // TODO: Replace with actual reviews count
+            });
+          } else {
+            // If no orders or error, set empty state
+            setOrderStats({
+              total: 0,
+              wishlist: 0,
+              reviews: 0,
+            });
+          }
         }
       } catch (error) {
         console.log("Error fetching user stats:", error);
+        setOrderStats({
+          total: 0,
+          wishlist: 0,
+          reviews: 0,
+        });
       }
     };
 
-    if (auth?.user) {
-      fetchUserStats();
-    }
-  }, [auth?.user]);
+    fetchUserStats();
+  }, [auth?.user, getUserOrders]);
 
   // Handle input changes
   const handleChange = (e) => {
