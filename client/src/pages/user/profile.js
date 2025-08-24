@@ -5,7 +5,7 @@ import { useAuth } from "../../context/auth";
 import { useOrder } from "../../context/order";
 import { toast } from "react-toastify";
 import axios from "axios";
-import "./profile.css";
+import "../../css/profile.css";
 
 const Profile = () => {
   const [auth, setAuth] = useAuth();
@@ -375,7 +375,7 @@ const Profile = () => {
                         </div>
                       </div>
 
-                      <div className="security-card">
+                      {/* <div className="security-card">
                         <h5>
                           <i className="fas fa-shield-alt"></i> Account Security
                         </h5>
@@ -400,7 +400,7 @@ const Profile = () => {
                             Enable
                           </button>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>

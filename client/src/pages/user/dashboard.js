@@ -5,7 +5,7 @@ import { useAuth } from "../../context/auth";
 import { useCart } from "../../context/cart";
 import { useOrder } from "../../context/order";
 import { Link } from "react-router-dom";
-import "./dashboard.css";
+import "../../css/dashboard.css";
 
 const Dashboard = () => {
   const [auth] = useAuth();
