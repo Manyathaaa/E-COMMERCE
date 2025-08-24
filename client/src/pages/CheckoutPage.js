@@ -5,7 +5,7 @@ import { useCart } from "../context/cart";
 import { useAuth } from "../context/auth";
 import { useOrder } from "../context/order";
 import { toast } from "react-toastify";
-import "./CheckoutPage.css";
+import "../css/CheckoutPage.css";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();

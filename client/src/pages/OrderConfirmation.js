@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useOrder } from "../context/order";
 import { toast } from "react-hot-toast";
 import Layout from "../components/Layout/Layout";
-import "./OrderConfirmation.css";
+import "../css/OrderConfirmation.css";
 
 const OrderConfirmation = () => {
   const { orderId } = useParams();

@@ -4,7 +4,7 @@ import { useWishlist } from "../context/wishlist";
 import { useCart } from "../context/cart";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "./WishlistPage.css";
+import "../css/WishlistPage.css";
 
 const WishlistPage = () => {
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();

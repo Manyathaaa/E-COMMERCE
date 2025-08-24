@@ -5,7 +5,7 @@ import UserMenu from "../../components/Layout/UserMenu";
 import { useAuth } from "../../context/auth";
 import { useSupport } from "../../context/support";
 import { useOrder } from "../../context/order";
-import "./SupportTicket.css";
+import "../../css/SupportTicket.css";
 
 const CreateSupportTicket = () => {
   const [auth] = useAuth();
