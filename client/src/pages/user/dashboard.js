@@ -10,7 +10,7 @@ import "../../css/dashboard.css";
 const Dashboard = () => {
   const [auth] = useAuth();
   const { getCartItemCount } = useCart();
-  const { getUserOrders, getOrderSummary, orders } = useOrder();
+  const { getUserOrders } = useOrder();
   const [recentOrders, setRecentOrders] = useState([]);
   const [orderStats, setOrderStats] = useState({
     total: 0,

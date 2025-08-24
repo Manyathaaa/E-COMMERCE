@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Layout from "../../components/Layout/Layout";
 import UserMenu from "../../components/Layout/UserMenu";
-import { useAuth } from "../../context/auth";
+// import { useAuth } from "../../context/auth";
 import { useOrder } from "../../context/order";
 import { toast } from "react-hot-toast";
-import "./OrderDetails.css";
+import "../../css/OrderDetails.css";
 
 const OrderDetails = () => {
-  const [auth] = useAuth();
+  // Removed unused variable 'auth'
   const { orderId } = useParams();
   const navigate = useNavigate();
   const { getOrder, cancelOrder, loading } = useOrder();

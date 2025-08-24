@@ -4,7 +4,7 @@ import UserMenu from "../../components/Layout/UserMenu";
 import { useAuth } from "../../context/auth";
 import { useOrder } from "../../context/order";
 import { Link } from "react-router-dom";
-import "./orders.css";
+import "../../css/orders.css";
 
 // Simple date formatter function
 const formatDate = (dateString) => {
@@ -20,9 +20,7 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("all");
-  const [pagination, setPagination] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
-  const [auth] = useAuth();
+  // Removed unused variables 'pagination', 'setCurrentPage', 'auth'
   const { getUserOrders, cancelOrder, loading: orderLoading } = useOrder();
 
   // Fetch user orders
