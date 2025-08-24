@@ -20,7 +20,8 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("all");
-  // Removed unused variables 'pagination', 'setCurrentPage', 'auth'
+  const [pagination, setPagination] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
   const { getUserOrders, cancelOrder, loading: orderLoading } = useOrder();
 
   // Fetch user orders

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Layout from "../../components/Layout/Layout";
 import UserMenu from "../../components/Layout/UserMenu";
 import { useAuth } from "../../context/auth";
 import { useSupport } from "../../context/support";
-import "./SupportTicket.css";
+import "../../css/SupportTicket.css";
 
 const SupportTickets = () => {
   const [auth] = useAuth();
-  const navigate = useNavigate();
+  // Removed unused variable 'navigate'
   const {
     tickets,
     loading,
