@@ -48,8 +48,12 @@ const Login = () => {
         // Optional: set default header for future axios requests
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-        // Navigate to intended page or home
-        navigate(location.state || "/");
+        // Redirect based on user role
+        if (user.role === 1) {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/user/dashboard");
+        }
       } else {
         toast.error(res.data.message);
       }
