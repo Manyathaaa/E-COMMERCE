@@ -6,7 +6,7 @@ Welcome to your full-featured, secure, and scalable e-commerce platform built wi
 
 ## 🌐 Live Demo
 - **Backend:** [https://e-commerce-6jik.onrender.com/](https://e-commerce-6jik.onrender.com/)
-- **Frontend:** *(Add your deployed frontend URL here)*
+- **Frontend:** (https://e-commerce-sooty-delta-13.vercel.app/)
 
 ---
 
