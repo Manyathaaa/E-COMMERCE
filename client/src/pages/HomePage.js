@@ -249,27 +249,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section className="categories-section">
-        <div className="container">
-          <h2 className="section-title">Shop by Category</h2>
-          <div className="categories-grid">
-            {categories?.slice(0, 6).map((category) => (
-              <Link
-                key={category._id}
-                to={`/category/${category.slug}`}
-                className="category-card"
-              >
-                <div className="category-image">
-                  <span className="category-icon">🛍️</span>
-                </div>
-                <h4>{category.name}</h4>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Products Section */}
       <section className="products-section">
         <div className="container">
