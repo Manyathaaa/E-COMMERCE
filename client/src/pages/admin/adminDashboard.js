@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { dummyOrders } from "./orders";
+import { dummyUsers } from "./user";
+import { dummyProducts } from "./createproduct";
 import Layout from "../../components/Layout/Layout";
 import AdminMenu from "../../components/Layout/AdminMenu";
 import { useAuth } from "../../context/auth";
@@ -16,8 +19,15 @@ const AdminDashboard = () => {
   });
 
   useEffect(() => {
-    // ...existing code to fetch stats...
+    // Use dummy data for analytics
+    setStats({
+      totalProducts: dummyProducts?.length || 0,
+      totalCategories: 5, // You can update this if you have dummy categories
+      totalUsers: dummyUsers?.length || 0,
+      totalOrders: dummyOrders?.length || 0,
+    });
   }, []);
+  // ...existing code...
 
   return (
     <Layout title="Admin Dashboard - Magica">
@@ -32,6 +42,49 @@ const AdminDashboard = () => {
             {/* Main Content */}
             <div className="col-lg-9 col-md-8">
               <div className="admin-content">
+                {/* Analytics Section */}
+                <div className="row mb-4">
+                  <div className="col-md-3">
+                    <div className="card text-center shadow-sm">
+                      <div className="card-body">
+                        <h5 className="card-title">Total Orders</h5>
+                        <p className="display-6 fw-bold text-primary">
+                          {stats.totalOrders}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="card text-center shadow-sm">
+                      <div className="card-body">
+                        <h5 className="card-title">Total Revenue</h5>
+                        <p className="display-6 fw-bold text-success">
+                          ₹{dummyOrders.reduce((sum, o) => sum + o.amount, 0)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="card text-center shadow-sm">
+                      <div className="card-body">
+                        <h5 className="card-title">Total Products</h5>
+                        <p className="display-6 fw-bold text-info">
+                          {stats.totalProducts}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="card text-center shadow-sm">
+                      <div className="card-body">
+                        <h5 className="card-title">Total Users</h5>
+                        <p className="display-6 fw-bold text-warning">
+                          {stats.totalUsers}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 {/* Welcome Section */}
                 <div className="admin-welcome">
                   <div className="welcome-content">

@@ -6,6 +6,49 @@ import { toast } from "react-toastify";
 import { Select } from "antd";
 const { Option } = Select;
 
+export const dummyProducts = [
+  {
+    id: 1,
+    name: "Nike Air Max",
+    category: "Footwear",
+    price: 5999,
+    quantity: 10,
+    status: "Active",
+  },
+  {
+    id: 2,
+    name: "Apple Watch",
+    category: "Electronics",
+    price: 24999,
+    quantity: 5,
+    status: "Active",
+  },
+  {
+    id: 3,
+    name: "Levi's Jeans",
+    category: "Apparel",
+    price: 1999,
+    quantity: 20,
+    status: "Inactive",
+  },
+  {
+    id: 4,
+    name: "Samsung Galaxy S21",
+    category: "Electronics",
+    price: 69999,
+    quantity: 3,
+    status: "Active",
+  },
+  {
+    id: 5,
+    name: "Adidas T-shirt",
+    category: "Apparel",
+    price: 999,
+    quantity: 15,
+    status: "Active",
+  },
+];
+
 const CreateProduct = () => {
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState("");
@@ -134,6 +177,47 @@ const CreateProduct = () => {
             {/* Main Content */}
             <div className="col-lg-9 col-md-8">
               <div className="admin-content">
+                {/* Product List */}
+                <div className="product-list-card p-3 p-md-4 mb-4 shadow-sm rounded bg-white">
+                  <h3 className="mb-3">All Products</h3>
+                  <div className="table-responsive">
+                    <table className="table table-bordered table-hover bg-white">
+                      <thead className="table-light">
+                        <tr>
+                          <th>#</th>
+                          <th>Name</th>
+                          <th>Category</th>
+                          <th>Price (₹)</th>
+                          <th>Quantity</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {dummyProducts.map((product) => (
+                          <tr key={product.id}>
+                            <td>{product.id}</td>
+                            <td>{product.name}</td>
+                            <td>{product.category}</td>
+                            <td>{product.price}</td>
+                            <td>{product.quantity}</td>
+                            <td>
+                              <span
+                                className={`badge bg-${
+                                  product.status === "Active"
+                                    ? "success"
+                                    : "danger"
+                                }`}
+                              >
+                                {product.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
                 {/* Page Header */}
                 <div className="page-header">
                   <h1>Create New Product</h1>
