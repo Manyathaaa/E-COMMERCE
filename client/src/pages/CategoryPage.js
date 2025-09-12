@@ -120,10 +120,6 @@ const CategoryPage = () => {
                           {category.description ||
                             `Explore our ${category.name.toLowerCase()} collection`}
                         </p>
-                        <div className="category-arrow">
-                          <span>Shop Now</span>
-                          <i className="fas fa-arrow-right"></i>
-                        </div>
                       </div>
                       <div className="category-overlay"></div>
                     </div>
