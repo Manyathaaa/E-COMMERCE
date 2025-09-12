@@ -266,17 +266,24 @@ export const deleteAccountController = async (req, res) => {
       });
     }
 
-    // TODO: Before deleting user, you might want to:
-    // 1. Cancel any pending orders
-    // 2. Clear cart items
-    // 3. Remove from wishlists
-    // 4. Handle any related data cleanup
+    // Cancel all pending orders for the user
+    const Order = (await import("../models/orderModel.js")).default;
+    await Order.updateMany(
+      {
+        user: req.user._id,
+        status: { $in: ["pending", "confirmed", "processing"] },
+      },
+      { $set: { status: "cancelled" } }
+    );
+
+    // TODO: If you add cart/wishlist models, clear them here
 
     await usermodel.findByIdAndDelete(req.user._id);
 
     res.status(200).send({
       success: true,
-      message: "Account deleted successfully",
+      message:
+        "Account deleted successfully. All pending orders have been cancelled.",
     });
   } catch (error) {
     console.log("deleteAccount error:", error);

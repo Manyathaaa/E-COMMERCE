@@ -1,6 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import HomePage from "./pages/HomePage";
+import Terms from "./pages/Terms";
+import Shipping from "./pages/Shipping";
+import Returns from "./pages/Returns";
 import About from "./pages/About";
 import PageNotFound from "./pages/PageNotFound";
 import Contact from "./pages/Contact";
@@ -41,6 +44,9 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/policy" element={<Policy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/shipping" element={<Shipping />} />
+        <Route path="/returns" element={<Returns />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

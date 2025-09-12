@@ -31,6 +31,15 @@ const userschema = new mongoose.Schema(
       type: Number,
       default: 0, // default to 0 for normal users
     },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+    status: {
+      type: String,
+      enum: ["active", "inactive", "suspended"],
+      default: "active",
+    },
   },
   {
     timestamps: true, // correct spelling is timestamps, not timeStamp
