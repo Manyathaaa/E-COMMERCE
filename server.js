@@ -27,6 +27,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://e-commerce-sooty-delta-13.vercel.app",
+      "https://magica.manyathaaa.xyz",
     ],
     credentials: true,
   })
