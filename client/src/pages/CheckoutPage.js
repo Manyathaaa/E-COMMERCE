@@ -125,8 +125,23 @@ const CheckoutPage = () => {
         newErrors.cardNumber = "Card number is required";
       else if (!/^\d{16}$/.test(paymentInfo.cardNumber.replace(/\s/g, "")))
         newErrors.cardNumber = "Card number must be 16 digits";
-      if (!paymentInfo.expiryDate.trim())
+      if (!paymentInfo.expiryDate.trim()) {
         newErrors.expiryDate = "Expiry date is required";
+      } else if (!/^(0[1-9]|1[0-2])\/(\d{2})$/.test(paymentInfo.expiryDate)) {
+        newErrors.expiryDate = "Expiry date must be MM/YY";
+      } else {
+        // Check if expiry is in the future
+        const [month, year] = paymentInfo.expiryDate.split("/").map(Number);
+        const now = new Date();
+        const currentYear = now.getFullYear() % 100;
+        const currentMonth = now.getMonth() + 1;
+        if (
+          year < currentYear ||
+          (year === currentYear && month < currentMonth)
+        ) {
+          newErrors.expiryDate = "Card has expired";
+        }
+      }
       if (!paymentInfo.cvv.trim()) newErrors.cvv = "CVV is required";
       else if (!/^\d{3,4}$/.test(paymentInfo.cvv))
         newErrors.cvv = "CVV must be 3-4 digits";
@@ -538,9 +553,14 @@ const CheckoutPage = () => {
                             onChange={handlePaymentChange}
                             placeholder="MM/YY"
                             maxLength="5"
+                            aria-invalid={!!errors.expiryDate}
+                            aria-describedby="expiryDateError"
                           />
                           {errors.expiryDate && (
-                            <div className="invalid-feedback">
+                            <div
+                              className="invalid-feedback"
+                              id="expiryDateError"
+                            >
                               {errors.expiryDate}
                             </div>
                           )}
@@ -666,6 +686,7 @@ const CheckoutPage = () => {
                     type="submit"
                     className="btn btn-primary btn-lg w-100"
                     disabled={loading || orderLoading}
+                    aria-disabled={loading || orderLoading}
                   >
                     {loading || orderLoading ? (
                       <>

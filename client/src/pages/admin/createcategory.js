@@ -16,8 +16,21 @@ const CreateCategory = () => {
   // Create Category
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) {
+    const trimmedName = name.trim();
+    if (!trimmedName) {
       toast.error("Category name is required");
+      return;
+    }
+    if (trimmedName.length > 50) {
+      toast.error("Category name must be under 50 characters");
+      return;
+    }
+    if (
+      categories.some(
+        (cat) => cat.name.toLowerCase() === trimmedName.toLowerCase()
+      )
+    ) {
+      toast.error("Category name already exists");
       return;
     }
 
@@ -152,27 +165,15 @@ const CreateCategory = () => {
                       type="submit"
                       className="btn btn-primary"
                       disabled={loading}
+                      aria-disabled={loading}
                     >
-                      {loading ? (
-                        <>
-                          <span className="spinner-border spinner-border-sm me-2"></span>
-                          Creating...
-                        </>
-                      ) : (
-                        "Create Category"
-                      )}
+                      {loading ? "Creating..." : "Create Category"}
                     </button>
                   </form>
-                </div>
-
-                {/* Categories List */}
-                <div className="categories-list-card">
-                  <div className="card-header">
-                    <h3>All Categories</h3>
-                    <span className="category-count">
-                      {categories.length} categories
-                    </span>
-                  </div>
+                  <h3>All Categories</h3>
+                  <span className="category-count">
+                    {categories.length} categories
+                  </span>
 
                   {categories.length > 0 ? (
                     <div className="categories-grid">

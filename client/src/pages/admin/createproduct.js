@@ -47,11 +47,32 @@ const CreateProduct = () => {
     e.preventDefault();
 
     // Validation
-    if (!name || !description || !price || !quantity || !category) {
+    if (
+      !name.trim() ||
+      !description.trim() ||
+      !price ||
+      !quantity ||
+      !category
+    ) {
       toast.error("Please fill all required fields");
       return;
     }
-
+    if (name.length > 100) {
+      toast.error("Product name must be under 100 characters");
+      return;
+    }
+    if (description.length > 1000) {
+      toast.error("Description must be under 1000 characters");
+      return;
+    }
+    if (isNaN(price) || Number(price) <= 0) {
+      toast.error("Price must be a positive number");
+      return;
+    }
+    if (isNaN(quantity) || Number(quantity) < 0) {
+      toast.error("Quantity must be zero or positive");
+      return;
+    }
     if (!photo) {
       toast.error("Please select a product image");
       return;
@@ -145,13 +166,7 @@ const CreateProduct = () => {
                               ✕
                             </button>
                           </div>
-                        ) : (
-                          <div className="upload-placeholder">
-                            <div className="upload-icon">📷</div>
-                            <p>Click to upload product image</p>
-                            <small>Supports: JPG, PNG, GIF (Max: 5MB)</small>
-                          </div>
-                        )}
+                        ) : null}
                         <input
                           type="file"
                           id="photoInput"
@@ -312,6 +327,16 @@ const CreateProduct = () => {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="form-group mt-4">
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={loading}
+              aria-disabled={loading}
+            >
+              {loading ? "Creating..." : "Create Product"}
+            </button>
           </div>
         </div>
       </div>
