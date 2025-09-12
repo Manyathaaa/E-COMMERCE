@@ -3,8 +3,10 @@ import Layout from "../../components/Layout/Layout";
 import AdminMenu from "../../components/Layout/AdminMenu";
 import { useAuth } from "../../context/auth";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [auth] = useAuth();
   const [stats, setStats] = useState({
     totalProducts: 0,
@@ -14,31 +16,8 @@ const AdminDashboard = () => {
   });
 
   useEffect(() => {
-    fetchStats();
+    // ...existing code to fetch stats...
   }, []);
-
-  const fetchStats = async () => {
-    try {
-      // Fetch products count
-      const productsRes = await axios.get(
-        `${process.env.REACT_APP_API}/api/v1/products/product-count`
-      );
-
-      // Fetch categories count
-      const categoriesRes = await axios.get(
-        `${process.env.REACT_APP_API}/api/v1/category/get-category`
-      );
-
-      setStats({
-        totalProducts: productsRes.data?.total || 0,
-        totalCategories: categoriesRes.data?.category?.length || 0,
-        totalUsers: 150, // Mock data
-        totalOrders: 45, // Mock data
-      });
-    } catch (error) {
-      console.error("Error fetching stats:", error);
-    }
-  };
 
   return (
     <Layout title="Admin Dashboard - Magica">
@@ -121,41 +100,6 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
-                {/* Quick Actions */}
-                <div className="quick-actions">
-                  <h3>Quick Actions</h3>
-                  <div className="actions-grid">
-                    <div className="action-card">
-                      <div className="action-icon">➕</div>
-                      <h4>Add Product</h4>
-                      <p>Create a new product listing</p>
-                      <button className="btn btn-primary">
-                        Create Product
-                      </button>
-                    </div>
-                    <div className="action-card">
-                      <div className="action-icon">🏷️</div>
-                      <h4>Add Category</h4>
-                      <p>Create a new product category</p>
-                      <button className="btn btn-primary">
-                        Create Category
-                      </button>
-                    </div>
-                    <div className="action-card">
-                      <div className="action-icon">📊</div>
-                      <h4>View Analytics</h4>
-                      <p>Check sales and performance</p>
-                      <button className="btn btn-primary">View Reports</button>
-                    </div>
-                    <div className="action-card">
-                      <div className="action-icon">👥</div>
-                      <h4>Manage Users</h4>
-                      <p>View and manage user accounts</p>
-                      <button className="btn btn-primary">Manage Users</button>
-                    </div>
-                  </div>
-                </div>
-
                 {/* Recent Activity */}
                 <div className="recent-activity">
                   <h3>Recent Activity</h3>
@@ -164,36 +108,36 @@ const AdminDashboard = () => {
                       <div className="activity-icon">📦</div>
                       <div className="activity-content">
                         <p>
-                          <strong>New product added</strong>
+                          <strong>Product "Nike Air Max" updated</strong>
                         </p>
-                        <span>2 hours ago</span>
-                      </div>
-                    </div>
-                    <div className="activity-item">
-                      <div className="activity-icon">👤</div>
-                      <div className="activity-content">
-                        <p>
-                          <strong>New user registered</strong>
-                        </p>
-                        <span>4 hours ago</span>
-                      </div>
-                    </div>
-                    <div className="activity-item">
-                      <div className="activity-icon">🛒</div>
-                      <div className="activity-content">
-                        <p>
-                          <strong>Order #1234 completed</strong>
-                        </p>
-                        <span>6 hours ago</span>
+                        <span>15 minutes ago</span>
                       </div>
                     </div>
                     <div className="activity-item">
                       <div className="activity-icon">🏷️</div>
                       <div className="activity-content">
                         <p>
-                          <strong>Category updated</strong>
+                          <strong>Category "Footwear" deleted</strong>
                         </p>
-                        <span>1 day ago</span>
+                        <span>1 hour ago</span>
+                      </div>
+                    </div>
+                    <div className="activity-item">
+                      <div className="activity-icon">�</div>
+                      <div className="activity-content">
+                        <p>
+                          <strong>Product "Apple Watch" added</strong>
+                        </p>
+                        <span>2 hours ago</span>
+                      </div>
+                    </div>
+                    <div className="activity-item">
+                      <div className="activity-icon">🛒</div>
+                      <div className="activity-content">
+                        <p>
+                          <strong>Order #5678 marked as shipped</strong>
+                        </p>
+                        <span>3 hours ago</span>
                       </div>
                     </div>
                   </div>

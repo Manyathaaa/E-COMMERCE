@@ -128,11 +128,11 @@ const CreateCategory = () => {
 
   return (
     <Layout title="Manage Categories - Admin">
-      <div className="admin-dashboard">
+      <div className="admin-dashboard responsive-category-page">
         <div className="container-fluid">
           <div className="row">
             {/* Sidebar */}
-            <div className="col-lg-3 col-md-4">
+            <div className="col-lg-3 col-md-4 mb-3 mb-md-0">
               <AdminMenu />
             </div>
 
@@ -140,17 +140,24 @@ const CreateCategory = () => {
             <div className="col-lg-9 col-md-8">
               <div className="admin-content">
                 {/* Page Header */}
-                <div className="page-header">
-                  <h1>Manage Categories</h1>
-                  <p>Create and manage product categories for your store</p>
+                <div className="page-header text-center text-md-start mb-4">
+                  <h1 className="fw-bold">Manage Categories</h1>
+                  <p className="text-muted">
+                    Create and manage product categories for your store
+                  </p>
                 </div>
 
                 {/* Create Category Form */}
-                <div className="create-category-card">
-                  <h3>Create New Category</h3>
-                  <form onSubmit={handleSubmit} className="category-form">
-                    <div className="form-group">
-                      <label htmlFor="categoryName">Category Name</label>
+                <div className="create-category-card p-3 p-md-4 mb-4 shadow-sm rounded bg-white">
+                  <h3 className="mb-3">Create New Category</h3>
+                  <form
+                    onSubmit={handleSubmit}
+                    className="category-form d-flex flex-column flex-md-row align-items-md-center gap-3"
+                  >
+                    <div className="form-group flex-grow-1">
+                      <label htmlFor="categoryName" className="mb-1">
+                        Category Name
+                      </label>
                       <input
                         type="text"
                         id="categoryName"
@@ -163,63 +170,76 @@ const CreateCategory = () => {
                     </div>
                     <button
                       type="submit"
-                      className="btn btn-primary"
+                      className="btn btn-primary px-4 py-2"
                       disabled={loading}
                       aria-disabled={loading}
+                      style={{ minWidth: 150 }}
                     >
                       {loading ? "Creating..." : "Create Category"}
                     </button>
                   </form>
-                  <h3>All Categories</h3>
-                  <span className="category-count">
-                    {categories.length} categories
-                  </span>
+                </div>
+
+                <div className="all-categories-card p-3 p-md-4 shadow-sm rounded bg-white">
+                  <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <h3 className="mb-0">All Categories</h3>
+                    <span className="category-count text-muted">
+                      {categories.length} categories
+                    </span>
+                  </div>
 
                   {categories.length > 0 ? (
-                    <div className="categories-grid">
+                    <div className="categories-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                       {categories.map((category) => (
-                        <div key={category._id} className="category-item">
-                          <div className="category-info">
-                            <div className="category-icon">🏷️</div>
-                            <div className="category-details">
-                              <h4>{category.name}</h4>
-                              <p>Category ID: {category._id?.slice(-6)}</p>
+                        <div key={category._id} className="category-item col">
+                          <div className="category-info d-flex align-items-center gap-3 p-3 rounded bg-light h-100">
+                            <div className="category-icon fs-2">🏷️</div>
+                            <div className="category-details flex-grow-1">
+                              <h4 className="mb-1">{category.name}</h4>
+                              <p
+                                className="mb-0 text-muted"
+                                style={{ fontSize: "0.9rem" }}
+                              >
+                                ID: {category._id?.slice(-6)}
+                              </p>
                             </div>
-                          </div>
-                          <div className="category-actions">
-                            <button
-                              className="btn btn-outline-primary btn-sm"
-                              onClick={() => {
-                                setVisible(true);
-                                setUpdatedName(category.name);
-                                setSelected(category);
-                              }}
-                            >
-                              ✏️ Edit
-                            </button>
-                            <button
-                              className="btn btn-outline-danger btn-sm"
-                              onClick={() => {
-                                if (
-                                  window.confirm(
-                                    `Are you sure you want to delete "${category.name}" category?`
-                                  )
-                                ) {
-                                  handleDelete(category._id);
-                                }
-                              }}
-                            >
-                              🗑️ Delete
-                            </button>
+                            <div className="category-actions d-flex flex-column gap-2">
+                              <button
+                                className="btn btn-outline-primary btn-sm"
+                                onClick={() => {
+                                  setVisible(true);
+                                  setUpdatedName(category.name);
+                                  setSelected(category);
+                                }}
+                              >
+                                ✏️ Edit
+                              </button>
+                              <button
+                                className="btn btn-outline-danger btn-sm"
+                                onClick={() => {
+                                  if (
+                                    window.confirm(
+                                      `Are you sure you want to delete "${category.name}" category?`
+                                    )
+                                  ) {
+                                    handleDelete(category._id);
+                                  }
+                                }}
+                              >
+                                🗑️ Delete
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="empty-state">
-                      <div className="empty-icon">📂</div>
-                      <h4>No Categories Found</h4>
-                      <p>Create your first category to get started!</p>
+                    <div className="empty-state text-center py-5">
+                      <div className="empty-icon fs-1 mb-2">📂</div>
+                      <h4 className="mb-2">No Categories Found</h4>
+                      <p className="text-muted">
+                        Create your first category to get started!
+                      </p>
                     </div>
                   )}
                 </div>
@@ -233,8 +253,10 @@ const CreateCategory = () => {
                   className="category-modal"
                 >
                   <form onSubmit={handleUpdate} className="edit-category-form">
-                    <div className="form-group">
-                      <label htmlFor="editCategoryName">Category Name</label>
+                    <div className="form-group mb-3">
+                      <label htmlFor="editCategoryName" className="mb-1">
+                        Category Name
+                      </label>
                       <input
                         type="text"
                         id="editCategoryName"
@@ -244,7 +266,7 @@ const CreateCategory = () => {
                         required
                       />
                     </div>
-                    <div className="modal-actions">
+                    <div className="modal-actions d-flex justify-content-end gap-2">
                       <button
                         type="button"
                         className="btn btn-secondary"
