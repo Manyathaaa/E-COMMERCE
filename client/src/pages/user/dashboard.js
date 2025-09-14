@@ -11,6 +11,7 @@ const Dashboard = () => {
   const [auth] = useAuth();
   const { getCartItemCount } = useCart();
   const { getUserOrders } = useOrder();
+  const [theme, setTheme] = useState("light");
   const [recentOrders, setRecentOrders] = useState([]);
   const [orderStats, setOrderStats] = useState({
     total: 0,
@@ -18,6 +19,11 @@ const Dashboard = () => {
     completed: 0,
     cancelled: 0,
   });
+
+  const handleThemeChange = (e) => {
+    setTheme(e.target.value);
+    // You can add logic to update the app theme here
+  };
 
   // Fetch recent orders and stats
   useEffect(() => {
@@ -89,7 +95,7 @@ const Dashboard = () => {
                 {/* Welcome Header */}
                 <div className="welcome-section mb-4">
                   <div className="row align-items-center">
-                    <div className="col-md-8">
+                    <div className="col-md-6">
                       <h1 className="dashboard-title">
                         Welcome back, {auth?.user?.name}! 👋
                       </h1>
@@ -97,7 +103,21 @@ const Dashboard = () => {
                         Here's what's happening with your account today.
                       </p>
                     </div>
-                    <div className="col-md-4 text-end">
+                    <div className="col-md-3 text-center">
+                      <div className="theme-toggle">
+                        <label className="form-label me-2">Theme:</label>
+                        <select
+                          className="form-select form-select-sm"
+                          style={{ width: "auto", display: "inline-block" }}
+                          value={theme}
+                          onChange={handleThemeChange}
+                        >
+                          <option value="light">Light</option>
+                          <option value="dark">Dark</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="col-md-3 text-end">
                       <div className="user-avatar">
                         <div className="avatar-circle">
                           {auth?.user?.name?.charAt(0).toUpperCase()}

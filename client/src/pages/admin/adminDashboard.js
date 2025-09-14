@@ -11,12 +11,18 @@ import { useNavigate } from "react-router-dom";
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [auth] = useAuth();
+  const [theme, setTheme] = useState("light");
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalCategories: 0,
     totalUsers: 0,
     totalOrders: 0,
   });
+
+  const handleThemeChange = (e) => {
+    setTheme(e.target.value);
+    // You can add logic to update the app theme here
+  };
 
   useEffect(() => {
     // Use dummy data for analytics
@@ -95,6 +101,18 @@ const AdminDashboard = () => {
                     <div className="avatar-circle">
                       {auth?.user?.name?.charAt(0).toUpperCase()}
                     </div>
+                  </div>
+                  <div className="theme-toggle">
+                    <label className="form-label me-2">Theme:</label>
+                    <select
+                      className="form-select form-select-sm"
+                      style={{ width: "auto", display: "inline-block" }}
+                      value={theme}
+                      onChange={handleThemeChange}
+                    >
+                      <option value="light">Light</option>
+                      <option value="dark">Dark</option>
+                    </select>
                   </div>
                 </div>
 
