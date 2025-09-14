@@ -1,0 +1,103 @@
+/* Light Theme (Default) */
+.light-theme {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --card-bg: #ffffff;
+  --border-color: #dee2e6;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+}
+
+/* Dark Theme */
+.dark-theme {
+  --bg-color: #1a1a1a;
+  --text-color: #ffffff;
+  --card-bg: #2d2d2d;
+  --border-color: #444444;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --primary-color: #0d6efd;
+  --secondary-color: #6c757d;
+}
+
+/* Apply theme variables */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 0.125rem 0.25rem var(--shadow) !important;
+}
+
+.table {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.table th,
+.table td {
+  border-color: var(--border-color) !important;
+}
+
+.form-control,
+.form-select {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+.admin-sidebar,
+.user-sidebar {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.nav-item {
+  color: var(--text-color) !important;
+}
+
+.nav-item:hover {
+  background-color: var(--border-color) !important;
+}
+
+.nav-item.active {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.btn-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.modal-content {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
+.dropdown-menu {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+.dropdown-item {
+  color: var(--text-color) !important;
+}
+
+.dropdown-item:hover {
+  background-color: var(--border-color) !important;
+}
