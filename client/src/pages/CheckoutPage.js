@@ -641,7 +641,7 @@ const CheckoutPage = () => {
                       <div key={item._id} className="summary-item">
                         <div className="item-image">
                           <img
-                            src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${item._id}`}
+                            src={item.photoUrl || `${process.env.REACT_APP_API}/api/v1/products/product-photo/${item._id}`}
                             alt={item.name}
                             onError={(e) => {
                               e.target.src = "/api/placeholder/60/60";

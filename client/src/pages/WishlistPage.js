@@ -90,7 +90,7 @@ const WishlistPage = () => {
                       <div className="wishlist-card">
                         <div className="card-image">
                           <img
-                            src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
+                            src={product.photoUrl || `${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
                             alt={product.name}
                             onError={(e) => {
                               e.target.src = "/api/placeholder/300/300";

@@ -20,6 +20,7 @@ const UpdateProduct = () => {
   const [quantity, setQuantity] = useState("");
   const [shipping, setShipping] = useState(false);
   const [photo, setPhoto] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
   const [productId, setProductId] = useState("");
 
   // Get Single Product
@@ -36,6 +37,7 @@ const UpdateProduct = () => {
       setCategory(p.category?._id);
       setShipping(p.shipping);
       setProductId(p._id);
+      setPhotoUrl(p.photoUrl || "");
     } catch (error) {
       toast.error("Failed to fetch product");
     }
@@ -169,7 +171,7 @@ const UpdateProduct = () => {
                 ) : (
                   <div className="text-center">
                     <img
-                      src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${productId}`}
+                      src={photoUrl || `${process.env.REACT_APP_API}/api/v1/products/product-photo/${productId}`}
                       alt="product_photo"
                       height="200px"
                       className="img img-responsive"

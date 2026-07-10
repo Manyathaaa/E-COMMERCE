@@ -30,7 +30,7 @@ const QuickView = ({ product, isOpen, onClose }) => {
             <div className="col-md-6">
               <div className="quick-view-image">
                 <img
-                  src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
+                  src={product.photoUrl || `${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
                   alt={product.name}
                   className="img-fluid"
                   onError={(e) => {

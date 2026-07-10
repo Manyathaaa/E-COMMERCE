@@ -219,8 +219,8 @@ const OrderDetails = () => {
                               <img
                                 src={
                                   product.product?._id
-                                    ? `${process.env.REACT_APP_API}/api/v1/products/product-photo/${product.product._id}`
-                                    : `${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`
+                                    ? (product.product?.photoUrl || `${process.env.REACT_APP_API}/api/v1/products/product-photo/${product.product._id}`)
+                                    : (product.photoUrl || `${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`)
                                 }
                                 alt={product.name}
                                 onError={(e) => {

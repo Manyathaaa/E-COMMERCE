@@ -42,7 +42,7 @@ const Products = () => {
                 <Link key={p._id} to={`/admin/product/${p.slug}`}>
                   <div className="card" style={{ width: "18rem" }}>
                     <img
-                      src={`http://localhost:5000/api/v1/products/product-photo/${p._id}`}
+                      src={p.photoUrl || `http://localhost:5000/api/v1/products/product-photo/${p._id}`}
                       onError={(e) => {
                         e.target.onerror = null; // Prevent infinite loop
                         e.target.src = "/no-image.png"; // Path to your fallback image

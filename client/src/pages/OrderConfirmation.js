@@ -181,8 +181,8 @@ const OrderConfirmation = () => {
                         className="product-item d-flex align-items-center mb-3"
                       >
                         <img
-                          src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${item.product._id}`}
-                          alt={item.name}
+                          src={item.product.photoUrl || `${process.env.REACT_APP_API}/api/v1/products/product-photo/${item.product._id}`}
+                          alt={item.product.name}
                           className="product-image me-3"
                         />
                         <div className="flex-grow-1">

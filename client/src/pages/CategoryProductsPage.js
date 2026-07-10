@@ -196,7 +196,7 @@ const CategoryProductsPage = () => {
                       {/* Product Image */}
                       <div className="product-image-wrapper">
                         <img
-                          src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
+                          src={product.photoUrl || `${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
                           alt={product.name}
                           className="product-image"
                           loading="lazy"

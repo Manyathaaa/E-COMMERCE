@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useCart } from "../context/cart";
 import { useWishlist } from "../context/wishlist";
 import { toast } from "react-toastify";
+import QuickView from "../components/QuickView";
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
@@ -20,6 +21,7 @@ const HomePage = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [isFiltering, setIsFiltering] = useState(false);
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
 
   // Load all categories
   const getAllCategory = async () => {
@@ -338,7 +340,7 @@ const HomePage = () => {
                       <div className="product-image-container">
                         <div className="product-image">
                           <img
-                            src={`${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
+                            src={product.photoUrl || `${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
                             alt={product.name}
                             onError={(e) => {
                               e.target.onerror = null;
@@ -368,7 +370,10 @@ const HomePage = () => {
                           ></i>
                         </button>
                         <div className="product-overlay">
-                          <button className="btn btn-primary">
+                          <button 
+                            className="btn btn-primary"
+                            onClick={() => setQuickViewProduct(product)}
+                          >
                             Quick View
                           </button>
                         </div>
@@ -459,6 +464,13 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+      {/* Quick View Modal */}
+      <QuickView
+        product={quickViewProduct}
+        isOpen={!!quickViewProduct}
+        onClose={() => setQuickViewProduct(null)}
+      />
     </div>
   );
 };
