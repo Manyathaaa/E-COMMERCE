@@ -51,21 +51,7 @@ export const getAdminDashboardStatsController = async (req, res) => {
       };
     });
 
-    // Dummy historical data if the app is too new
-    let displayIncomeByMonth = incomeByMonth;
-    if (displayIncomeByMonth.length === 0 || displayIncomeByMonth.length === 1) {
-      const baseRev = displayIncomeByMonth.length === 1 ? displayIncomeByMonth[0].revenue : 0;
-      const today = new Date();
-      displayIncomeByMonth = [];
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-        const monthName = d.toLocaleString('default', { month: 'short' });
-        displayIncomeByMonth.push({
-          date: `${monthName} ${d.getFullYear()}`,
-          revenue: i === 0 ? baseRev : Math.floor(Math.random() * 50000) + 10000 
-        });
-      }
-    }
+    const displayIncomeByMonth = incomeByMonth;
 
     // Group products by category
     const productsByCategoryResult = await productModel.aggregate([

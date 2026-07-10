@@ -38,6 +38,7 @@ import SupportTickets from "./pages/user/SupportTickets";
 import CreateSupportTicket from "./pages/user/CreateSupportTicket";
 import SupportTicketDetail from "./pages/user/SupportTicketDetail";
 import Header from "./components/Layout/Header";
+import ProductDetailsPage from "./pages/ProductDetailsPage";
 function App() {
   return (
     <div className="App">
@@ -55,6 +56,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/category" element={<CategoryPage />} />
         <Route path="/category/:slug" element={<CategoryProductsPage />} />
+        <Route path="/products/:id" element={<ProductDetailsPage />} />
         <Route path="/support" element={<SupportTickets />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/wishlist" element={<WishlistPage />} />

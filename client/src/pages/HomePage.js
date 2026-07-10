@@ -7,6 +7,7 @@ import { useCart } from "../context/cart";
 import { useWishlist } from "../context/wishlist";
 import { toast } from "react-toastify";
 import QuickView from "../components/QuickView";
+import ProductCard from "../components/Cards/ProductCard";
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
@@ -336,67 +337,23 @@ const HomePage = () => {
               ) : products.length > 0 ? (
                 <div className="products-grid">
                   {products.map((product) => (
-                    <div key={product._id} className="product-card">
-                      <div className="product-image-container">
-                        <div className="product-image">
-                          <img
-                            src={product.photoUrl || `${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
-                            alt={product.name}
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src =
-                                "https://via.placeholder.com/300x300?text=No+Image";
-                            }}
-                          />
-                        </div>
-                        {/* Wishlist Heart Button */}
-                        <button
-                          className={`heart-button ${
-                            isInWishlist(product._id) ? "active" : ""
-                          }`}
-                          onClick={() => handleWishlistToggle(product)}
-                          title={
-                            isInWishlist(product._id)
-                              ? "Remove from wishlist"
-                              : "Add to wishlist"
-                          }
-                        >
-                          <i
-                            className={
-                              isInWishlist(product._id)
-                                ? "fas fa-heart"
-                                : "far fa-heart"
-                            }
-                          ></i>
-                        </button>
-                        <div className="product-overlay">
-                          <button 
-                            className="btn btn-primary"
-                            onClick={() => setQuickViewProduct(product)}
-                          >
-                            Quick View
-                          </button>
-                        </div>
-                      </div>
-                      <div className="product-info">
-                        <h5 className="product-name">{product.name}</h5>
-                        <p className="product-description">
-                          {product.description?.substring(0, 60)}...
-                        </p>
-                        <div className="product-price">₹{product.price}</div>
-                        <div className="product-actions">
-                          <button
-                            className="btn btn-primary btn-sm"
-                            onClick={() => {
-                              addToCart(product);
-                              toast.success(`${product.name} added to cart!`);
-                            }}
-                          >
-                            Add to Cart
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                    <ProductCard 
+                      key={product._id} 
+                      product={product}
+                      isInWishlist={isInWishlist}
+                      handleWishlistToggle={handleWishlistToggle}
+                      addToCart={(cartItem) => {
+                        // Check if already in cart
+                        const existingItemIndex = cart.findIndex((item) => item._id === product._id);
+                        if (existingItemIndex !== -1) {
+                          toast.info("Item is already in cart");
+                          return;
+                        }
+                        setCart([...cart, cartItem]);
+                        localStorage.setItem("cart", JSON.stringify([...cart, cartItem]));
+                      }}
+                      setQuickViewProduct={setQuickViewProduct}
+                    />
                   ))}
                 </div>
               ) : (

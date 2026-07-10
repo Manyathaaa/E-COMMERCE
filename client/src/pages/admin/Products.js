@@ -12,7 +12,7 @@ const Products = () => {
   //getall products
   const getAllProducts = async () => {
     try {
-      const { data } = await axios.get("/api/v1/products/get-product");
+      const { data } = await axios.get("/api/products");
       setProducts(data.products);
     } catch (error) {
       console.log(error);
@@ -49,7 +49,7 @@ const Products = () => {
                 <tr>
                   <th>Product</th>
                   <th>Category</th>
-                  <th>Price</th>
+                  <th>Price & Discount</th>
                   <th>Stock</th>
                   <th>Actions</th>
                 </tr>
@@ -60,10 +60,10 @@ const Products = () => {
                     <td>
                       <div className="d-flex align-items-center gap-3">
                         <img 
-                          src={`/api/v1/products/product-photo/${p._id}`}
+                          src={p.images?.[0] || p.photoUrl || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop"}
                           alt={p.name} 
                           style={{ width: 48, height: 48, borderRadius: '8px', objectFit: 'cover' }}
-                          onError={(e) => { e.target.src = "https://via.placeholder.com/48?text=No+Image" }}
+                          onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop" }}
                         />
                         <div>
                           <div style={{ fontWeight: '600', color: 'var(--admin-text-main)' }}>
@@ -80,8 +80,21 @@ const Products = () => {
                         {p.category?.name || "Uncategorized"}
                       </span>
                     </td>
-                    <td style={{ fontWeight: '600' }}>
-                      ₹{p.price}
+                    <td>
+                      {p.discount > 0 ? (
+                        <div>
+                          <div style={{ fontWeight: '600', color: 'var(--status-danger-text)' }}>
+                            ₹{(p.price - (p.price * p.discount / 100)).toLocaleString('en-IN')}
+                          </div>
+                          <div style={{ fontSize: '12px', textDecoration: 'line-through', color: 'var(--admin-text-secondary)' }}>
+                            ₹{p.price.toLocaleString('en-IN')} ({p.discount}% OFF)
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ fontWeight: '600' }}>
+                          ₹{p.price.toLocaleString('en-IN')}
+                        </div>
+                      )}
                     </td>
                     <td>
                       {p.quantity > 0 ? (

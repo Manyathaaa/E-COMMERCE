@@ -281,18 +281,21 @@ const Orders = () => {
                           <div className="order-body">
                             <div className="products-list">
                               {order.products?.map((product) => (
-                                <div key={product._id} className="product-item">
-                                  <div className="product-info">
-                                    <h6>{product.name}</h6>
-                                    <p>
-                                      Qty: {product.quantity} × ₹{product.price}
+                                <div key={product._id} className="product-item d-flex align-items-center mb-2">
+                                  <img 
+                                    src={product.image || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop"} 
+                                    alt={product.name} 
+                                    style={{width: "40px", height: "40px", objectFit: "cover", borderRadius: "5px", marginRight: "10px"}}
+                                    onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop" }}
+                                  />
+                                  <div className="product-info flex-grow-1">
+                                    <h6 className="mb-0">{product.name}</h6>
+                                    <p className="mb-0 text-muted" style={{fontSize: "0.85em"}}>
+                                      Qty: {product.quantity} × ₹{product.price?.toLocaleString('en-IN')}
                                     </p>
                                   </div>
-                                  <div className="product-amount">
-                                    ₹
-                                    {(
-                                      product.quantity * product.price
-                                    ).toLocaleString()}
+                                  <div className="product-amount fw-bold">
+                                    ₹{(product.quantity * product.price).toLocaleString('en-IN')}
                                   </div>
                                 </div>
                               ))}

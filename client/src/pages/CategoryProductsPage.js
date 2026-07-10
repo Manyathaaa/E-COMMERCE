@@ -5,6 +5,7 @@ import Layout from "../components/Layout/Layout";
 import { useCart } from "../context/cart";
 import { useWishlist } from "../context/wishlist";
 import { toast } from "react-toastify";
+import ProductCard from "../components/Cards/ProductCard";
 
 const CategoryProductsPage = () => {
   const { slug } = useParams();
@@ -178,133 +179,14 @@ const CategoryProductsPage = () => {
                     className="col-lg-3 col-md-4 col-sm-6"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    <div className="product-card modern-card">
-                      {/* Wishlist & Stock Badge */}
-                      <div className="product-badges">
-                        {product.quantity === 0 && (
-                          <span className="badge out-of-stock-badge">
-                            Out of Stock
-                          </span>
-                        )}
-                        {product.quantity > 0 && product.quantity <= 5 && (
-                          <span className="badge low-stock-badge">
-                            Only {product.quantity} left
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Product Image */}
-                      <div className="product-image-wrapper">
-                        <img
-                          src={product.photoUrl || `${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
-                          alt={product.name}
-                          className="product-image"
-                          loading="lazy"
-                          onError={(e) => {
-                            e.target.src =
-                              "https://via.placeholder.com/400x300?text=No+Image+Available&bg=f8f9fa&color=6c757d";
-                          }}
-                        />
-                        <div className="product-overlay">
-                          <div className="overlay-actions">
-                            <button
-                              className="action-btn view-btn"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                navigate(`/product/${product.slug}`);
-                              }}
-                              title="Quick View"
-                            >
-                              <i className="fas fa-eye"></i>
-                            </button>
-                            <button
-                              className={`action-btn wishlist-btn ${
-                                isInWishlist(product._id) ? "active" : ""
-                              }`}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleWishlistToggle(product);
-                              }}
-                              title={
-                                isInWishlist(product._id)
-                                  ? "Remove from wishlist"
-                                  : "Add to wishlist"
-                              }
-                            >
-                              <i
-                                className={
-                                  isInWishlist(product._id)
-                                    ? "fas fa-heart"
-                                    : "far fa-heart"
-                                }
-                              ></i>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Product Info */}
-                      <div className="product-content">
-                        <div className="product-category">{category.name}</div>
-                        <h5 className="product-title">{product.name}</h5>
-                        <p className="product-description">
-                          {product.description?.length > 55
-                            ? `${product.description.substring(0, 55)}...`
-                            : product.description ||
-                              "Premium quality product with excellent features"}
-                        </p>
-
-                        {/* Rating Stars */}
-                        <div className="product-rating">
-                          {[...Array(5)].map((_, i) => (
-                            <i
-                              key={i}
-                              className={`fas fa-star ${
-                                i < 4 ? "star-filled" : "star-empty"
-                              }`}
-                            ></i>
-                          ))}
-                          <span className="rating-text">(4.0)</span>
-                        </div>
-
-                        {/* Price & Actions */}
-                        <div className="product-bottom">
-                          <div className="price-section">
-                            <span className="current-price">
-                              ₹{product.price}
-                            </span>
-                            <span className="original-price">
-                              ₹{Math.round(product.price * 1.2)}
-                            </span>
-                            <span className="discount-badge">17% OFF</span>
-                          </div>
-
-                          <div className="product-actions">
-                            <button
-                              className={`btn-add-cart ${
-                                product.quantity === 0 ? "disabled" : ""
-                              }`}
-                              onClick={() => handleAddToCart(product)}
-                              disabled={product.quantity === 0}
-                            >
-                              {product.quantity === 0 ? (
-                                <>
-                                  <i className="fas fa-ban"></i>
-                                  <span>Sold Out</span>
-                                </>
-                              ) : (
-                                <>
-                                  <i className="fas fa-shopping-cart"></i>
-                                  <span>Add to Cart</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <ProductCard 
+                      product={product}
+                      isInWishlist={isInWishlist}
+                      handleWishlistToggle={handleWishlistToggle}
+                      addToCart={(cartItem) => {
+                        handleAddToCart(product); // Existing logic inside CategoryProductsPage uses this wrapper
+                      }}
+                    />
                   </div>
                 ))}
               </div>

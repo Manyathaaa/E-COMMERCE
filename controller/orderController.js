@@ -37,13 +37,15 @@ export const createOrderController = async (req, res) => {
         });
       }
 
-      const itemTotal = product.price * item.quantity;
+      const finalPrice = product.price - (product.price * (product.discount || 0)) / 100;
+      const itemTotal = finalPrice * item.quantity;
       calculatedSubtotal += itemTotal;
 
       orderProducts.push({
         product: product._id,
         name: product.name,
-        price: product.price,
+        image: product.images?.[0] || product.photoUrl || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop",
+        price: finalPrice,
         quantity: item.quantity,
         total: itemTotal,
       });

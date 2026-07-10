@@ -11,6 +11,7 @@ import orderroute from "./routes/orderRoutes.js";
 import supportroute from "./routes/supportRoutes.js";
 import analyticsroute from "./routes/analyticsRoutes.js";
 import formidable from "express-formidable";
+import productApiRoutes from "./routes/productApiRoutes.js";
 
 // env config
 dotenv.config();
@@ -42,6 +43,7 @@ app.use("/api/v1/user", userroute);
 app.use("/api/v1/orders", orderroute);
 app.use("/api/v1/support", supportroute);
 app.use("/api/v1/analytics", analyticsroute);
+app.use("/api/products", productApiRoutes);
 
 // Home route
 app.get("/", (req, res) => {

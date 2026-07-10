@@ -98,11 +98,11 @@ const CartPage = () => {
                       <div key={item._id} className="cart-item">
                         <div className="item-image">
                           <img
-                            src={item.photoUrl || `${process.env.REACT_APP_API}/api/v1/products/product-photo/${item._id}`}
+                            src={item.image || item.photoUrl || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop"}
                             alt={item.name}
                             onError={(e) => {
                               e.target.src =
-                                "https://via.placeholder.com/150x150?text=No+Image";
+                                "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop";
                             }}
                           />
                         </div>
@@ -113,9 +113,16 @@ const CartPage = () => {
                             {item.description?.substring(0, 100)}...
                           </p>
                           <div className="item-price">
-                            <span className="price">₹{item.price}</span>
-                            <span className="total-price">
-                              Total: ₹{(item.price * item.quantity).toFixed(2)}
+                            {item.discount > 0 ? (
+                              <div className="d-flex flex-column">
+                                <span className="price text-danger fw-bold">₹{item.finalPrice?.toLocaleString('en-IN') || item.price?.toLocaleString('en-IN')}</span>
+                                <span className="text-muted text-decoration-line-through" style={{fontSize: '0.8em'}}>₹{item.price?.toLocaleString('en-IN')} ({item.discount}% OFF)</span>
+                              </div>
+                            ) : (
+                              <span className="price fw-bold">₹{item.price?.toLocaleString('en-IN')}</span>
+                            )}
+                            <span className="total-price fw-bold mt-1">
+                              Total: ₹{((item.finalPrice || item.price) * item.quantity).toLocaleString('en-IN')}
                             </span>
                           </div>
                         </div>

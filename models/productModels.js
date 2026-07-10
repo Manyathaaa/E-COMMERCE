@@ -34,6 +34,26 @@ const productSchema = new mongoose.Schema(
     photoUrl: {
       type: String,
     },
+    images: {
+      type: [String],
+      default: [],
+    },
+    brand: {
+      type: String,
+      default: "Generic",
+    },
+    discount: {
+      type: Number,
+      default: 0,
+    },
+    rating: {
+      type: Number,
+      default: 0,
+    },
+    availabilityStatus: {
+      type: String,
+      default: "In Stock",
+    },
     shipping: {
       type: Boolean,
     },

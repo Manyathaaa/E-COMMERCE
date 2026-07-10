@@ -14,7 +14,7 @@ const Customers = () => {
     const fetchUsers = async () => {
       try {
         // Fetch users using the existing endpoint
-        const { data } = await axios.get("/api/v1/auth/all-users");
+        const { data } = await axios.get("/api/v1/user/admin/users");
         if (data.success) {
           // Filter out admins
           const customers = data.users.filter(u => u.role !== 1);

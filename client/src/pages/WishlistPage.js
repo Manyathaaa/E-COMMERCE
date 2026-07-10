@@ -90,17 +90,17 @@ const WishlistPage = () => {
                       <div className="wishlist-card">
                         <div className="card-image">
                           <img
-                            src={product.photoUrl || `${process.env.REACT_APP_API}/api/v1/products/product-photo/${product._id}`}
+                            src={product.images?.[0] || product.photoUrl || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop"}
                             alt={product.name}
                             onError={(e) => {
-                              e.target.src = "/api/placeholder/300/300";
+                              e.target.src = "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop";
                             }}
                           />
                           <div className="card-overlay">
                             <button
                               className="btn btn-white btn-sm"
                               onClick={() =>
-                                navigate(`/product/${product.slug}`)
+                                navigate(`/products/${product._id}`)
                               }
                             >
                               <i className="fas fa-eye"></i>
@@ -115,9 +115,20 @@ const WishlistPage = () => {
                             {product.description.substring(0, 60)}...
                           </p>
                           <div className="product-price">
-                            <span className="current-price">
-                              ₹{product.price}
-                            </span>
+                            {product.discount > 0 ? (
+                              <div className="d-flex align-items-center">
+                                <span className="current-price text-danger fw-bold me-2">
+                                  ₹{(product.price - (product.price * product.discount) / 100).toLocaleString('en-IN')}
+                                </span>
+                                <span className="text-muted text-decoration-line-through" style={{fontSize: '0.85em'}}>
+                                  ₹{product.price.toLocaleString('en-IN')}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="current-price">
+                                ₹{product.price.toLocaleString('en-IN')}
+                              </span>
+                            )}
                           </div>
 
                           <div className="card-actions">
