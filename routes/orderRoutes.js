@@ -3,10 +3,9 @@ import {
   createOrderController,
   getUserOrdersController,
   getOrderController,
-  //   updateOrderStatusController,
+  updateOrderStatusController,
   cancelOrderController,
-  //   getAllOrdersController,
-  //   getOrderStatsController,
+  getAllOrdersController,
 } from "../controller/orderController.js";
 import { requireSignIn, isAdmin } from "../middlewares/authmiddleware.js";
 
@@ -18,14 +17,13 @@ router.get("/user-orders", requireSignIn, getUserOrdersController);
 router.get("/:orderId", requireSignIn, getOrderController);
 router.put("/:orderId/cancel", requireSignIn, cancelOrderController);
 
-// // Admin routes
-// router.get("/admin/all-orders", requireSignIn, isAdmin, getAllOrdersController);
-// router.put(
-//   "/admin/:orderId/status",
-//   requireSignIn,
-//   isAdmin,
-//   updateOrderStatusController
-// );
-// router.get("/admin/stats", requireSignIn, isAdmin, getOrderStatsController);
+// Admin routes
+router.get("/admin/all-orders", requireSignIn, isAdmin, getAllOrdersController);
+router.put(
+  "/admin/:orderId/status",
+  requireSignIn,
+  isAdmin,
+  updateOrderStatusController
+);
 
 export default router;

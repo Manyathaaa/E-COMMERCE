@@ -1,70 +1,114 @@
-import { Layout } from "antd";
-import React, { useEffect, useState } from "react";
-import AdminMenu from "../../components/Layout/AdminMenu";
+import React, { useState, useEffect } from "react";
+import AdminLayout from "../../components/Admin/AdminLayout";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { Plus, Edit2, Trash2 } from "lucide-react";
+
 const Products = () => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch all products
+  //getall products
   const getAllProducts = async () => {
     try {
-      const { data } = await axios.get(
-        "http://localhost:5000/api/v1/products/get-products"
-      );
-      console.log("API response:", data);
-      setProducts(data.products); // Ensure this matches your backend key (likely "products")
+      const { data } = await axios.get("/api/v1/products/get-product");
+      setProducts(data.products);
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong while fetching products.");
+      toast.error("Something Went Wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
+  //lifecycle method
   useEffect(() => {
     getAllProducts();
   }, []);
 
   return (
-    <Layout>
-      <div className="row">
-        <div className="col-md-3">
-          <AdminMenu />
+    <AdminLayout title={"All Products - Admin"}>
+      <div className="ent-card">
+        <div className="chart-header">
+          <h3 className="chart-title">Products Management</h3>
+          <Link to="/admin/create-product" className="ent-btn">
+            <Plus size={18} /> Add Product
+          </Link>
         </div>
-        <div className="col-md-9 d-flex">
-          <h1 className="text-center">ALL PRODUCT LIST</h1>
 
-          {products.length === 0 ? (
-            <p className="text-center">No products found.</p>
-          ) : (
-            <div className="d-flex flex-wrap gap-3 justify-content-center">
-              {products?.map((p) => (
-                <Link key={p._id} to={`/admin/product/${p.slug}`}>
-                  <div className="card" style={{ width: "18rem" }}>
-                    <img
-                      src={p.photoUrl || `http://localhost:5000/api/v1/products/product-photo/${p._id}`}
-                      onError={(e) => {
-                        e.target.onerror = null; // Prevent infinite loop
-                        e.target.src = "/no-image.png"; // Path to your fallback image
-                      }}
-                      className="card-img-top"
-                      alt={p.name}
-                      style={{ height: "200px", objectFit: "cover" }}
-                    />
-
-                    <div className="card-body">
-                      <h5 className="card-title">{p.name}</h5>
-                      <p className="card-text">{p.description}</p>
-                      <p className="card-text fw-bold">₹ {p.price}</p>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}  
-        </div>
+        {loading ? (
+          <div className="text-center p-5">
+            <i className="fas fa-spinner fa-spin fa-2x"></i>
+            <p className="mt-2">Loading Products...</p>
+          </div>
+        ) : (
+          <div className="ent-table-container">
+            <table className="ent-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products?.map((p) => (
+                  <tr key={p._id}>
+                    <td>
+                      <div className="d-flex align-items-center gap-3">
+                        <img 
+                          src={`/api/v1/products/product-photo/${p._id}`}
+                          alt={p.name} 
+                          style={{ width: 48, height: 48, borderRadius: '8px', objectFit: 'cover' }}
+                          onError={(e) => { e.target.src = "https://via.placeholder.com/48?text=No+Image" }}
+                        />
+                        <div>
+                          <div style={{ fontWeight: '600', color: 'var(--admin-text-main)' }}>
+                            {p.name.length > 40 ? p.name.substring(0, 40) + "..." : p.name}
+                          </div>
+                          <div style={{ fontSize: '12px', color: 'var(--admin-text-secondary)' }}>
+                            {p.description.substring(0, 30)}...
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span className="status-badge status-info">
+                        {p.category?.name || "Uncategorized"}
+                      </span>
+                    </td>
+                    <td style={{ fontWeight: '600' }}>
+                      ₹{p.price}
+                    </td>
+                    <td>
+                      {p.quantity > 0 ? (
+                        <span style={{ color: 'var(--status-success-text)', fontWeight: '600' }}>{p.quantity} in stock</span>
+                      ) : (
+                        <span style={{ color: 'var(--status-danger-text)', fontWeight: '600' }}>Out of stock</span>
+                      )}
+                    </td>
+                    <td>
+                      <div className="d-flex gap-2">
+                        <Link to={`/admin/product/${p.slug}`} className="action-btn">
+                          <Edit2 size={16} />
+                        </Link>
+                        {/* Delete would normally be a separate handler, visually mimicking here */}
+                        <button className="action-btn delete">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
-    </Layout>
+    </AdminLayout>
   );
 };
 

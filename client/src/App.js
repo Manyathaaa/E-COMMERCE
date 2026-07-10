@@ -20,7 +20,8 @@ import AdminDashboard from "./pages/admin/adminDashboard";
 import CreateCategory from "./pages/admin/createcategory";
 import CreateProduct from "./pages/admin/createproduct";
 import Products from "./pages/admin/Products";
-import Users from "./pages/admin/user";
+import Customers from "./pages/admin/Customers";
+import Reviews from "./pages/admin/Reviews";
 import AdminOrders from "./pages/admin/orders";
 
 import Orders from "./pages/user/orders";
@@ -80,11 +81,11 @@ function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="create-category" element={<CreateCategory />} />
           <Route path="create-product" element={<CreateProduct />} />
-          <Route path="orders" element={<AdminOrders />} />
-
           <Route path="product/:slug" element={<UpdateProduct />} />
           <Route path="product" element={<Products />} />
-          <Route path="user" element={<Users />} />
+          <Route path="user" element={<Customers />} />
+          <Route path="reviews" element={<Reviews />} />
+          <Route path="orders" element={<AdminOrders />} />
         </Route>
         {/* 404 Route */}
         <Route path="*" element={<PageNotFound />} />

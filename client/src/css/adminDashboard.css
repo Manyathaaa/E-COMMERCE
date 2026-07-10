@@ -1,92 +1,122 @@
-/* Admin Dashboard Premium Theme */
+/* Admin Dashboard Light Theme */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 .admin-dashboard-container {
-  background-color: #0b1120;
+  background-color: #f4f7fe;
   min-height: 100vh;
-  color: #e2e8f0;
+  color: #2b3674;
   font-family: 'Inter', sans-serif;
+  padding-bottom: 40px;
 }
 
+/* Header */
 .admin-header {
-  margin-bottom: 2rem;
-  border-bottom: 1px solid #1e293b;
-  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
 }
 
 .admin-header h1 {
   font-size: 2rem;
   font-weight: 700;
-  color: #f8fafc;
-  margin-bottom: 0.5rem;
+  color: #2b3674;
+  margin-bottom: 0.25rem;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
 .admin-header p {
-  color: #94a3b8;
-  font-size: 1.1rem;
+  color: #a3aed1;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Base Card Style */
+.light-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0px 18px 40px rgba(112, 144, 176, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: none;
 }
 
 /* KPI Cards */
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .kpi-card {
-  background: linear-gradient(145deg, #1e293b, #0f172a);
-  border: 1px solid #334155;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
+  position: relative;
 }
 
-.kpi-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-  border-color: #475569;
+.kpi-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
 }
 
-.kpi-info h4 {
+.kpi-card-title {
   font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #94a3b8;
-  margin-bottom: 0.5rem;
-}
-
-.kpi-info h2 {
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: #f8fafc;
+  font-weight: 600;
+  color: #a3aed1;
   margin: 0;
 }
 
-.kpi-icon {
-  font-size: 2.5rem;
-  opacity: 0.8;
-  padding: 1rem;
-  border-radius: 50%;
-  background-color: rgba(255,255,255,0.05);
+.kpi-card-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2b3674;
+  margin: 0;
 }
 
-.kpi-icon.revenue { color: #10b981; }
-.kpi-icon.orders { color: #3b82f6; }
-.kpi-icon.users { color: #8b5cf6; }
-.kpi-icon.products { color: #f59e0b; }
+.kpi-icon-container {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+/* Specific KPI Colors */
+.kpi-sales .kpi-icon-container { background: #f4f7fe; color: #4318FF; }
+.kpi-orders .kpi-icon-container { background: #e6faeb; color: #05CD99; }
+.kpi-users .kpi-icon-container { background: #f4f7fe; color: #4318FF; }
+.kpi-products .kpi-icon-container { background: #fef0db; color: #FFCE20; }
+
+.trend-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.trend-badge.positive {
+  color: #05CD99;
+}
+.trend-badge.positive span {
+  color: #a3aed1;
+  font-weight: 500;
+}
 
 /* Charts Section */
 .charts-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 @media (max-width: 992px) {
@@ -95,33 +125,129 @@
   }
 }
 
-.chart-card {
-  background-color: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
-.chart-card h3 {
+.chart-title {
   font-size: 1.25rem;
-  font-weight: 600;
-  color: #f8fafc;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid #334155;
-  padding-bottom: 1rem;
+  font-weight: 700;
+  color: #2b3674;
+  margin: 0;
 }
 
 /* Tooltip Customization for Recharts */
 .recharts-tooltip-wrapper .recharts-default-tooltip {
-  background-color: #0f172a !important;
-  border: 1px solid #334155 !important;
-  border-radius: 8px !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 15px -3px rgba(112, 144, 176, 0.2) !important;
+  padding: 10px !important;
 }
 
 .recharts-tooltip-item {
-  color: #e2e8f0 !important;
+  color: #2b3674 !important;
+  font-weight: 600;
+}
+
+.recharts-tooltip-label {
+  color: #a3aed1 !important;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+/* Custom Legend for Donut */
+.custom-legend {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.legend-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2b3674;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #2b3674;
+}
+
+/* Top Products Table */
+.top-products-card {
+  width: 100%;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.products-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+
+.products-table th {
+  color: #a3aed1;
+  font-weight: 500;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+  padding: 10px 15px;
+  border: none;
+  background: #f8fafc;
+}
+
+.products-table th:first-child { border-radius: 8px 0 0 8px; }
+.products-table th:last-child { border-radius: 0 8px 8px 0; }
+
+.products-table td {
+  padding: 15px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2b3674;
+}
+
+.product-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.product-thumbnail {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #f1f5f9;
+}
+
+.products-table tr:last-child td {
+  border-bottom: none;
 }
 
 /* Loading State */
@@ -131,7 +257,8 @@
   align-items: center;
   height: 50vh;
   font-size: 1.5rem;
-  color: #94a3b8;
+  color: #4318FF;
+  font-weight: 600;
 }
 
 .admin-loading i {

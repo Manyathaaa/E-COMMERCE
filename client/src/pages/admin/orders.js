@@ -1,180 +1,131 @@
-import React from "react";
-import Layout from "../../components/Layout/Layout";
-import AdminMenu from "../../components/Layout/AdminMenu";
-
-export const dummyOrders = [
-  {
-    id: 101,
-    customer: "Amit Sharma",
-    product: "Nike Air Max",
-    amount: 5999,
-    status: "Shipped",
-    date: "2025-09-10",
-  },
-  {
-    id: 102,
-    customer: "Priya Singh",
-    product: "Apple Watch",
-    amount: 24999,
-    status: "Processing",
-    date: "2025-09-11",
-  },
-  {
-    id: 103,
-    customer: "Rahul Verma",
-    product: "Levi's Jeans",
-    amount: 1999,
-    status: "Delivered",
-    date: "2025-09-09",
-  },
-  {
-    id: 104,
-    customer: "Sneha Patel",
-    product: "Samsung Galaxy S21",
-    amount: 69999,
-    status: "Cancelled",
-    date: "2025-09-08",
-  },
-  {
-    id: 105,
-    customer: "Vikas Gupta",
-    product: "Adidas T-shirt",
-    amount: 999,
-    status: "Processing",
-    date: "2025-09-12",
-  },
-  {
-    id: 106,
-    customer: "Meera Joshi",
-    product: "Sony Headphones",
-    amount: 4999,
-    status: "Delivered",
-    date: "2025-09-12",
-  },
-  {
-    id: 107,
-    customer: "Rohan Mehta",
-    product: "HP Laptop",
-    amount: 54999,
-    status: "Shipped",
-    date: "2025-09-11",
-  },
-  {
-    id: 108,
-    customer: "Kavita Rao",
-    product: "Canon DSLR",
-    amount: 39999,
-    status: "Processing",
-    date: "2025-09-10",
-  },
-  {
-    id: 109,
-    customer: "Suresh Kumar",
-    product: "Puma Shoes",
-    amount: 2999,
-    status: "Delivered",
-    date: "2025-09-09",
-  },
-  {
-    id: 110,
-    customer: "Anjali Jain",
-    product: "JBL Speaker",
-    amount: 3499,
-    status: "Cancelled",
-    date: "2025-09-08",
-  },
-  {
-    id: 111,
-    customer: "Deepak Yadav",
-    product: "Samsung TV",
-    amount: 29999,
-    status: "Processing",
-    date: "2025-09-12",
-  },
-  {
-    id: 112,
-    customer: "Neha Agarwal",
-    product: "Apple iPad",
-    amount: 34999,
-    status: "Shipped",
-    date: "2025-09-11",
-  },
-  {
-    id: 113,
-    customer: "Manish Tiwari",
-    product: "Ray-Ban Sunglasses",
-    amount: 7999,
-    status: "Delivered",
-    date: "2025-09-10",
-  },
-  {
-    id: 114,
-    customer: "Pooja Desai",
-    product: "Mi Smart Band",
-    amount: 1999,
-    status: "Processing",
-    date: "2025-09-09",
-  },
-  {
-    id: 115,
-    customer: "Arjun Kapoor",
-    product: "Dell Monitor",
-    amount: 10999,
-    status: "Delivered",
-    date: "2025-09-08",
-  },
-];
+import React, { useState, useEffect } from "react";
+import AdminLayout from "../../components/Admin/AdminLayout";
+import axios from "axios";
+import { useAuth } from "../../context/auth";
+import toast from "react-hot-toast";
 
 const AdminOrders = () => {
+  const [orders, setOrders] = useState([]);
+  const [auth] = useAuth();
+  const [loading, setLoading] = useState(true);
+
+  // Fetch all orders
+  const getOrders = async () => {
+    try {
+      if (!auth?.token) return;
+      const { data } = await axios.get("/api/v1/orders/admin/all-orders");
+      if (data.success) {
+        setOrders(data.orders);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error fetching orders");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    getOrders();
+  }, [auth?.token]);
+
+  const handleChangeStatus = async (orderId, newStatus) => {
+    try {
+      const { data } = await axios.put(`/api/v1/orders/admin/${orderId}/status`, {
+        status: newStatus,
+      });
+      if (data.success) {
+        toast.success("Order status updated!");
+        // Refresh orders
+        getOrders();
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error updating order status");
+    }
+  };
+
   return (
-    <Layout title={"Admin - Orders"}>
-      <div className="row">
-        <div className="col-md-3">
-          <AdminMenu />
+    <AdminLayout title="Orders">
+      <div className="ent-card">
+        <div className="chart-header">
+          <h3 className="chart-title">All Customer Orders</h3>
         </div>
-        <div className="col-md-9">
-          <h1 className="mb-4">All Orders</h1>
-          <div className="table-responsive">
-            <table className="table table-bordered table-hover bg-white">
-              <thead className="table-light">
+        
+        {loading ? (
+          <div className="text-center p-5">
+            <i className="fas fa-spinner fa-spin fa-2x"></i>
+            <p className="mt-2">Loading Orders...</p>
+          </div>
+        ) : orders.length === 0 ? (
+          <div className="alert alert-info border-0" style={{backgroundColor: 'var(--status-info-bg)', color: 'var(--status-info-text)'}}>
+            No orders found.
+          </div>
+        ) : (
+          <div className="ent-table-container">
+            <table className="ent-table">
+              <thead>
                 <tr>
                   <th>Order ID</th>
                   <th>Customer</th>
-                  <th>Product</th>
-                  <th>Amount (₹)</th>
-                  <th>Status</th>
+                  <th>Amount</th>
                   <th>Date</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {dummyOrders.map((order) => (
-                  <tr key={order.id}>
-                    <td>{order.id}</td>
-                    <td>{order.customer}</td>
-                    <td>{order.product}</td>
-                    <td>{order.amount}</td>
+                {orders.map((order) => (
+                  <tr key={order._id}>
                     <td>
-                      <span
-                        className={`badge bg-${
-                          order.status === "Delivered"
-                            ? "success"
-                            : order.status === "Cancelled"
-                            ? "danger"
-                            : "warning"
-                        }`}
-                      >
-                        {order.status}
+                      <span style={{ fontWeight: '600' }}>{order.orderNumber}</span>
+                      <br />
+                      <span style={{ color: 'var(--admin-text-secondary)', fontSize: '12px' }}>{order.products.length} Items</span>
+                    </td>
+                    <td>
+                      <span style={{ fontWeight: '600' }}>{order.shippingAddress?.fullName || order.user?.name}</span>
+                      <br />
+                      <span style={{ color: 'var(--admin-text-secondary)', fontSize: '12px' }}>{order.user?.email}</span>
+                    </td>
+                    <td>
+                      <span style={{ fontWeight: '700' }}>₹{(order.orderSummary?.total || 0).toLocaleString()}</span>
+                      <br />
+                      <span style={{ color: 'var(--admin-text-secondary)', fontSize: '12px', textTransform: 'uppercase' }}>{order.paymentMethod}</span>
+                    </td>
+                    <td>
+                      {new Date(order.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })}
+                      <br />
+                      <span style={{ color: 'var(--admin-text-secondary)', fontSize: '12px' }}>
+                        {new Date(order.createdAt).toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit' })}
                       </span>
                     </td>
-                    <td>{order.date}</td>
+                    <td>
+                      <select 
+                        className={`status-badge ${
+                          order.status === 'delivered' ? 'status-success' : 
+                          order.status === 'cancelled' ? 'status-danger' : 
+                          'status-warning'
+                        }`}
+                        value={order.status}
+                        onChange={(e) => handleChangeStatus(order._id, e.target.value)}
+                        style={{ outline: 'none', border: 'none', cursor: 'pointer', appearance: 'none', textAlign: 'center' }}
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                      </select>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </div>
+        )}
       </div>
-    </Layout>
+    </AdminLayout>
   );
 };
 

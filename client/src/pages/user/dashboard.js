@@ -24,18 +24,15 @@ const Dashboard = () => {
     const fetchUserStats = async () => {
       try {
         if (auth?.user) {
-          // Fetch real order data
           const result = await getUserOrders(1, "all");
           if (result.success) {
             const userOrders = result.orders || [];
             setRecentOrders(userOrders);
 
-            // Calculate real stats from orders
             const stats = {
               total: userOrders.length,
               pending: userOrders.filter(
-                (order) =>
-                  order.status === "pending" || order.status === "confirmed"
+                (order) => order.status === "pending" || order.status === "confirmed"
               ).length,
               completed: userOrders.filter(
                 (order) => order.status === "delivered"
@@ -44,37 +41,20 @@ const Dashboard = () => {
                 (order) => order.status === "cancelled"
               ).length,
             };
-
             setOrderStats(stats);
           } else {
-            // If no orders or error, set empty state
             setRecentOrders([]);
-            setOrderStats({
-              total: 0,
-              pending: 0,
-              completed: 0,
-              cancelled: 0,
-            });
           }
         }
       } catch (error) {
         console.log("Error fetching user stats:", error);
-        // Set empty state on error
-        setRecentOrders([]);
-        setOrderStats({
-          total: 0,
-          pending: 0,
-          completed: 0,
-          cancelled: 0,
-        });
       }
     };
-
     fetchUserStats();
   }, [auth?.user, getUserOrders]);
 
   return (
-    <Layout title={"Dashboard - Magica"}>
+    <Layout title={"My Hub - Magica"}>
       <div className="dashboard-container">
         <div className="container-fluid">
           <div className="row">
@@ -86,277 +66,134 @@ const Dashboard = () => {
             {/* Main Content */}
             <div className="col-lg-9 col-md-8">
               <div className="dashboard-content">
-                {/* Welcome Header */}
-                <div className="welcome-section mb-4">
-                  <div className="row align-items-center">
-                    <div className="col-md-6">
-                      <h1 className="dashboard-title">
-                        Welcome back, {auth?.user?.name}! 👋
-                      </h1>
-                      <p className="dashboard-subtitle">
-                        Here's what's happening with your account today.
-                      </p>
+                
+                {/* Hero Welcome Banner */}
+                <div className="hero-welcome-banner">
+                  <div className="welcome-text">
+                    <h1>Hi, {auth?.user?.name?.split(' ')[0]}!</h1>
+                    <p>Ready to discover something amazing today?</p>
+                    <Link to="/category" className="shop-now-btn">
+                      Explore Collections <i className="fas fa-arrow-right"></i>
+                    </Link>
+                  </div>
+                  <div className="welcome-avatar">
+                    {auth?.user?.name?.charAt(0).toUpperCase()}
+                  </div>
+                </div>
+
+                {/* Minimalist Shopping Summary */}
+                <div className="shopping-summary-grid">
+                  <div className="summary-card">
+                    <div className="summary-icon cart">
+                      <i className="fas fa-shopping-bag"></i>
                     </div>
-                    <div className="col-md-3 text-end">
-                      <div className="user-avatar">
-                        <div className="avatar-circle">
-                          {auth?.user?.name?.charAt(0).toUpperCase()}
-                        </div>
-                      </div>
+                    <div className="summary-details">
+                      <h3>{getCartItemCount()}</h3>
+                      <p>In your Cart</p>
+                    </div>
+                  </div>
+
+                  <div className="summary-card">
+                    <div className="summary-icon orders">
+                      <i className="fas fa-box-open"></i>
+                    </div>
+                    <div className="summary-details">
+                      <h3>{orderStats.total}</h3>
+                      <p>Total Orders</p>
+                    </div>
+                  </div>
+
+                  <div className="summary-card">
+                    <div className="summary-icon pending">
+                      <i className="fas fa-clock"></i>
+                    </div>
+                    <div className="summary-details">
+                      <h3>{orderStats.pending}</h3>
+                      <p>On the way</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Quick Stats Cards */}
-                <div className="row mb-4">
-                  <div className="col-lg-3 col-md-6 mb-3">
-                    <div className="stat-card">
-                      <div className="stat-icon cart-icon">
-                        <i className="fas fa-shopping-cart"></i>
+                {/* Quick Actions Revamp */}
+                <div className="quick-actions-section">
+                  <h3 className="section-title">Where to next?</h3>
+                  <div className="actions-grid">
+                    <Link to="/category" className="action-tile">
+                      <div className="tile-icon">
+                        <i className="fas fa-sparkles"></i>
                       </div>
-                      <div className="stat-content">
-                        <h3>{getCartItemCount()}</h3>
-                        <p>Items in Cart</p>
+                      <span>New Arrivals</span>
+                    </Link>
+                    
+                    <Link to="/user/orders" className="action-tile">
+                      <div className="tile-icon">
+                        <i className="fas fa-truck-fast"></i>
                       </div>
-                    </div>
-                  </div>
+                      <span>Track Orders</span>
+                    </Link>
+                    
+                    <Link to="/user/profile" className="action-tile">
+                      <div className="tile-icon">
+                        <i className="fas fa-user-astronaut"></i>
+                      </div>
+                      <span>My Profile</span>
+                    </Link>
 
-                  <div className="col-lg-3 col-md-6 mb-3">
-                    <div className="stat-card">
-                      <div className="stat-icon orders-icon">
-                        <i className="fas fa-box"></i>
+                    <Link to="/cart" className="action-tile">
+                      <div className="tile-icon">
+                        <i className="fas fa-cart-shopping"></i>
                       </div>
-                      <div className="stat-content">
-                        <h3>{orderStats.total}</h3>
-                        <p>Total Orders</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-lg-3 col-md-6 mb-3">
-                    <div className="stat-card">
-                      <div className="stat-icon pending-icon">
-                        <i className="fas fa-clock"></i>
-                      </div>
-                      <div className="stat-content">
-                        <h3>{orderStats.pending}</h3>
-                        <p>Pending Orders</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-lg-3 col-md-6 mb-3">
-                    <div className="stat-card">
-                      <div className="stat-icon completed-icon">
-                        <i className="fas fa-check-circle"></i>
-                      </div>
-                      <div className="stat-content">
-                        <h3>{orderStats.completed}</h3>
-                        <p>Completed Orders</p>
-                      </div>
-                    </div>
+                      <span>Checkout</span>
+                    </Link>
                   </div>
                 </div>
 
-                {/* Quick Actions */}
-                <div className="row mb-4">
-                  <div className="col-12">
-                    <div className="quick-actions-card">
-                      <h4 className="card-title">
-                        <i className="fas fa-bolt" aria-hidden="true"></i> Quick
-                        Actions
-                      </h4>
-                      <div className="row g-3">
-                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3">
-                          <Link to="/category" className="action-btn">
-                            <div className="action-icon">
-                              <i
-                                className="fas fa-shopping-bag"
-                                aria-hidden="true"
-                              ></i>
-                            </div>
-                            <span>Shop Now</span>
-                          </Link>
-                        </div>
-
-                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3">
-                          <Link to="/user/orders" className="action-btn">
-                            <div className="action-icon">
-                              <i
-                                className="fas fa-clock-rotate-left"
-                                aria-hidden="true"
-                              ></i>
-                            </div>
-                            <span>Order History</span>
-                          </Link>
-                        </div>
-
-                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3">
-                          <Link to="/user/profile" className="action-btn">
-                            <div className="action-icon">
-                              <i
-                                className="fas fa-user-pen"
-                                aria-hidden="true"
-                              ></i>
-                            </div>
-                            <span>Edit Profile</span>
-                          </Link>
-                        </div>
-
-                        <div className="col-lg-3 col-md-6 col-sm-6 mb-3">
-                          <Link to="/cart" className="action-btn">
-                            <div className="action-icon">
-                              <i
-                                className="fas fa-cart-shopping"
-                                aria-hidden="true"
-                              ></i>
-                            </div>
-                            <span>View Cart</span>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
+                {/* Elegant Recent Orders */}
+                <div className="recent-orders-card">
+                  <div className="orders-header">
+                    <h3 className="section-title" style={{ marginBottom: 0 }}>Recent Purchases</h3>
+                    <Link to="/user/orders" className="view-all-link">
+                      View full history
+                    </Link>
                   </div>
+
+                  {recentOrders.length > 0 ? (
+                    <div className="elegant-orders-list">
+                      {recentOrders.slice(0, 4).map((order) => (
+                        <div key={order._id} className="elegant-order-item">
+                          <div className="order-main-info">
+                            <h4>Order #{order.orderNumber}</h4>
+                            <p>
+                              Placed on {new Date(order.createdAt).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric"
+                              })}
+                            </p>
+                          </div>
+                          
+                          <div className={`order-status-badge ${order.status}`}>
+                            {order.status}
+                          </div>
+                          
+                          <div className="order-price">
+                            ₹{(order.orderSummary?.total || order.totalAmount || 0).toLocaleString()}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="empty-orders">
+                      <i className="fas fa-box-open"></i>
+                      <h5>Your cart has been waiting!</h5>
+                      <p>You haven't placed any orders yet. Let's fix that.</p>
+                      <Link to="/category" className="shop-now-btn" style={{ background: '#4f46e5' }}>
+                        Start Shopping
+                      </Link>
+                    </div>
+                  )}
                 </div>
 
-                {/* User Information Card */}
-                <div className="row mb-4">
-                  <div className="col-lg-6 mb-3">
-                    <div className="info-card">
-                      <h4 className="card-title">
-                        <i className="fas fa-user"></i> Account Information
-                      </h4>
-                      <div className="info-content">
-                        <div className="info-item">
-                          <span className="info-label">Name:</span>
-                          <span className="info-value">
-                            {auth?.user?.name || "Not provided"}
-                          </span>
-                        </div>
-                        <div className="info-item">
-                          <span className="info-label">Email:</span>
-                          <span className="info-value">
-                            {auth?.user?.email || "Not provided"}
-                          </span>
-                        </div>
-                        <div className="info-item">
-                          <span className="info-label">Address:</span>
-                          <span className="info-value">
-                            {auth?.user?.address || "Not provided"}
-                          </span>
-                        </div>
-                        <div className="info-item">
-                          <span className="info-label">Phone:</span>
-                          <span className="info-value">
-                            {auth?.user?.phone || "Not provided"}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-lg-6 mb-3">
-                    <div className="info-card">
-                      <h4 className="card-title">
-                        <i className="fas fa-chart-line"></i> Account Activity
-                      </h4>
-                      <div className="activity-content">
-                        <div className="activity-item">
-                          <div className="activity-icon success">
-                            <i className="fas fa-check"></i>
-                          </div>
-                          <div className="activity-text">
-                            <span>Account created successfully</span>
-                            <small>Welcome to Magica!</small>
-                          </div>
-                        </div>
-                        <div className="activity-item">
-                          <div className="activity-icon info">
-                            <i className="fas fa-info"></i>
-                          </div>
-                          <div className="activity-text">
-                            <span>Profile information</span>
-                            <small>Keep your details updated</small>
-                          </div>
-                        </div>
-                        <div className="activity-item">
-                          <div className="activity-icon warning">
-                            <i className="fas fa-shopping-cart"></i>
-                          </div>
-                          <div className="activity-text">
-                            <span>Ready to shop</span>
-                            <small>Explore our categories</small>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Recent Orders */}
-                <div className="row">
-                  <div className="col-12">
-                    <div className="orders-card">
-                      <div className="d-flex justify-content-between align-items-center mb-3">
-                        <h4 className="card-title">
-                          <i className="fas fa-receipt"></i> Recent Orders
-                        </h4>
-                        <Link to="/user/orders" className="view-all-btn">
-                          View All Orders <i className="fas fa-arrow-right"></i>
-                        </Link>
-                      </div>
-
-                      {recentOrders.length > 0 ? (
-                        <div className="orders-list">
-                          {recentOrders.slice(0, 3).map((order, index) => (
-                            <div key={order._id} className="order-item">
-                              <div className="order-info">
-                                <span className="order-id">
-                                  #{order.orderNumber}
-                                </span>
-                                <span className="order-date">
-                                  {new Date(order.createdAt).toLocaleDateString(
-                                    "en-IN",
-                                    {
-                                      year: "numeric",
-                                      month: "short",
-                                      day: "numeric",
-                                    }
-                                  )}
-                                </span>
-                                <span
-                                  className={`order-status ${order.status}`}
-                                >
-                                  {order.status.charAt(0).toUpperCase() +
-                                    order.status.slice(1)}
-                                </span>
-                                <span className="order-total">
-                                  ₹
-                                  {(
-                                    order.orderSummary?.total ||
-                                    order.totalAmount ||
-                                    0
-                                  ).toLocaleString()}
-                                </span>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="no-orders">
-                          <div className="no-orders-icon">
-                            <i className="fas fa-shopping-bag"></i>
-                          </div>
-                          <h5>No Orders Yet</h5>
-                          <p>Start shopping to see your orders here!</p>
-                          <Link to="/category" className="btn btn-primary">
-                            Start Shopping
-                          </Link>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

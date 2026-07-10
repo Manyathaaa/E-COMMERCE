@@ -226,3 +226,66 @@ export const cancelOrderController = async (req, res) => {
     });
   }
 };
+
+// Admin: Get all orders
+export const getAllOrdersController = async (req, res) => {
+  try {
+    const orders = await Order.find({})
+      .populate("products.product", "name photo")
+      .populate("user", "name email")
+      .sort({ createdAt: -1 });
+      
+    res.status(200).json({
+      success: true,
+      orders,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching all orders",
+      error: error.message,
+    });
+  }
+};
+
+// Admin: Update order status
+export const updateOrderStatusController = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+    
+    if (!["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status value",
+      });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      orderId,
+      { status },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Order status updated successfully",
+      order,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating order status",
+      error: error.message,
+    });
+  }
+};
