@@ -1,38 +1,52 @@
 import React, { useState, useEffect } from "react";
-import { dummyOrders } from "./orders";
-import { dummyUsers } from "./user";
-import { dummyProducts } from "./createproduct";
 import Layout from "../../components/Layout/Layout";
 import AdminMenu from "../../components/Layout/AdminMenu";
 import { useAuth } from "../../context/auth";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend
+} from "recharts";
+import "../../css/adminDashboard.css"; // The new premium CSS
+
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#14b8a6"];
 
 const AdminDashboard = () => {
-  const navigate = useNavigate();
   const [auth] = useAuth();
-  const [stats, setStats] = useState({
-    totalProducts: 0,
-    totalCategories: 0,
-    totalUsers: 0,
-    totalOrders: 0,
-  });
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState(null);
+  const [graphs, setGraphs] = useState(null);
 
   useEffect(() => {
-    // Use dummy data for analytics
-    setStats({
-      totalProducts: dummyProducts?.length || 0,
-      totalCategories: 5, // You can update this if you have dummy categories
-      totalUsers: dummyUsers?.length || 0,
-      totalOrders: dummyOrders?.length || 0,
-    });
+    const fetchStats = async () => {
+      try {
+        const { data } = await axios.get("/api/v1/analytics/dashboard-stats");
+        if (data.success) {
+          setStats(data.stats);
+          setGraphs(data.graphs);
+        }
+      } catch (error) {
+        console.error("Error fetching admin stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
   }, []);
-  // ...existing code...
 
   return (
-    <Layout title="Admin Dashboard - Magica">
-      <div className="admin-dashboard">
-        <div className="container-fluid">
+    <Layout title="Admin Dashboard - Analytics">
+      <div className="admin-dashboard-container">
+        <div className="container-fluid py-4">
           <div className="row">
             {/* Sidebar */}
             <div className="col-lg-3 col-md-4">
@@ -41,161 +55,140 @@ const AdminDashboard = () => {
 
             {/* Main Content */}
             <div className="col-lg-9 col-md-8">
-              <div className="admin-content">
-                {/* Analytics Section */}
-                <div className="row mb-4">
-                  <div className="col-md-3">
-                    <div className="card text-center shadow-sm">
-                      <div className="card-body">
-                        <h5 className="card-title">Total Orders</h5>
-                        <p className="display-6 fw-bold text-primary">
-                          {stats.totalOrders}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card text-center shadow-sm">
-                      <div className="card-body">
-                        <h5 className="card-title">Total Revenue</h5>
-                        <p className="display-6 fw-bold text-success">
-                          ₹{dummyOrders.reduce((sum, o) => sum + o.amount, 0)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card text-center shadow-sm">
-                      <div className="card-body">
-                        <h5 className="card-title">Total Products</h5>
-                        <p className="display-6 fw-bold text-info">
-                          {stats.totalProducts}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card text-center shadow-sm">
-                      <div className="card-body">
-                        <h5 className="card-title">Total Users</h5>
-                        <p className="display-6 fw-bold text-warning">
-                          {stats.totalUsers}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* Welcome Section */}
-                <div className="admin-welcome">
-                  <div className="welcome-content">
-                    <h1>Welcome back, {auth?.user?.name}! 👋</h1>
-                    <p>Here's what's happening with your store today.</p>
-                  </div>
-                  <div className="admin-avatar">
-                    <div className="avatar-circle">
-                      {auth?.user?.name?.charAt(0).toUpperCase()}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Stats Cards */}
-                <div className="stats-grid">
-                  <div className="stat-card">
-                    <div className="stat-icon products">📦</div>
-                    <div className="stat-info">
-                      <h3>{stats.totalProducts}</h3>
-                      <p>Total Products</p>
-                    </div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-icon categories">🏷️</div>
-                    <div className="stat-info">
-                      <h3>{stats.totalCategories}</h3>
-                      <p>Categories</p>
-                    </div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-icon users">👥</div>
-                    <div className="stat-info">
-                      <h3>{stats.totalUsers}</h3>
-                      <p>Total Users</p>
-                    </div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-icon orders">🛒</div>
-                    <div className="stat-info">
-                      <h3>{stats.totalOrders}</h3>
-                      <p>Orders</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Admin Info Card */}
-                <div className="admin-info-card">
-                  <h3>Admin Information</h3>
-                  <div className="info-grid">
-                    <div className="info-item">
-                      <label>Full Name</label>
-                      <p>{auth?.user?.name}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Email Address</label>
-                      <p>{auth?.user?.email}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Contact Number</label>
-                      <p>{auth?.user?.contact || "Not provided"}</p>
-                    </div>
-                    <div className="info-item">
-                      <label>Role</label>
-                      <p>Administrator</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Recent Activity */}
-                <div className="recent-activity">
-                  <h3>Recent Activity</h3>
-                  <div className="activity-list">
-                    <div className="activity-item">
-                      <div className="activity-icon">📦</div>
-                      <div className="activity-content">
-                        <p>
-                          <strong>Product "Nike Air Max" updated</strong>
-                        </p>
-                        <span>15 minutes ago</span>
-                      </div>
-                    </div>
-                    <div className="activity-item">
-                      <div className="activity-icon">🏷️</div>
-                      <div className="activity-content">
-                        <p>
-                          <strong>Category "Footwear" deleted</strong>
-                        </p>
-                        <span>1 hour ago</span>
-                      </div>
-                    </div>
-                    <div className="activity-item">
-                      <div className="activity-icon">�</div>
-                      <div className="activity-content">
-                        <p>
-                          <strong>Product "Apple Watch" added</strong>
-                        </p>
-                        <span>2 hours ago</span>
-                      </div>
-                    </div>
-                    <div className="activity-item">
-                      <div className="activity-icon">🛒</div>
-                      <div className="activity-content">
-                        <p>
-                          <strong>Order #5678 marked as shipped</strong>
-                        </p>
-                        <span>3 hours ago</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <div className="admin-header">
+                <h1>
+                  <i className="fas fa-chart-line"></i> Performance Dashboard
+                </h1>
+                <p>Welcome back, {auth?.user?.name}! Here's your real-time store overview.</p>
               </div>
+
+              {loading ? (
+                <div className="admin-loading">
+                  <i className="fas fa-spinner"></i> Loading Analytics...
+                </div>
+              ) : (
+                <>
+                  {/* KPI Cards */}
+                  <div className="kpi-grid">
+                    <div className="kpi-card">
+                      <div className="kpi-info">
+                        <h4>Total Revenue</h4>
+                        <h2>₹{stats?.totalRevenue?.toLocaleString() || 0}</h2>
+                      </div>
+                      <div className="kpi-icon revenue">
+                        <i className="fas fa-wallet"></i>
+                      </div>
+                    </div>
+                    <div className="kpi-card">
+                      <div className="kpi-info">
+                        <h4>Sold Products</h4>
+                        <h2>{stats?.totalSoldProducts?.toLocaleString() || 0}</h2>
+                      </div>
+                      <div className="kpi-icon revenue" style={{ color: "#ec4899" }}>
+                        <i className="fas fa-tags"></i>
+                      </div>
+                    </div>
+                    <div className="kpi-card">
+                      <div className="kpi-info">
+                        <h4>Total Orders</h4>
+                        <h2>{stats?.totalOrders?.toLocaleString() || 0}</h2>
+                      </div>
+                      <div className="kpi-icon orders">
+                        <i className="fas fa-shopping-cart"></i>
+                      </div>
+                    </div>
+                    <div className="kpi-card">
+                      <div className="kpi-info">
+                        <h4>Pending Orders</h4>
+                        <h2>
+                          {graphs?.ordersByStatus?.find(o => o.status === "pending")?.count || 0}
+                        </h2>
+                      </div>
+                      <div className="kpi-icon users" style={{ color: "#f59e0b" }}>
+                        <i className="fas fa-clock"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Charts */}
+                  <div className="charts-grid">
+                    {/* Income Graph */}
+                    <div className="chart-card">
+                      <h3><i className="fas fa-chart-area"></i> Income Over Time</h3>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <AreaChart
+                          data={graphs?.incomeByMonth || []}
+                          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                        >
+                          <defs>
+                            <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                              <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                          <XAxis dataKey="date" stroke="#94a3b8" />
+                          <YAxis stroke="#94a3b8" tickFormatter={(value) => `₹${value}`} />
+                          <Tooltip 
+                            formatter={(value) => [`₹${value}`, "Revenue"]}
+                            labelStyle={{ color: "#f8fafc" }}
+                          />
+                          <Area type="monotone" dataKey="revenue" stroke="#10b981" fillOpacity={1} fill="url(#colorRevenue)" />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+
+                    {/* Order Status Graph */}
+                    <div className="chart-card">
+                      <h3><i className="fas fa-chart-bar"></i> Order Status</h3>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <PieChart>
+                          <Pie
+                            data={graphs?.ordersByStatus || []}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={60}
+                            outerRadius={80}
+                            paddingAngle={5}
+                            dataKey="count"
+                            nameKey="status"
+                          >
+                            {(graphs?.ordersByStatus || []).map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={COLORS[(index + 3) % COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip labelStyle={{ color: "#f8fafc" }} />
+                          <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+
+                    {/* Category Distribution */}
+                    <div className="chart-card">
+                      <h3><i className="fas fa-chart-pie"></i> Products by Category</h3>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <PieChart>
+                          <Pie
+                            data={graphs?.productsByCategory || []}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={60}
+                            outerRadius={80}
+                            paddingAngle={5}
+                            dataKey="value"
+                          >
+                            {(graphs?.productsByCategory || []).map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip labelStyle={{ color: "#f8fafc" }} />
+                          <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

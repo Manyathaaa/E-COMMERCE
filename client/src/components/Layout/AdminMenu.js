@@ -60,13 +60,7 @@ const AdminMenu = () => {
           <span className="nav-text">Orders</span>
         </NavLink>
 
-        <NavLink
-          to="/admin/analytics"
-          className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
-        >
-          <span className="nav-icon">📈</span>
-          <span className="nav-text">Analytics</span>
-        </NavLink>
+
       </nav>
 
       <div className="sidebar-footer">

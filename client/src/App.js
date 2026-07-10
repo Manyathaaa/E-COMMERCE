@@ -22,7 +22,7 @@ import CreateProduct from "./pages/admin/createproduct";
 import Products from "./pages/admin/Products";
 import Users from "./pages/admin/user";
 import AdminOrders from "./pages/admin/orders";
-import Analytics from "./pages/admin/Analytics";
+
 import Orders from "./pages/user/orders";
 import Profile from "./pages/user/profile";
 import OrderDetails from "./pages/user/OrderDetails";
@@ -81,7 +81,7 @@ function App() {
           <Route path="create-category" element={<CreateCategory />} />
           <Route path="create-product" element={<CreateProduct />} />
           <Route path="orders" element={<AdminOrders />} />
-          <Route path="analytics" element={<Analytics />} />
+
           <Route path="product/:slug" element={<UpdateProduct />} />
           <Route path="product" element={<Products />} />
           <Route path="user" element={<Users />} />
