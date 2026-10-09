@@ -339,16 +339,7 @@ const HomePage = () => {
                       product={product}
                       isInWishlist={isInWishlist}
                       handleWishlistToggle={handleWishlistToggle}
-                      addToCart={(cartItem) => {
-                        // Check if already in cart
-                        const existingItemIndex = cart.findIndex((item) => item._id === product._id);
-                        if (existingItemIndex !== -1) {
-                          toast.info("Item is already in cart");
-                          return;
-                        }
-                        setCart([...cart, cartItem]);
-                        localStorage.setItem("cart", JSON.stringify([...cart, cartItem]));
-                      }}
+                      addToCart={addToCart}
                       setQuickViewProduct={setQuickViewProduct}
                     />
                   ))}
