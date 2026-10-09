@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Layout from "../../components/Layout/Layout";
 import UserMenu from "../../components/Layout/UserMenu";
-import { useAuth } from "../../context/auth";
 import { useOrder } from "../../context/order";
 import { Link } from "react-router-dom";
 import "../../css/orders.css";
@@ -20,25 +19,22 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("all");
-  const [pagination, setPagination] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
   const { getUserOrders, cancelOrder, loading: orderLoading } = useOrder();
 
   // Fetch user orders
   const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
-      const result = await getUserOrders(currentPage, filterStatus);
+      const result = await getUserOrders(1, filterStatus);
       if (result.success) {
         setOrders(result.orders);
-        setPagination(result.pagination);
       }
     } catch (error) {
       console.log("Error fetching orders:", error);
     } finally {
       setLoading(false);
     }
-  }, [getUserOrders, currentPage, filterStatus]);
+  }, [getUserOrders, filterStatus]);
 
   useEffect(() => {
     fetchOrders();

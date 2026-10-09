@@ -9,10 +9,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell
+  ResponsiveContainer
 } from "recharts";
 import {
   DollarSign,
@@ -22,8 +19,6 @@ import {
   ArrowUpRight,
   ArrowDownRight
 } from "lucide-react";
-
-const COLORS = ["#4318FF", "#6AD2FF", "#E1E9F8", "#2B3674", "#05CD99"];
 
 const AdminDashboard = () => {
   const [auth] = useAuth();

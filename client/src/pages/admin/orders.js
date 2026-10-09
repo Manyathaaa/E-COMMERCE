@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import AdminLayout from "../../components/Admin/AdminLayout";
 import axios from "axios";
 import { useAuth } from "../../context/auth";
@@ -10,7 +10,7 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(true);
 
   // Fetch all orders
-  const getOrders = async () => {
+  const getOrders = useCallback(async () => {
     try {
       if (!auth?.token) return;
       const { data } = await axios.get("/api/v1/orders/admin/all-orders");
@@ -23,12 +23,11 @@ const AdminOrders = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [auth?.token]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     getOrders();
-  }, [auth?.token]);
+  }, [getOrders]);
 
   const handleChangeStatus = async (orderId, newStatus) => {
     try {

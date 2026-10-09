@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 
 const Login = () => {
@@ -12,8 +12,6 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [, setAuth] = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);

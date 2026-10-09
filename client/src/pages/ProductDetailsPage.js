@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Layout from "./../components/Layout/Layout";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
@@ -13,11 +13,7 @@ const ProductDetailsPage = () => {
   const [cart, setCart] = useCart();
   const [selectedImage, setSelectedImage] = useState("");
 
-  useEffect(() => {
-    if (id) getProduct();
-  }, [id]);
-
-  const getProduct = async () => {
+  const getProduct = useCallback(async () => {
     try {
       setLoading(true);
       const { data } = await axios.get(`/api/products/${id}`);
@@ -34,7 +30,11 @@ const ProductDetailsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    if (id) getProduct();
+  }, [id, getProduct]);
 
   if (loading) {
     return (
