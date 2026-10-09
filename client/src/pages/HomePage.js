@@ -51,11 +51,9 @@ const HomePage = () => {
       console.log("API URL:", process.env.REACT_APP_API);
       console.log("Fetching products for page:", pageNum);
 
-      // Use the correct endpoint based on whether it's first load or pagination
       const response = await axios.get(
-        pageNum === 1
-          ? `${process.env.REACT_APP_API}/api/v1/products/get-products`
-          : `${process.env.REACT_APP_API}/api/v1/products/product-list/${pageNum}`
+        `${process.env.REACT_APP_API}/api/v1/products/get-products`,
+        { params: { page: pageNum, limit: 12 } }
       );
 
       const data = response.data;
@@ -97,9 +95,8 @@ const HomePage = () => {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        `${process.env.REACT_APP_API}/api/v1/products/get-products?page=${
-          page + 1
-        }&limit=12`
+        `${process.env.REACT_APP_API}/api/v1/products/get-products`,
+        { params: { page: page + 1, limit: 12 } }
       );
 
       if (data.products && data.products.length > 0) {
@@ -136,7 +133,6 @@ const HomePage = () => {
   useEffect(() => {
     console.log("Initial load started");
     getAllCategory();
-    getAllProducts(1, true);
     getTotal();
   }, [getAllProducts]);
 
@@ -178,7 +174,8 @@ const HomePage = () => {
     if (checked.length || selectedPrice !== null) {
       filterProducts();
     } else {
-      // Reset to normal pagination when no filters
+      // Reset to normal pagination when no filters. This effect owns the
+      // initial product request as well, avoiding a duplicate fetch on mount.
       setIsFiltering(false);
       setPage(1);
       setHasMore(true);

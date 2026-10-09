@@ -56,7 +56,17 @@ export const createProductController = async (req, res) => {
 // controllers/productController.js
 export const getAllProductsController = async (req, res) => {
   try {
-    const products = await productModels.find({}).select("-photo"); // exclude photo
+    const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(
+      100,
+      Math.max(1, Number.parseInt(req.query.limit, 10) || 12)
+    );
+    const products = await productModels
+      .find({})
+      .select("-photo")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
     res.status(200).send({
       success: true,
       products,
